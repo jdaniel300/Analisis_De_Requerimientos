@@ -1,0 +1,519 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Asistencia";
+    Layout = "_LayoutPlantilla";
+}
+<div class="container mt-5">
+    <div class="page-inner">
+        <div class="page-header">
+            <h3 class="fw-bold mb-3">Horarios</h3>
+        </div>
+        <div class="row">
+            <div class="col-12 ">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-center">
+                        <ul class="nav nav-pills nav-secondary" id="days-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="lunes-tab" data-bs-toggle="pill" href="#lunes" role="tab" aria-controls="lunes" aria-selected="true">Lunes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="martes-tab" data-bs-toggle="pill" href="#martes" role="tab" aria-controls="martes" aria-selected="false">Martes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="miercoles-tab" data-bs-toggle="pill" href="#miercoles" role="tab" aria-controls="miercoles" aria-selected="false">Miércoles</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="jueves-tab" data-bs-toggle="pill" href="#jueves" role="tab" aria-controls="jueves" aria-selected="false">Jueves</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="viernes-tab" data-bs-toggle="pill" href="#viernes" role="tab" aria-controls="viernes" aria-selected="false">Viernes</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="days-tabContent">
+                            <!-- Lunes -->
+                            <div class="tab-pane fade show active" id="lunes" role="tabpanel" aria-labelledby="lunes-tab">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="list-group" id="lunes-horarios">
+                                            <a href="#" class="list-group-item list-group-item-action active" data-horario="08:00 - 10:00">
+                                                08:00 - 10:00
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-horario="10:00 - 12:00">
+                                                10:00 - 12:00
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-horario="14:00 - 16:00">
+                                                14:00 - 16:00
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-horario="16:00 - 18:00">
+                                                16:00 - 18:00
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-10">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <div class="d-flex align-items-center">
+                                                        <h4 class="card-title">Participantes</h4>
+                                                        <button class="btn btn-primary btn-round ms-auto"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#addRowModal">
+                                                            <i class="fa fa-plus"></i>
+                                                            Agregar Participante
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <!-- Modal -->
+                                                    <div class="modal fade"
+                                                         id="addRowModal"
+                                                         tabindex="-1"
+                                                         role="dialog"
+                                                         aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header border-0">
+                                                                    <h5 class="modal-title">
+                                                                        <span class="fw-mediumbold"> Nuevo</span>
+                                                                        <span class="fw-light"> Participante </span>
+                                                                    </h5>
+                                                                    <button type="button"
+                                                                            class="close"
+                                                                            data-dismiss="modal"
+                                                                            aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p class="small">
+                                                                        Agrega un nuevo participante al taller
+                                                                    </p>
+                                                                    <form>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 pe-0">
+                                                                                <div class="form-group form-group-default">
+                                                                                    <label>Nombre</label>
+                                                                                    <input id="addName"
+                                                                                           type="text"
+                                                                                           class="form-control"
+                                                                                           placeholder="fill name" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-12 ">
+                                                                                <div class="form-group form-group-default">
+                                                                                    <label>Apellidos</label>
+                                                                                    <input id="addPosition"
+                                                                                           type="text"
+                                                                                           class="form-control"
+                                                                                           placeholder="fill position" />
+                                                                                </div>
+                                                                            </div>
+                                                                            
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                                <div class="modal-footer border-0">
+                                                                    <button type="button"
+                                                                            id="addRowButton"
+                                                                            class="btn btn-primary">
+                                                                        Agregar
+                                                                    </button>
+                                                                    <button type="button"
+                                                                            class="btn btn-danger"
+                                                                            data-dismiss="modal">
+                                                                        Cerrar
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="table-responsive">
+                                                        <table id="add-row"
+                                                               class="display table table-striped table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nombre</th>
+                                                                    <th>Apellido</th>
+                                                                    <th style="width: 10%">Estado Asistencia</th>
+                                                                </tr>
+                                                            </thead>
+                                                            
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>Tiger Nixon</td>
+                                                                    <td>System Architect</td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="form-group">
+                                                                            
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+                                                                               
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Garrett Winters</td>
+                                                                    <td>Accountant</td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="form-group">
+
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Ashton Cox</td>
+                                                                    <td>Junior Technical Author</td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="form-group">
+
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Cedric Kelly</td>
+                                                                    <td>Senior Javascript Developer</td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="form-group">
+
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Airi Satou</td>
+                                                                    <td>Accountant</td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="form-group">
+
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Brielle Williamson</td>
+                                                                    <td>Integration Specialist</td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="form-group">
+
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Herrod Chandler</td>
+                                                                    <td>Sales Assistant</td>
+                                                                   
+                                                                    <td>
+                                                                        <div class="form-group">
+
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Rhona Davidson</td>
+                                                                    <td>Integration Specialist</td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="form-group">
+
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Colleen Hurst</td>
+                                                                    <td>Javascript Developer</td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="form-group">
+
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Sonya Frost</td>
+                                                                    <td>Software Engineer</td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="form-group">
+
+                                                                            <select class="form-select form-control-sm" id="defaultSelect">
+                                                                                <option>Ausente</option>
+                                                                                <option>presente</option>
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+
+                            <!-- Martes -->
+                            <div class="tab-pane fade" id="martes" role="tabpanel" aria-labelledby="martes-tab">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="list-group" id="martes-horarios">
+                                            <a href="#" class="list-group-item list-group-item-action active" data-horario="08:00 - 10:00">
+                                                08:00 - 10:00
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-horario="10:00 - 12:00">
+                                                10:00 - 12:00
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-horario="14:00 - 16:00">
+                                                14:00 - 16:00
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Asistencia para <span id="martes-horario-seleccionado">08:00 - 10:00</span></h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label>Estado de asistencia</label>
+                                                    <select class="form-control" id="martes-asistencia">
+                                                        <option value="presente">Presente</option>
+                                                        <option value="ausente">Ausente</option>
+                                                        <option value="tardanza">Tardanza</option>
+                                                        <option value="scan-qr">Scan QR</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mt-3">
+                                                    <label>Comentarios</label>
+                                                    <textarea class="form-control" rows="3" id="martes-comentarios"></textarea>
+                                                </div>
+                                                <button class="btn btn-primary mt-3" id="martes-guardar">Guardar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Miércoles -->
+                            <div class="tab-pane fade" id="miercoles" role="tabpanel" aria-labelledby="miercoles-tab">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="list-group" id="miercoles-horarios">
+                                            <a href="#" class="list-group-item list-group-item-action active" data-horario="09:00 - 11:00">
+                                                09:00 - 11:00
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-horario="11:00 - 13:00">
+                                                11:00 - 13:00
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Asistencia para <span id="miercoles-horario-seleccionado">09:00 - 11:00</span></h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label>Estado de asistencia</label>
+                                                    <select class="form-control" id="miercoles-asistencia">
+                                                        <option value="presente">Presente</option>
+                                                        <option value="ausente">Ausente</option>
+                                                        <option value="tardanza">Tardanza</option>
+                                                        <option value="scan-qr">Scan QR</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mt-3">
+                                                    <label>Comentarios</label>
+                                                    <textarea class="form-control" rows="3" id="miercoles-comentarios"></textarea>
+                                                </div>
+                                                <button class="btn btn-primary mt-3" id="miercoles-guardar">Guardar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Jueves -->
+                            <div class="tab-pane fade" id="jueves" role="tabpanel" aria-labelledby="jueves-tab">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="list-group" id="jueves-horarios">
+                                            <a href="#" class="list-group-item list-group-item-action active" data-horario="08:00 - 10:00">
+                                                08:00 - 10:00
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-horario="15:00 - 17:00">
+                                                15:00 - 17:00
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Asistencia para <span id="jueves-horario-seleccionado">08:00 - 10:00</span></h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label>Estado de asistencia</label>
+                                                    <select class="form-control" id="jueves-asistencia">
+                                                        <option value="presente">Presente</option>
+                                                        <option value="ausente">Ausente</option>
+                                                        <option value="tardanza">Tardanza</option>
+                                                        <option value="scan-qr">Scan QR</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mt-3">
+                                                    <label>Comentarios</label>
+                                                    <textarea class="form-control" rows="3" id="jueves-comentarios"></textarea>
+                                                </div>
+                                                <button class="btn btn-primary mt-3" id="jueves-guardar">Guardar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Viernes -->
+                            <div class="tab-pane fade" id="viernes" role="tabpanel" aria-labelledby="viernes-tab">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="list-group" id="viernes-horarios">
+                                            <a href="#" class="list-group-item list-group-item-action active" data-horario="10:00 - 12:00">
+                                                10:00 - 12:00
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-horario="16:00 - 18:00">
+                                                16:00 - 18:00
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Asistencia para <span id="viernes-horario-seleccionado">10:00 - 12:00</span></h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label>Estado de asistencia</label>
+                                                    <select class="form-control" id="viernes-asistencia">
+                                                        <option value="presente">Presente</option>
+                                                        <option value="ausente">Ausente</option>
+                                                        <option value="tardanza">Tardanza</option>
+                                                        <option value="scan-qr">Scan QR</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mt-3">
+                                                    <label>Comentarios</label>
+                                                    <textarea class="form-control" rows="3" id="viernes-comentarios"></textarea>
+                                                </div>
+                                                <button class="btn btn-primary mt-3" id="viernes-guardar">Guardar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para manejar la selección de horarios
+    document.querySelectorAll('[id$="-horarios"]').forEach(horariosList => {
+        const dayId = horariosList.id.split('-')[0];
+
+        horariosList.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            if (e.target.classList.contains('list-group-item')) {
+                // Remover active de todos los items
+                this.querySelectorAll('.list-group-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                // Agregar active al item clickeado
+                e.target.classList.add('active');
+
+                // Actualizar el horario seleccionado en el panel
+                const horarioSeleccionado = e.target.getAttribute('data-horario');
+                document.getElementById(`${dayId}-horario-seleccionado`).textContent = horarioSeleccionado;
+            }
+        });
+    });
+
+    // Función para manejar el guardado de asistencia
+    document.querySelectorAll('[id$="-guardar"]').forEach(btn => {
+        const dayId = btn.id.split('-')[0];
+
+        btn.addEventListener('click', function() {
+            const horario = document.getElementById(`${dayId}-horario-seleccionado`).textContent;
+            const asistencia = document.getElementById(`${dayId}-asistencia`).value;
+            const comentarios = document.getElementById(`${dayId}-comentarios`).value;
+
+            // Aquí puedes hacer lo que necesites con los datos, como enviarlos al servidor
+            console.log({
+                dia: dayId,
+                horario: horario,
+                asistencia: asistencia,
+                comentarios: comentarios
+            });
+
+            alert(`Asistencia guardada para ${dayId} en el horario ${horario}`);
+        });
+    });
+</script>
