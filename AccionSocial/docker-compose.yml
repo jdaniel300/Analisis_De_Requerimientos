@@ -1,0 +1,67 @@
+services:
+  accionsocial.web:
+    restart: on-failure  
+    build:
+      context: .
+      dockerfile: AccionSocial.web/Dockerfile
+    image: accionsocial.web
+    container_name: accionsocial.web
+    ports:
+      - "8090:8080"
+    depends_on:
+      sqlserver:
+        condition: service_started
+    networks:
+      - accion-network
+    environment:
+      - ConnectionStrings__Database=Server=sqlserver;Database=AccionDB;User Id=sa;Password=AccionSocialDb123!;TrustServerCertificate=True
+
+  sqlserver:
+    build:
+      context: .
+      dockerfile: AccionSocial.web/Dockerfile.sqlserver
+    image: custom-sqlserver
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=AccionSocialDb123!
+      - MSSQL_PID=Express
+      - MSSQL_COLLATION=Latin1_General_CI_AS
+      - MSSQL_LCID=1033
+      - MSSQL_MEMORY_LIMIT_MB=4096
+      - MSSQL_REMOTE_ACCESS_ENABLED=1
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2'
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -Q \"SELECT 1\" || exit 1"]
+      interval: 20s
+      timeout: 20s
+      retries: 10
+      start_period: 180s
+    networks:
+    - accion-network
+    command: 
+      - "/bin/bash"
+      - "-c"
+      - |
+        # Install SQL tools
+        apt-get update && apt-get install -y curl gnupg
+        curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+        curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+        apt-get update
+        ACCEPT_EULA=Y apt-get install -y mssql-tools
+        # Start SQL Server
+        /opt/mssql/bin/sqlservr
+
+volumes:
+  sql_data:
+networks:
+  accion-network:
+    driver: bridge

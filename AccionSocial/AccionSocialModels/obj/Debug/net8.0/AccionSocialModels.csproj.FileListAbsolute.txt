@@ -1,0 +1,15 @@
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\AccionSocialModels.deps.json
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\AccionSocialModels.runtimeconfig.json
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\AccionSocialModels.dll
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\AccionSocialModels.pdb
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.csproj.AssemblyReference.cache
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.GeneratedMSBuildEditorConfig.editorconfig
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.AssemblyInfoInputs.cache
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.AssemblyInfo.cs
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.csproj.CoreCompileInputs.cache
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.sourcelink.json
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.dll
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\refint\AccionSocialModels.dll
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.pdb
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.genruntimeconfig.cache
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\ref\AccionSocialModels.dll
