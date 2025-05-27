@@ -1,0 +1,178 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="sidebar" data-background-color="dark">
+    <div class="sidebar-logo">
+        <!-- Logo Header -->
+        <div class="logo-header" data-background-color="dark">
+            <a href="../index.html" class="logo">
+                <img src="~/Plantilla/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand" height="20" />
+            </a>
+            <div class="nav-toggle">
+                <button class="btn btn-toggle toggle-sidebar">
+                    <i class="gg-menu-right"></i>
+                </button>
+                <button class="btn btn-toggle sidenav-toggler">
+                    <i class="gg-menu-left"></i>
+                </button>
+            </div>
+            <button class="topbar-toggler more">
+                <i class="gg-more-vertical-alt"></i>
+            </button>
+        </div>
+        <!-- End Logo Header -->
+    </div>
+    <div class="sidebar-wrapper scrollbar scrollbar-inner">
+        <div class="sidebar-content">
+            <ul class="nav nav-secondary">
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
+                        <i class="fas fa-home"></i>
+                        <p>Reportes</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="dashboard">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a asp-controller="Home" asp-action="Index">
+                                    <span class="sub-item">Reportes Generales</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">Talleres</h4>
+                </li>
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#microfinanzas">
+                        <i class="fas fa-layer-group"></i>
+                        <p>Microfinanzas</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="microfinanzas">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="/Home/Moodle">
+                                    <span class="sub-item">Moodle</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/Home/Asistencia">
+                                    <span class="sub-item">Asistencia</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Control Ingresos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Encuestas y Sugerencias</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">Administrativo</h4>
+                </li>
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#solicitudes">
+                        <i class="fas fa-layer-group"></i>
+                        <p>Solicitudes</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="solicitudes">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Mis solicitudes</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Historial de solicitudes</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Flujos de aprobación</span>
+                                </a>
+                            </li>
+                           
+                            
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#seguridad">
+                        <i class="fas fa-layer-group"></i>
+                        <p>Seguridad y Acceso</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="seguridad">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Administrar Usuarios</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Politicas de Seguridad</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Alertas de Seguridad</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#talleres">
+                        <i class="fas fa-layer-group"></i>
+                        <p>Administrar Talleres</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="talleres">
+                        <ul class="nav nav-collapse">
+                            
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Gestión</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Cronogramas</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="sub-item">Control de Gastos</span>
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                </li>
+                <!-- Puedes agregar más elementos del menú según necesites -->
+            </ul>
+        </div>
+    </div>
+</div>
+    
+
+

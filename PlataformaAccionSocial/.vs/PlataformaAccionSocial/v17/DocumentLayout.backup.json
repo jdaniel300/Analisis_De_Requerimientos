@@ -1,37 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\ProyectosVS\\PlataformaAccionSocial\\",
+  "WorkspaceRootPath": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\plataformaaccionsocial\\plataformaaccionsocial\\views\\home\\moodle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\home\\moodle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\forms\\forms.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\plataformaaccionsocial\\plataformaaccionsocial\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\tables\\tables.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\components\\panels.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\plataformaaccionsocial\\plataformaaccionsocial\\views\\shared\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\shared\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\plataformaaccionsocial\\plataformaaccionsocial\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\plataformaaccionsocial\\plataformaaccionsocial\\views\\shared\\_layoutplantilla.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\home\\moodle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\home\\moodle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\shared\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\shared\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\shared\\_layoutplantilla.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\shared\\_layoutplantilla.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
@@ -41,7 +29,7 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 214,
+          "DockedHeight": 404,
           "SelectedChildIndex": 8,
           "Children": [
             {
@@ -66,15 +54,23 @@
             },
             {
               "$type": "Bookmark",
+              "Name": "ST:0:0:{e5c86464-96be-4d7c-9a8b-abcb3bbf5f92}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 0,
               "Title": "HomeController.cs",
-              "DocumentMoniker": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Controllers\\HomeController.cs",
+              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Controllers\\HomeController.cs",
-              "ToolTip": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Controllers\\HomeController.cs",
+              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Controllers\\HomeController.cs",
               "RelativeToolTip": "PlataformaAccionSocial\\Controllers\\HomeController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -83,11 +79,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Moodle.cshtml",
-              "DocumentMoniker": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
+              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
-              "ToolTip": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
+              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
               "RelativeToolTip": "PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
               "ViewState": "AgIAAGMAAAAAAAAAAAAAAHQAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -96,24 +92,24 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 2,
               "Title": "_SideBar.cshtml",
-              "DocumentMoniker": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
+              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
-              "ToolTip": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
+              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
               "RelativeToolTip": "PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAAADwAAAA1AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADAAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-04-15T05:59:59.476Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 4,
               "Title": "_LayoutPlantilla.cshtml",
-              "DocumentMoniker": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
+              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
-              "ToolTip": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
+              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
               "RelativeToolTip": "PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -122,85 +118,20 @@
           ]
         },
         {
-          "DockedHeight": 214,
+          "DockedHeight": 200,
           "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
+              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
-              "ToolTip": "D:\\ProyectosVS\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
+              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
               "RelativeToolTip": "PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAACcAAAAAAAAAAAAAADUAAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAACsAAABIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-04-15T06:02:20.31Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "ec0b7387-76f8-4562-b978-cf171f0c36eb",
-        "Display": 0,
-        "X": 1278,
-        "Y": 65,
-        "Width": 1265,
-        "Height": 1331,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 2,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "index.html",
-              "DocumentMoniker": "C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\index.html",
-              "ToolTip": "C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\index.html",
-              "ViewState": "AgIAAFsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2025-04-15T16:01:12.386Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "panels.html",
-              "DocumentMoniker": "C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\components\\panels.html",
-              "ToolTip": "C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\components\\panels.html",
-              "ViewState": "AgIAAGMCAAAAAAAAAAAAAHgCAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2025-04-15T16:04:14.399Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "forms.html",
-              "DocumentMoniker": "C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\forms\\forms.html",
-              "ToolTip": "C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\forms\\forms.html",
-              "ViewState": "AgIAAOkFAAAAAAAAAAAAAAQGAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2025-04-15T18:55:26.498Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "tables.html",
-              "DocumentMoniker": "C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\tables\\tables.html",
-              "ToolTip": "C:\\Users\\mija2\\Desktop\\kaiadmin-lite-1.2.0\\tables\\tables.html",
-              "ViewState": "AgIAAOQCAAAAAAAAAAAAAAYDAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2025-04-15T17:35:35.362Z",
               "EditorCaption": ""
             }
           ]

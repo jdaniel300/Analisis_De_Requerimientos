@@ -1,6 +1,7 @@
 using AccionSocialModels;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +35,26 @@ builder.Services.AddIdentity<Usuario, Rol>(options =>
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
     .SetApplicationName("AccionSocial");
+    
+
+
+
+// Configuración de Kestrel
+builder.WebHost.ConfigureKestrel(serverOptions => {
+    serverOptions.Limits.MaxConcurrentConnections = 100;
+    serverOptions.Limits.MaxRequestBodySize = 10 * 1024 * 1024;
+    serverOptions.ListenAnyIP(8080);
+    //serverOptions.ListenAnyIP(8443, listenOptions => {
+    //    listenOptions.UseHttps("certificate.pfx", "password");
+    //});
+});
+
+// Añadir compresión de respuesta
+builder.Services.AddResponseCompression(options => {
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
 
 var app = builder.Build();
 
@@ -111,17 +132,19 @@ using (var scope = app.Services.CreateScope())
 }
 
 
+app.UseResponseCompression();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+   
+    app.UseForwardedHeaders();
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 // ¡Orden CORRECTO: primero Authentication, luego Authorization!

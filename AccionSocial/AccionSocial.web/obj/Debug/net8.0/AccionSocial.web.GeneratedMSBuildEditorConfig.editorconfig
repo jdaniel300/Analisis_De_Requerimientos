@@ -40,6 +40,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/ProyectosVS/PrograAvanzada/DiseñoDesarrollo/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Encabezado.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9FbmNhYmV6YWRvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ProyectosVS/PrograAvanzada/DiseñoDesarrollo/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_PiePag.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9QaWVQYWcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/ProyectosVS/PrograAvanzada/DiseñoDesarrollo/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_SideBar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TaWRlQmFyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/ProyectosVS/PrograAvanzada/DiseñoDesarrollo/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -55,3 +67,7 @@ build_metadata.AdditionalFiles.CssScope =
 [D:/ProyectosVS/PrograAvanzada/DiseñoDesarrollo/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-w1fge707rs
+
+[D:/ProyectosVS/PrograAvanzada/DiseñoDesarrollo/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_LayoutPlantilla.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRQbGFudGlsbGEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-omo5byo809

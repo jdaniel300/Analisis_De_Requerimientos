@@ -248,6 +248,7 @@ D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\Accio
 D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web\obj\Debug\net8.0\AccionSocial.web.RazorAssemblyInfo.cs
 D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web\obj\Debug\net8.0\AccionSocial.web.sourcelink.json
 D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web\obj\Debug\net8.0\scopedcss\Views\Shared\_LayoutPlantilla.cshtml.rz.scp.css
 D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web\obj\Debug\net8.0\scopedcss\bundle\AccionSocial.web.styles.css
 D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web\obj\Debug\net8.0\scopedcss\projectbundle\AccionSocial.web.bundle.scp.css
 D:\ProyectosVS\PrograAvanzada\DiseñoDesarrollo\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web\obj\Debug\net8.0\staticwebassets.build.json

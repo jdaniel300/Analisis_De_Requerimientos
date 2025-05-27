@@ -7,15 +7,17 @@ services:
     image: accionsocial.web
     container_name: accionsocial.web
     ports:
-      - "8090:8080"
+      - "8090:8080" 
     depends_on:
       sqlserver:
         condition: service_started
     networks:
       - accion-network
     environment:
-      - ConnectionStrings__Database=Server=sqlserver;Database=AccionDB;User Id=sa;Password=AccionSocialDb123!;TrustServerCertificate=True
-
+      - ConnectionStrings__Database=Server=sqlserver;Database=AccionDB;User Id=sa;Password=AccionSocialDb123!;TrustServerCertificate=True; Connect Timeout=60
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - dataprotection_keys:/app/keys
   sqlserver:
     build:
       context: .
@@ -30,6 +32,7 @@ services:
       - MSSQL_LCID=1033
       - MSSQL_MEMORY_LIMIT_MB=4096
       - MSSQL_REMOTE_ACCESS_ENABLED=1
+    restart: always
     ports:
       - "1433:1433"
     volumes:
@@ -59,9 +62,11 @@ services:
         ACCEPT_EULA=Y apt-get install -y mssql-tools
         # Start SQL Server
         /opt/mssql/bin/sqlservr
+  
 
 volumes:
   sql_data:
+  dataprotection_keys:
 networks:
   accion-network:
     driver: bridge

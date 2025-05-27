@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PlataformaAccionSocial</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    <!-- Fonts and icons -->
+    <script src="~/Plantilla/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+        WebFont.load({
+          google: { families: ["Public Sans:300,400,500,600,700"] },
+          custom: {
+            families: [
+              "Font Awesome 5 Solid",
+              "Font Awesome 5 Regular",
+              "Font Awesome 5 Brands",
+              "simple-line-icons",
+            ],
+            urls: ["assets/css/fonts.min.css"],
+          },
+          active: function () {
+            sessionStorage.fonts = true;
+          },
+        });
+    </script>
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="~/Plantilla/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Plantilla/css/plugins.min.css" />
+    <link rel="stylesheet" href="~/Plantilla/css/kaiadmin.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar Dinámico -->
+        @Html.Partial("_SideBar")
+
+        <div class="main-panel">
+            <!-- Encabezado Dinámico -->
+            @Html.Partial("_Encabezado")
+
+            <!-- Contenido Principal -->
+            <div class="content pt-5">
+                @RenderBody()
+            </div>
+
+            <!-- Pie de Página Dinámico -->
+            @Html.Partial("_PiePag")
+        </div>
+    </div>
+
+    
+    
+
+   
+
+    <!--   Core JS Files   -->
+    <script src="~/Plantilla/js/core/jquery-3.7.1.min.js"></script>
+    <script src="~/Plantilla/js/core/popper.min.js"></script>
+    <script src="~/Plantilla/js/core/bootstrap.min.js"></script>
+
+    <!-- jQuery Scrollbar -->
+    <script src="~/Plantilla/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+    <!-- Chart JS -->
+    <script src="~/Plantilla/js/plugin/chart.js/chart.min.js"></script>
+
+    <!-- jQuery Sparkline -->
+    <script src="~/Plantilla/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+
+    <!-- Chart Circle -->
+    <script src="~/Plantilla/js/plugin/chart-circle/circles.min.js"></script>
+
+    <!-- Datatables -->
+    <script src="~/Plantilla/js/plugin/datatables/datatables.min.js"></script>
+
+    <!-- Bootstrap Notify -->
+    <script src="~/Plantilla/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+    <!-- jQuery Vector Maps -->
+    <script src="~/Plantilla/js/plugin/jsvectormap/jsvectormap.min.js"></script>
+    <script src="~/Plantilla/js/plugin/jsvectormap/world.js"></script>
+
+    <!-- Sweet Alert -->
+    <script src="~/Plantilla/js/plugin/sweetalert/sweetalert.min.js"></script>
+
+    <!-- Kaiadmin JS -->
+    <script src="~/Plantilla/js/kaiadmin.min.js"></script>
+    
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
