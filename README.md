@@ -13,7 +13,7 @@ Al inicializar por primera vez el proyecto en la carpeta raiz abrimos la termina
 Esto levanta las imagenes simultaneamente tanto como la base de datos y el proyecto, una vez levantado utilizara la direccion:
 http://localhost:8090/
 
-Para bajar el proyecto de docker se utiliza (OJO esto elimina la imagen de base de datos, por lo tanto todo el contenido en tablas tambien)
+Para bajar el proyecto de docker se utiliza
 
 - docker-compose down
 
