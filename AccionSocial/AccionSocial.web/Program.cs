@@ -9,9 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var conn = builder.Configuration.GetConnectionString("Database");
-
 // Configuración de DbContext con Identity
+var conn = builder.Configuration.GetConnectionString("Database");
 builder.Services.AddDbContext<MyIdentityDbContext>(options =>
     options.UseSqlServer(conn, b => b.MigrationsAssembly("AccionSocialModels")));
 
@@ -28,7 +27,7 @@ builder.Services.AddIdentity<Usuario, Rol>(options =>
     options.Lockout.AllowedForNewUsers = true;
 })
 .AddEntityFrameworkStores<MyIdentityDbContext>()
-.AddRoles<Rol>() // ¡Esta línea es crucial para habilitar RoleManager!
+.AddRoles<Rol>() 
 .AddDefaultTokenProviders();
 
 // Configuración de DataProtection
@@ -36,9 +35,6 @@ builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
     .SetApplicationName("AccionSocial");
     
-
-
-
 // Configuración de Kestrel
 builder.WebHost.ConfigureKestrel(serverOptions => {
     serverOptions.Limits.MaxConcurrentConnections = 100;
@@ -75,7 +71,7 @@ using (var scope = app.Services.CreateScope())
 
             // Aplicar migraciones primero
             var dbContext = services.GetRequiredService<MyIdentityDbContext>();
-            await dbContext.Database.MigrateAsync(); // Usa MigrateAsync y await
+            await dbContext.Database.MigrateAsync();
 
             var roleManager = services.GetRequiredService<RoleManager<Rol>>();
             var userManager = services.GetRequiredService<UserManager<Usuario>>();
@@ -146,8 +142,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
-// ¡Orden CORRECTO: primero Authentication, luego Authorization!
 app.UseAuthentication();
 app.UseAuthorization();
 
