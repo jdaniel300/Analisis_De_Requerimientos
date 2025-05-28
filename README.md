@@ -3,7 +3,7 @@ Instalar docker desktop
 Bajar la imagen en cmd con el comando 
 docker pull mcr.microsoft.com/mssql/server
 
-docker run --name "AccionDB" -e "ACCEP_EULA=Y" -e "MSSQL_SA_PASSWORD=AccionSocial123!" -p 1433:1433 -d mcr.microsoft.com/mssql/server
+docker run --name "AccionDB" -e "ACCEP_EULA=Y" -e "MSSQL_SA_PASSWORD=AccionSocial123!" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
 !Importante!
 Al inicializar por primera vez el proyecto en docker se utiliza docker-compose.yml
