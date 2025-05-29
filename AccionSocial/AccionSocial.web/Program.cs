@@ -104,9 +104,42 @@ using (var scope = app.Services.CreateScope())
                 };
                 var result = await userManager.CreateAsync(adminUser, "AdminAccion123!");
 
-                if (!result.Succeeded)
+                if (result.Succeeded)
                 {
-                    logger.LogError("Error al crear admin: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
+                    // Asignar rol Admin al usuario recién creado
+                    var roleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
+                    if (roleResult.Succeeded)
+                    {
+                        logger.LogInformation("Usuario admin creado y rol asignado correctamente.");
+                    }
+                    else
+                    {
+                        logger.LogError("Error al asignar rol: {Errors}",
+                            string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                    }
+                }
+                else
+                {
+                    logger.LogError("Error al crear admin: {Errors}",
+                        string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+            }
+            else
+            {
+                // Verificar si el usuario existente ya tiene el rol Admin
+                var isInRole = await userManager.IsInRoleAsync(adminUser, "Admin");
+                if (!isInRole)
+                {
+                    var roleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
+                    if (roleResult.Succeeded)
+                    {
+                        logger.LogInformation("Rol Admin asignado al usuario admin existente.");
+                    }
+                    else
+                    {
+                        logger.LogError("Error al asignar rol al usuario existente: {Errors}",
+                            string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                    }
                 }
             }
 
