@@ -18,6 +18,23 @@ services:
     networks:
       - accion-network
 
+  accionsocial.api:
+    build:
+      context: .
+      dockerfile: AccionSocial.api/Dockerfile
+    container_name: accionsocial.api
+    ports:
+      - "5000:8081"
+    depends_on:
+      - sqlserver
+    networks:
+      - accion-network
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=AccionDB;User Id=sa;Password=AccionSocialDb123!;TrustServerCertificate=True;Connect Timeout=60
+    volumes:
+      - dataprotection_keys:/app/keys
+      - app_uploads:/app/uploads
+
   accionsocial.web:
     restart: always
     build:
@@ -28,18 +45,17 @@ services:
     ports:
       - "8090:8080"
     depends_on:
-      - sqlserver
+      - accionsocial.api
     networks:
       - accion-network
     environment:
-      - ConnectionStrings__Database=Server=sqlserver;Database=AccionDB;User Id=sa;Password=AccionSocialDb123!;TrustServerCertificate=True;Connect Timeout=60
+      - API_URL=http://accionsocial.api
       - ASPNETCORE_ENVIRONMENT=Development
-    volumes:
-      - dataprotection_keys:/app/keys
 
 volumes:
   sql_data:
   dataprotection_keys:
+  app_uploads:
 
 networks:
   accion-network:
