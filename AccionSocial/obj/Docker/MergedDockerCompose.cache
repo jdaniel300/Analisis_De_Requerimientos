@@ -1,0 +1,125 @@
+name: dockercompose15490127890436359025
+services:
+  accionsocial.api:
+    build:
+      context: D:\AccionSocialApp\Analisis_De_Requerimientos\AccionSocial
+      dockerfile: AccionSocial.api/Dockerfile
+    container_name: accionsocial.api
+    depends_on:
+      sqlserver:
+        condition: service_started
+        required: true
+    environment:
+      ConnectionStrings__DefaultConnection: Server=sqlserver;Database=AccionDB;User Id=sa;Password=AccionSocialDb123!;TrustServerCertificate=True;Connect Timeout=60
+    networks:
+      accion-network: null
+    ports:
+      - mode: ingress
+        target: 8081
+        published: "5000"
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: dataprotection_keys
+        target: /app/keys
+        volume: {}
+      - type: volume
+        source: app_uploads
+        target: /app/uploads
+        volume: {}
+  accionsocial.web:
+    build:
+      context: D:\AccionSocialApp\Analisis_De_Requerimientos\AccionSocial
+      dockerfile: AccionSocial.web/Dockerfile
+    container_name: accionsocial.web
+    depends_on:
+      accionsocial.api:
+        condition: service_started
+        required: true
+    environment:
+      API_URL: http://accionsocial.api
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ASPNETCORE_HTTPS_PORTS: "8081"
+    image: accionsocial.web
+    networks:
+      accion-network: null
+    ports:
+      - mode: ingress
+        target: 8080
+        published: "8090"
+        protocol: tcp
+      - mode: ingress
+        target: 8080
+        protocol: tcp
+      - mode: ingress
+        target: 8081
+        protocol: tcp
+    restart: always
+    volumes:
+      - type: bind
+        source: C:\Users\mija2\AppData\Roaming/Microsoft/UserSecrets
+        target: /home/app/.microsoft/usersecrets
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\mija2\AppData\Roaming/Microsoft/UserSecrets
+        target: /root/.microsoft/usersecrets
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\mija2\AppData\Roaming/ASP.NET/Https
+        target: /home/app/.aspnet/https
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\mija2\AppData\Roaming/ASP.NET/Https
+        target: /root/.aspnet/https
+        read_only: true
+        bind:
+          create_host_path: true
+  sqlserver:
+    container_name: AccionDB
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_DATA_DIR: /var/opt/mssql/data
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: AccionSocialDb123!
+      MSSQL_TCP_PORT: "1433"
+    hostname: mssql-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    networks:
+      accion-network: null
+    ports:
+      - mode: ingress
+        target: 1433
+        published: "1455"
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: D:\AccionSocialApp\Analisis_De_Requerimientos\AccionSocial\data
+        target: /var/opt/mssql/data
+        bind:
+          create_host_path: true
+      - type: bind
+        source: D:\AccionSocialApp\Analisis_De_Requerimientos\AccionSocial\log
+        target: /var/opt/mssql/log
+        bind:
+          create_host_path: true
+      - type: bind
+        source: D:\AccionSocialApp\Analisis_De_Requerimientos\AccionSocial\secrets
+        target: /var/opt/mssql/secrets
+        bind:
+          create_host_path: true
+networks:
+  accion-network:
+    name: dockercompose15490127890436359025_accion-network
+    driver: bridge
+volumes:
+  app_uploads:
+    name: dockercompose15490127890436359025_app_uploads
+  dataprotection_keys:
+    name: dockercompose15490127890436359025_dataprotection_keys

@@ -1,0 +1,62 @@
+services:
+  sqlserver:
+    container_name: AccionDB
+    hostname: mssql-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: 'AccionSocialDb123!'
+      MSSQL_DATA_DIR: /var/opt/mssql/data
+      MSSQL_PID: 'Developer' 
+      MSSQL_TCP_PORT: 1433 
+    ports: 
+      - "1455:1433"
+    volumes:
+      - ./data:/var/opt/mssql/data
+      - ./log:/var/opt/mssql/log
+      - ./secrets:/var/opt/mssql/secrets
+    networks:
+      - accion-network
+
+  accionsocial.api:
+    build:
+      context: .
+      dockerfile: AccionSocial.api/Dockerfile
+    container_name: accionsocial.api
+    ports:
+      - "5000:8081"
+    depends_on:
+      - sqlserver
+    networks:
+      - accion-network
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=AccionDB;User Id=sa;Password=AccionSocialDb123!;TrustServerCertificate=True;Connect Timeout=60
+    volumes:
+      - dataprotection_keys:/app/keys
+      - app_uploads:/app/uploads
+
+  accionsocial.web:
+    restart: always
+    build:
+      context: .
+      dockerfile: AccionSocial.web/Dockerfile
+    image: accionsocial.web
+    container_name: accionsocial.web
+    ports:
+      - "8090:8080"
+    depends_on:
+      - accionsocial.api
+    networks:
+      - accion-network
+    environment:
+      - API_URL=http://accionsocial.api
+      - ASPNETCORE_ENVIRONMENT=Development
+
+volumes:
+  sql_data:
+  dataprotection_keys:
+  app_uploads:
+
+networks:
+  accion-network:
+    driver: bridge
