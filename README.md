@@ -21,3 +21,7 @@ Si se realizan cambios en el proyecto AccionSocial.web y para verlos reflejados 
 
 - docker-compose build
 - docker-compose up -d accionsocial.web
+
+Para aplicar migraciones desde la carpeta raiz todo desde el api
+dotnet ef migrations add "NombreMigracion" --project AccionSocialModels --startup-project AccionSocial.api
+dotnet ef database update --project AccionSocialModels --startup-project AccionSocial.api
