@@ -1,8 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\AccionSocial"
+    "\\AccionSocial",
+    "\\AccionSocial\\AccionSocial.web",
+    "\\AccionSocial\\AccionSocial.web\\Views",
+    "\\AccionSocial\\AccionSocial.web\\Views\\Home"
   ],
-  "SelectedNode": "\\PlataformaAccionSocial",
+  "SelectedNode": "\\AccionSocial\\AccionSocial.web\\Views\\Home\\Index.cshtml",
   "PreviewInSolutionExplorer": false
 }

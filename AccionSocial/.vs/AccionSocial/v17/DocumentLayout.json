@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|d:\\accionsocialapp\\analisis_de_requerimientos\\accionsocial\\accionsocial.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|solutionrelative:accionsocial.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\accionsocialapp\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -30,11 +34,11 @@
       "DocumentGroups": [
         {
           "DockedHeight": 133,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Program.cs",
               "RelativeDocumentMoniker": "AccionSocial.web\\Program.cs",
@@ -44,6 +48,19 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-24T13:17:56.027Z",
               "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Program.cs",
+              "RelativeDocumentMoniker": "AccionSocial.api\\Program.cs",
+              "ToolTip": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Program.cs",
+              "RelativeToolTip": "AccionSocial.api\\Program.cs",
+              "ViewState": "AgIAAJMAAAAAAAAAAAAAAAYAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T00:53:42.176Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Bookmark",
@@ -79,7 +96,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "docker-compose.yml",
               "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\docker-compose.yml",
               "RelativeDocumentMoniker": "docker-compose.yml",
@@ -91,20 +108,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Index.cshtml",
               "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "AccionSocial.web\\Views\\Home\\Index.cshtml",
               "ToolTip": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Home\\Index.cshtml",
               "RelativeToolTip": "AccionSocial.web\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-05-27T19:37:28.775Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Dockerfile",
               "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Dockerfile",
               "RelativeDocumentMoniker": "AccionSocial.web\\Dockerfile",
@@ -116,7 +133,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "docker-compose.dcproj",
               "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\docker-compose.dcproj",
               "RelativeDocumentMoniker": "docker-compose.dcproj",
