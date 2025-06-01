@@ -113,9 +113,19 @@ builder.Services.AddAuthorization(options =>
     // options.AddPolicy("OtroRol", policy => policy.RequireRole("OtroRol"));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowWebApp",
+        builder => builder
+            .WithOrigins("http://localhost:8090") 
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
+
 
 var app = builder.Build();
-
+//Base de datos
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -251,8 +261,11 @@ app.UseSwaggerUI(c =>
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCors("AllowWebApp");
 app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 
 var authGroup = app.MapGroup("/api/auth").WithTags("Authentication");
