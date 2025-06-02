@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+Hl+ZyUsb6c=",
+  "dgSpecHash": "n6GoXg7Rsl8=",
   "success": true,
-  "projectFilePath": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\AccionSocial.api.csproj",
+  "projectFilePath": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\AccionSocial.api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mija2\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\mija2\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

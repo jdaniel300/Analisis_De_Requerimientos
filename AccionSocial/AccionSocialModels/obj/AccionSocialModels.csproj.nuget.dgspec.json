@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\AccionSocialModels.csproj": {}
+    "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\AccionSocialModels.csproj": {}
   },
   "projects": {
-    "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\AccionSocialModels.csproj": {
+    "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\AccionSocialModels.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\AccionSocialModels.csproj",
+        "projectUniqueName": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\AccionSocialModels.csproj",
         "projectName": "AccionSocialModels",
-        "projectPath": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\AccionSocialModels.csproj",
+        "projectPath": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\AccionSocialModels.csproj",
         "packagesPath": "C:\\Users\\mija2\\.nuget\\packages\\",
-        "outputPath": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\obj\\",
+        "outputPath": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

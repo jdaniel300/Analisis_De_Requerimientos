@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AccionSocial.api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1e702954592829d613747337b0c3125a929ebb9b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1e628938809345227c7e74702f574dfb69a6dc12")]
 [assembly: System.Reflection.AssemblyProductAttribute("AccionSocial.api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AccionSocial.api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

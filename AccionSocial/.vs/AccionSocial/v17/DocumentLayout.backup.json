@@ -1,67 +1,41 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\",
+  "WorkspaceRootPath": "D:\\Analisis_De_Requerimientos\\AccionSocial\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|d:\\accionsocialapp\\analisis_de_requerimientos\\accionsocial\\accionsocial.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|solutionrelative:accionsocial.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\accionsocialapp\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{81DDED9D-158B-E303-5F62-77A2896D2A5A}|docker-compose.dcproj|d:\\accionsocialapp\\analisis_de_requerimientos\\accionsocial\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{81DDED9D-158B-E303-5F62-77A2896D2A5A}|docker-compose.dcproj|solutionrelative:docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\accionsocialapp\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\accionsocialapp\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\auth\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\auth\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{81DDED9D-158B-E303-5F62-77A2896D2A5A}|docker-compose.dcproj|d:\\accionsocialapp\\analisis_de_requerimientos\\accionsocial\\docker-compose.dcproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{81DDED9D-158B-E303-5F62-77A2896D2A5A}|docker-compose.dcproj|solutionrelative:docker-compose.dcproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\auth\\itokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\auth\\itokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\views\\login\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\views\\login\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\auth\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\auth\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
     {
-      "Orientation": 1,
+      "Orientation": 0,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 133,
-          "SelectedChildIndex": 1,
+          "DockedWidth": 1360,
+          "SelectedChildIndex": 9,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Program.cs",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Program.cs",
-              "ToolTip": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Program.cs",
-              "RelativeToolTip": "AccionSocial.web\\Program.cs",
-              "ViewState": "AgIAAFcAAAAAAAAAAAAAACkAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-24T13:17:56.027Z",
-              "IsPinned": true
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Program.cs",
-              "RelativeDocumentMoniker": "AccionSocial.api\\Program.cs",
-              "ToolTip": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Program.cs",
-              "RelativeToolTip": "AccionSocial.api\\Program.cs",
-              "ViewState": "AgIAAJMAAAAAAAAAAAAAAAYAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-30T00:53:42.176Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{0174dea2-fdbe-4ef1-8f99-c0beae78880f}"
@@ -97,51 +71,75 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "docker-compose.yml",
-              "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\docker-compose.yml",
-              "RelativeDocumentMoniker": "docker-compose.yml",
-              "ToolTip": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\docker-compose.yml",
-              "RelativeToolTip": "docker-compose.yml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAlAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
-              "WhenOpened": "2025-05-26T03:38:42.584Z"
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\appsettings.json",
+              "RelativeDocumentMoniker": "AccionSocial.web\\appsettings.json",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\appsettings.json",
+              "RelativeToolTip": "AccionSocial.web\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-01T23:22:30.881Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Views\\Home\\Index.cshtml",
-              "ToolTip": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "AccionSocial.web\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-27T19:37:28.775Z",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Program.cs",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Program.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Program.cs",
+              "RelativeToolTip": "AccionSocial.web\\Program.cs",
+              "ViewState": "AgIAAEQAAAAAAAAAAAAgwHEAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T23:21:39.091Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ITokenService.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\ITokenService.cs",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Auth\\ITokenService.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\ITokenService.cs",
+              "RelativeToolTip": "AccionSocial.web\\Services\\Auth\\ITokenService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T22:14:08.023Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "Dockerfile",
-              "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Dockerfile",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Dockerfile",
-              "ToolTip": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Dockerfile",
-              "RelativeToolTip": "AccionSocial.web\\Dockerfile",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAALAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-27T05:00:59.511Z"
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Login\\Login.cshtml",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Views\\Login\\Login.cshtml",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Login\\Login.cshtml",
+              "RelativeToolTip": "AccionSocial.web\\Views\\Login\\Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-01T22:11:08.199Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\AuthService.cs",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Auth\\AuthService.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\AuthService.cs",
+              "RelativeToolTip": "AccionSocial.web\\Services\\Auth\\AuthService.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAowBwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T22:10:49.031Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "docker-compose.dcproj",
-              "DocumentMoniker": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\docker-compose.dcproj",
-              "RelativeDocumentMoniker": "docker-compose.dcproj",
-              "ToolTip": "D:\\AccionSocialApp\\Analisis_De_Requerimientos\\AccionSocial\\docker-compose.dcproj",
-              "RelativeToolTip": "docker-compose.dcproj",
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\IAuthService.cs",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Auth\\IAuthService.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\IAuthService.cs",
+              "RelativeToolTip": "AccionSocial.web\\Services\\Auth\\IAuthService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-27T19:15:23.717Z"
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T22:10:46.57Z"
             }
           ]
         }
