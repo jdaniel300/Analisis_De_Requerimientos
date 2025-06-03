@@ -74,7 +74,9 @@ namespace AccionSocial.web.Controllers
                 var authProperties = new AuthenticationProperties
                 {
                     IsPersistent = model.RememberMe,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7),
+                    AllowRefresh = true,
+                    IssuedUtc = DateTimeOffset.UtcNow
                 };
 
                 await HttpContext.SignInAsync(
@@ -109,9 +111,23 @@ namespace AccionSocial.web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            _logger.LogInformation("Usuario cerró sesión");
-            return RedirectToAction("Index", "Home");
+            try
+            {
+                // Llama al servicio para hacer logout en el API
+                await _authService.LogoutAsync();
+
+                // Limpia la autenticación local
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                // Redirige a la página de login
+                return RedirectToAction("Login", "Login");
+            }
+            catch (Exception ex)
+            {
+                // Manejo de errores
+                TempData["ErrorMessage"] = "Ocurrió un error al cerrar la sesión";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         private async Task<LoginResponse> LoginViaApi(LoginDTO model)

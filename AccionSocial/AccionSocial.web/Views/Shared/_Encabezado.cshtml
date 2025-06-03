@@ -1,8 +1,9 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Microsoft.AspNetCore.Authentication
+@using System.Security.Claims
 @{
-}  
+    var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+    var fullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value;
+}
 <div class="main-header">
     <div class="main-header-logo">
         <!-- Logo Header -->
@@ -119,8 +120,8 @@
                                     <img src="~/Plantilla/img/profile.jpg" alt="image profile" class="avatar-img rounded" />
                                 </div>
                                 <div class="u-text">
-                                    <h4>Usuario</h4>
-                                    <p class="text-muted">usuario@example.com</p>
+                                    <h4>@fullName</h4>
+                                    <p class="text-muted">@userEmail</p>
                                     <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">Ver perfil</a>
                                 </div>
                             </div>
@@ -133,7 +134,12 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#">Configuracion de cuenta</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Salir</a>
+                            <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="dropdown-item" style="background:none; border:none; width:100%; text-align:left;">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Salir
+                                </button>
+                            </form>
                         </li>
         </div>
         </ul>

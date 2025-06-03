@@ -1,6 +1,8 @@
 ﻿using AccionSocial.web.Services.Auth;
 using AccionSocialModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -18,9 +20,8 @@ public class AuthService : IAuthService
         _httpClient = httpClient;
         _tokenService = tokenService;
         _httpContextAccessor = httpContextAccessor;
+
     }
-    [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<LoginResponse> AuthenticateAsync(LoginDTO loginDto)
     {
         try
@@ -45,11 +46,8 @@ public class AuthService : IAuthService
     {
         try
         {
-            // Consumir el endpoint de logout del API
+            // Cambia esta línea para usar la ruta correcta
             var response = await _httpClient.PostAsync("/api/auth/logout", null);
-
-            // Eliminar la cookie local si existe
-            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("auth_token");
 
             if (!response.IsSuccessStatusCode)
             {
