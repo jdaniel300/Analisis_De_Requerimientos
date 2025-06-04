@@ -31,7 +31,7 @@ namespace AccionSocial.web.Controllers
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return View("_Login"); ;
         }
 
 
@@ -48,10 +48,7 @@ namespace AccionSocial.web.Controllers
 
             try
             {
-                // Opción 1: Usar el servicio local (si estás usando Identity directamente en el proyecto web)
-                // var response = await _authService.AuthenticateAsync(model);
 
-                // Opción 2: Consumir el API (recomendado si tu API está separada)
                 var response = await LoginViaApi(model);
 
                 // Crear la identidad del usuario
@@ -91,6 +88,10 @@ namespace AccionSocial.web.Controllers
                     return Redirect(returnUrl);
                 }
 
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
                 return RedirectToAction("Index", "Home");
             }
             catch (UnauthorizedAccessException ex)

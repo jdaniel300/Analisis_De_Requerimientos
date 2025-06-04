@@ -30,6 +30,10 @@ builder.Services.AddIdentity<Usuario, Rol>(options =>
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
     options.Lockout.MaxFailedAccessAttempts = 3;
     options.Lockout.AllowedForNewUsers = true;
+
+    options.User.AllowedUserNameCharacters =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<MyIdentityDbContext>()
 .AddRoles<Rol>()
@@ -125,7 +129,7 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
-//Base de datos
+//CREACION DE BASE DE DATOS 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -269,7 +273,7 @@ app.UseAuthorization();
 
 
 var authGroup = app.MapGroup("/api/auth").WithTags("Authentication");
-
+//LOGIN
 authGroup.MapPost("/login", async (
     [FromBody] LoginDTO request,
     [FromServices] UserManager<Usuario> userManager,
@@ -332,7 +336,7 @@ authGroup.MapPost("/login", async (
 .Produces(StatusCodes.Status401Unauthorized)
 .ProducesProblem(StatusCodes.Status500InternalServerError);
 
-// Endpoint de logout
+//LOGOUT
 authGroup.MapPost("/logout", async (
     [FromServices] SignInManager<Usuario> signInManager,
     [FromServices] ILogger<Program> logger) =>
@@ -344,7 +348,7 @@ authGroup.MapPost("/logout", async (
 .WithName("Logout")
 .WithOpenApi();
 
-// Endpoint para obtener usuario actual
+// USUARIO ACTUAL
 authGroup.MapGet("/current-user", async (
     ClaimsPrincipal userClaim,
     [FromServices] UserManager<Usuario> userManager) =>
@@ -369,7 +373,75 @@ authGroup.MapGet("/current-user", async (
 .WithName("GetCurrentUser")
 .WithOpenApi();
 
-// Ejemplo de endpoint protegido
+//REGISTRO
+app.MapPost("/api/register", async (
+    RegistroDTO registerUserDto,
+    UserManager<Usuario> userManager,
+    ILogger<Program> logger) =>
+{
+    // Validaciones básicas
+    if (registerUserDto.Password != registerUserDto.ConfirmPassword)
+    {
+        return Results.BadRequest("Las contraseñas no coinciden.");
+    }
+
+    // Verificar si el usuario ya existe
+    var existingUser = await userManager.FindByNameAsync(registerUserDto.UserName);
+    if (existingUser != null)
+    {
+        return Results.BadRequest("El nombre de usuario ya está en uso.");
+    }
+
+    existingUser = await userManager.FindByEmailAsync(registerUserDto.Email);
+    if (existingUser != null)
+    {
+        return Results.BadRequest("El correo electrónico ya está registrado.");
+    }
+
+    // Crear el nuevo usuario
+    var user = new Usuario
+    {
+        UserName = registerUserDto.UserName,
+        NormalizedUserName = registerUserDto.UserName.ToUpper(),
+        Email = registerUserDto.Email,
+        NormalizedEmail = registerUserDto.Email.ToUpper(),
+        EmailConfirmed = false, // Puedes cambiar esto según tu lógica de negocio
+        Nombre = registerUserDto.Nombre,
+        Apellidos = registerUserDto.Apellidos,
+        PhoneNumber = registerUserDto.PhoneNumber,
+        FechaCreacion = DateTime.Now,
+        Estado = true, // Puedes establecer esto según tu lógica de negocio
+        FechaCaducidadContrasena = DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
+        SecurityStamp = Guid.NewGuid().ToString()
+    };
+
+    // Intentar crear el usuario
+    var result = await userManager.CreateAsync(user, registerUserDto.Password);
+
+    if (result.Succeeded)
+    {
+        logger.LogInformation("Nuevo usuario registrado: {UserName}", user.UserName);
+
+        // Aquí puedes agregar lógica adicional como:
+        // - Enviar email de confirmación
+        // - Asignar roles por defecto
+        // - Generar token de confirmación, etc.
+
+        return Results.Ok(new { Message = "Usuario registrado exitosamente" });
+    }
+    else
+    {
+        var errors = result.Errors.Select(e => e.Description);
+        logger.LogError("Error al registrar usuario: {Errors}", string.Join(", ", errors));
+        return Results.BadRequest(new { Errors = errors });
+    }
+})
+.WithName("RegisterUser")
+.WithOpenApi()
+.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status400BadRequest);
+
+// PARA PRUEBAS -> Ejemplo de endpoint protegido 
 app.MapGet("/api/protected", (ClaimsPrincipal user) =>
 {
     return $"Hola {user.Identity?.Name}, este es un endpoint protegido!";
@@ -378,7 +450,7 @@ app.MapGet("/api/protected", (ClaimsPrincipal user) =>
 .WithName("ProtectedEndpoint")
 .WithOpenApi();
 
-// Ejemplo de endpoint protegido con rol
+//PARA PRUEBAS -> Ejemplo de endpoint protegido con rol
 app.MapGet("/api/admin-only", (ClaimsPrincipal user) =>
 {
     return $"Hola {user.Identity?.Name}, este endpoint es solo para admins!";
@@ -386,7 +458,7 @@ app.MapGet("/api/admin-only", (ClaimsPrincipal user) =>
 .RequireAuthorization("Admin")
 .WithName("AdminOnlyEndpoint")
 .WithOpenApi();
-
+//PARA PRUEBAS ->
 app.MapGet("/api/test", () => "Funciona!");
 
 app.Run();

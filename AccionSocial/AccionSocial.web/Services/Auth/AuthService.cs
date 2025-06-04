@@ -1,11 +1,5 @@
 ﻿using AccionSocial.web.Services.Auth;
 using AccionSocialModels;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
-
 public class AuthService : IAuthService
 {
     private readonly HttpClient _httpClient;

@@ -109,7 +109,6 @@ app.Use(async (context, next) =>
         context.Response.Redirect($"/Home/Login?returnUrl={context.Request.Path}");
         return;
     }
-
     await next();
 });
 
