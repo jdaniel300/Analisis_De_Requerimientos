@@ -157,9 +157,52 @@ namespace AccionSocial.web.Controllers
 
             return await response.Content.ReadFromJsonAsync<LoginResponse>();
         }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View("_Registro", new RegistroDTO());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegistroDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("_Registro", model);
+            }
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                var apiUrl = _configuration["ApiSettings:BaseUrl"] + "/register";
+
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var response = await client.PostAsJsonAsync(apiUrl, model);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError(string.Empty, errorContent);
+                    return View("_Registro", model);
+                }
+
+                TempData["SuccessMessage"] = "¡Registro exitoso! Por favor inicia sesión.";
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error durante el registro");
+                ModelState.AddModelError(string.Empty, "Ocurrió un error durante el registro. Por favor inténtalo de nuevo.");
+                return View("_Registro", model);
+            }
+        }
+
     }
-
-
 
 }
 

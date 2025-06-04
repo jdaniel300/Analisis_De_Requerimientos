@@ -81,5 +81,25 @@ public class AuthService : IAuthService
             throw new Exception("Error al comunicarse con el servicio de autenticación", ex);
         }
     }
+    public async Task<RegisterResponse> RegisterAsync(RegistroDTO registerDto)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("register", registerDto);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception(errorContent);
+            }
+
+            return await response.Content.ReadFromJsonAsync<RegisterResponse>();
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new Exception("Error al comunicarse con el servicio de registro", ex);
+        }
+    }
 }
+
 
