@@ -1,11 +1,21 @@
 ﻿@model AccionSocialModels.LoginDTO
-
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_LayoutPlantilla";
+}
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
                 <h3 class="text-center">Iniciar Sesión</h3>
             </div>
+            @if (TempData["TimeoutMessage"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    @TempData["TimeoutMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
             <div class="card-body">
                 <form asp-action="Login" method="post">
                     @Html.AntiForgeryToken()

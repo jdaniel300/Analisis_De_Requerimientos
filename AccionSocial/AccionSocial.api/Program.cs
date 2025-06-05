@@ -1,7 +1,6 @@
 using AccionSocialModels;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -129,6 +128,8 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+
+
 //CREACION DE BASE DE DATOS 
 using (var scope = app.Services.CreateScope())
 {
@@ -172,11 +173,21 @@ using (var scope = app.Services.CreateScope())
             var roleManager = services.GetRequiredService<RoleManager<Rol>>();
             var userManager = services.GetRequiredService<UserManager<Usuario>>();
 
-            // Crear rol "Admin" si no existe
+            // Crear roles
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
                 await roleManager.CreateAsync(new Rol { Name = "Admin" });
                 logger.LogInformation("Rol 'Admin' creado.");
+            }
+            if (!await roleManager.RoleExistsAsync("Straff"))
+            {
+                await roleManager.CreateAsync(new Rol { Name = "Straff" });
+                logger.LogInformation("Rol 'Straff' creado.");
+            }
+            if (!await roleManager.RoleExistsAsync("Participante"))
+            {
+                await roleManager.CreateAsync(new Rol { Name = "Participante" });
+                logger.LogInformation("Rol 'Participante' creado.");
             }
 
             // Crear usuario admin si no existe
@@ -374,7 +385,7 @@ authGroup.MapGet("/current-user", async (
 .WithOpenApi();
 
 //REGISTRO
-app.MapPost("/api/register", async (
+authGroup.MapPost("/api/register", async (
     RegistroDTO registerUserDto,
     UserManager<Usuario> userManager,
     ILogger<Program> logger) =>
@@ -420,6 +431,7 @@ app.MapPost("/api/register", async (
 
     if (result.Succeeded)
     {
+        var roleResult = await userManager.AddToRoleAsync(user, "Participante");
         logger.LogInformation("Nuevo usuario registrado: {UserName}", user.UserName);
 
         // Aquí puedes agregar lógica adicional como:

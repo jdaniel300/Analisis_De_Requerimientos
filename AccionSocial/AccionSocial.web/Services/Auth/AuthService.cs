@@ -40,7 +40,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            // Cambia esta línea para usar la ruta correcta
+           
             var response = await _httpClient.PostAsync("/api/auth/logout", null);
 
             if (!response.IsSuccessStatusCode)

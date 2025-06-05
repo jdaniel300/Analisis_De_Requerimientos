@@ -1,45 +1,52 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PlataformaAccionSocial</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - PlataformaAccionSocial</title>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     
-    <!-- Fonts and icons -->
-    <script src="~/Plantilla/js/plugin/webfont/webfont.min.js"></script>
-    <script>
-        WebFont.load({
-          google: { families: ["Public Sans:300,400,500,600,700"] },
-          custom: {
-            families: [
-              "Font Awesome 5 Solid",
-              "Font Awesome 5 Regular",
-              "Font Awesome 5 Brands",
-              "simple-line-icons",
-            ],
-            urls: ["assets/css/fonts.min.css"],
-          },
-          active: function () {
-            sessionStorage.fonts = true;
-          },
-        });
-    </script>
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="~/Plantilla/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/Plantilla/css/plugins.min.css" />
-    <link rel="stylesheet" href="~/Plantilla/css/kaiadmin.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-</head>
-<body>
-    <div class="wrapper">
+        <!-- Fonts and icons -->
+        <script src="~/Plantilla/js/plugin/webfont/webfont.min.js"></script>
+        <script>
+            WebFont.load({
+              google: { families: ["Public Sans:300,400,500,600,700"] },
+              custom: {
+                families: [
+                  "Font Awesome 5 Solid",
+                  "Font Awesome 5 Regular",
+                  "Font Awesome 5 Brands",
+                  "simple-line-icons",
+                ],
+                urls: ["assets/css/fonts.min.css"],
+              },
+              active: function () {
+                sessionStorage.fonts = true;
+              },
+            });
+        </script>
+        <!-- CSS Files -->
+        <link rel="stylesheet" href="~/Plantilla/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/Plantilla/css/plugins.min.css" />
+        <link rel="stylesheet" href="~/Plantilla/css/kaiadmin.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    </head>
+    <body>
+        <div class="wrapper">
+        <!-- Sidebar Dinámico -->
+         @if (User.Identity.IsAuthenticated)
+    {
         <!-- Sidebar Dinámico -->
         @Html.Partial("_SideBar")
+    }
 
-        <div class="main-panel">
-            <!-- Encabezado Dinámico -->
-            @Html.Partial("_Encabezado")
+            <div class="main-panel">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <!-- Encabezado Dinámico -->
+                    @Html.Partial("_Encabezado")
+                }
 
             <!-- Contenido Principal -->
             <div class="content pt-5">
@@ -51,45 +58,161 @@
         </div>
     </div>
 
+    <!-- Modal para la advertencia de inactividad -->
+    <div class="modal fade" id="inactivityModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">¡Atención!</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Tu sesión está a punto de cerrarse por inactividad.</p>
+                    <p>Tiempo restante: <span id="countdown">5:00</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="continueSession">
+                        Continuar trabajando
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!--   Core JS Files   -->
+        <script src="~/Plantilla/js/core/jquery-3.7.1.min.js"></script>
+        <script src="~/Plantilla/js/core/popper.min.js"></script>
+        <script src="~/Plantilla/js/core/bootstrap.min.js"></script>
+
+        <!-- jQuery Scrollbar -->
+        <script src="~/Plantilla/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+        <!-- Chart JS -->
+        <script src="~/Plantilla/js/plugin/chart.js/chart.min.js"></script>
+
+        <!-- jQuery Sparkline -->
+        <script src="~/Plantilla/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+
+        <!-- Chart Circle -->
+        <script src="~/Plantilla/js/plugin/chart-circle/circles.min.js"></script>
+
+        <!-- Datatables -->
+        <script src="~/Plantilla/js/plugin/datatables/datatables.min.js"></script>
+
+        <!-- Bootstrap Notify -->
+        <script src="~/Plantilla/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+        <!-- jQuery Vector Maps -->
+        <script src="~/Plantilla/js/plugin/jsvectormap/jsvectormap.min.js"></script>
+        <script src="~/Plantilla/js/plugin/jsvectormap/world.js"></script>
+
+        <!-- Sweet Alert -->
+        <script src="~/Plantilla/js/plugin/sweetalert/sweetalert.min.js"></script>
+
+        <!-- Kaiadmin JS -->
+        <script src="~/Plantilla/js/kaiadmin.min.js"></script>
+
+        <!-- Configuracion por inactividad -->
+
+        <script>
+            $(function() {
+                // Configuración (en milisegundos)
+                //var inactivityTimeout = 30 * 60 * 1000; // 30 minutos
+                //var warningTimeout = 5 * 60 * 1000; // 5 minutos antes
+                var inactivityTimeout = 5 * 60 * 1000; // 30 minutos
+                var warningTimeout = 1 * 60 * 1000; // 5 minutos antes
+
+                var timer;
+                var warningTimer;
+
+                // Eventos que resetearán el temporizador
+                var events = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart', 'mousedown'];
+
+                function resetTimer() {
+                    clearTimeout(timer);
+                    clearTimeout(warningTimer);
+
+                    // Ocultar advertencia si está visible
+                    if (typeof Swal !== 'undefined' && Swal.isVisible()) {
+                        Swal.close();
+                    }
+
+                    // Configurar temporizador de advertencia
+                    warningTimer = setTimeout(showWarning, inactivityTimeout - warningTimeout);
+
+                    // Configurar temporizador principal
+                    timer = setTimeout(logout, inactivityTimeout);
+                }
+
+                function showWarning() {
+                    // Usar SweetAlert (que ya tienes en tu layout)
+                    Swal.fire({
+                        title: '¡Atención!',
+                        html: `Tu sesión se cerrará en ${Math.floor(warningTimeout/60000)} minutos por inactividad.<br><br>
+                              <div class="text-center"><small>Mueve el mouse o presiona una tecla para continuar</small></div>`,
+                        icon: 'warning',
+                        showConfirmButton: true,
+                        confirmButtonText: 'Entendido',
+                        allowOutsideClick: true,
+                        timer: warningTimeout,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            // Resetear al interactuar
+                            events.forEach(event => {
+                                document.addEventListener(event, resetTimer);
+                            });
+                        }
+                    }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            logout();
+                        }
+                    });
+                }
+
+                function logout() {
+                    // Limpiar temporizadores
+                    clearTimeout(timer);
+                    clearTimeout(warningTimer);
+
+                    // Crear formulario dinámico para el logout con anti-forgery token
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '@Url.Action("Logout", "Login")';
+
+                    // Agregar input para indicar que es por inactividad
+                    var timeoutInput = document.createElement('input');
+                    timeoutInput.type = 'hidden';
+                    timeoutInput.name = 'timeout';
+                    timeoutInput.value = 'true';
+                    form.appendChild(timeoutInput);
+
+                    // Agregar anti-forgery token
+                    var tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = $('input[name="__RequestVerificationToken"]').val();
+                    form.appendChild(tokenInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+
+                // Inicializar temporizador solo si el usuario está autenticado
+                @if (User.Identity.IsAuthenticated)
+                {
+                        <text>
+                        // Configurar listeners de eventos
+                        events.forEach(function(event) {
+                            $(document).on(event, resetTimer);
+                        });
+
+                        resetTimer();
+                        </text>
+                }
+            });
+        </script>
     
-    
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
 
-   
-
-    <!--   Core JS Files   -->
-    <script src="~/Plantilla/js/core/jquery-3.7.1.min.js"></script>
-    <script src="~/Plantilla/js/core/popper.min.js"></script>
-    <script src="~/Plantilla/js/core/bootstrap.min.js"></script>
-
-    <!-- jQuery Scrollbar -->
-    <script src="~/Plantilla/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
-
-    <!-- Chart JS -->
-    <script src="~/Plantilla/js/plugin/chart.js/chart.min.js"></script>
-
-    <!-- jQuery Sparkline -->
-    <script src="~/Plantilla/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
-
-    <!-- Chart Circle -->
-    <script src="~/Plantilla/js/plugin/chart-circle/circles.min.js"></script>
-
-    <!-- Datatables -->
-    <script src="~/Plantilla/js/plugin/datatables/datatables.min.js"></script>
-
-    <!-- Bootstrap Notify -->
-    <script src="~/Plantilla/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
-
-    <!-- jQuery Vector Maps -->
-    <script src="~/Plantilla/js/plugin/jsvectormap/jsvectormap.min.js"></script>
-    <script src="~/Plantilla/js/plugin/jsvectormap/world.js"></script>
-
-    <!-- Sweet Alert -->
-    <script src="~/Plantilla/js/plugin/sweetalert/sweetalert.min.js"></script>
-
-    <!-- Kaiadmin JS -->
-    <script src="~/Plantilla/js/kaiadmin.min.js"></script>
-    
-    
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
 </html>
+

@@ -27,7 +27,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Login/Login";
         options.AccessDeniedPath = "/Login/AccessDenied";
-        options.Cookie.SameSite = SameSiteMode.Lax; // Más flexible para desarrollo
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(5); 
+        options.SlidingExpiration = true; 
     });
 
 // Servicios de autenticación
