@@ -34,7 +34,6 @@ namespace AccionSocial.web.Controllers
             return View("_Login"); ;
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDTO model, string returnUrl = null)
@@ -110,7 +109,7 @@ namespace AccionSocial.web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(string timeout = null)
         {
             try
             {
@@ -120,12 +119,17 @@ namespace AccionSocial.web.Controllers
                 // Limpia la autenticación local
                 await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-                // Redirige a la página de login
+                // Manejo específico para cierre por inactividad
+                if (!string.IsNullOrEmpty(timeout) && timeout == "true")
+                {
+                    TempData["TimeoutMessage"] = "Tu sesión ha expirado por inactividad. Por favor inicia sesión nuevamente.";
+                }
+
                 return RedirectToAction("Login", "Login");
             }
             catch (Exception ex)
             {
-                // Manejo de errores
+                _logger.LogError(ex, "Error al cerrar sesión");
                 TempData["ErrorMessage"] = "Ocurrió un error al cerrar la sesión";
                 return RedirectToAction("Index", "Home");
             }
@@ -201,8 +205,6 @@ namespace AccionSocial.web.Controllers
                 return View("_Registro", model);
             }
         }
-
     }
-
 }
 
