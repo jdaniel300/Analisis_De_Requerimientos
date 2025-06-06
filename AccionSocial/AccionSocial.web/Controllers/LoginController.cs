@@ -42,7 +42,7 @@ namespace AccionSocial.web.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return PartialView("_Login", model);
             }
 
             try
@@ -81,11 +81,6 @@ namespace AccionSocial.web.Controllers
                     authProperties);
 
                 _logger.LogInformation("Usuario {Username} ha iniciado sesión correctamente", response.Username);
-
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                {
-                    return Redirect(returnUrl);
-                }
 
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
@@ -180,7 +175,7 @@ namespace AccionSocial.web.Controllers
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                var apiUrl = _configuration["ApiSettings:BaseUrl"] + "/register";
+                var apiUrl = _configuration["ApiSettings:BaseUrl"] + "/auth/api/register";
 
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(
@@ -205,6 +200,7 @@ namespace AccionSocial.web.Controllers
                 return View("_Registro", model);
             }
         }
+
     }
 }
 

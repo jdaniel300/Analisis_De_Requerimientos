@@ -56,7 +56,7 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponse> GetCurrentUserAsync()
     {
-        try
+        try 
         {
             // Verificar si tenemos un token almacenado localmente
             var token = _httpContextAccessor.HttpContext?.Request.Cookies["auth_token"];
@@ -85,7 +85,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("register", registerDto);
+            var response = await _httpClient.PostAsJsonAsync("/api/auth/register", registerDto);
 
             if (!response.IsSuccessStatusCode)
             {
