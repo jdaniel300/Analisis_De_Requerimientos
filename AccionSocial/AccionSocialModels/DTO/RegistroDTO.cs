@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AccionSocialModels
+namespace AccionSocialModels.DTO
 {
     public class RegistroDTO
     {
@@ -28,5 +28,7 @@ namespace AccionSocialModels
         [Required(ErrorMessage = "La confirmación de contraseña es requerida")]
         [Compare("Password", ErrorMessage = "Las contraseñas no coinciden")]
         public string ConfirmPassword { get; set; }
+
+        public string? Rol { get; set; }
     }
 }

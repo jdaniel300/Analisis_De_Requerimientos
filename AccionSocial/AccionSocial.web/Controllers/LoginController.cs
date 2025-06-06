@@ -1,5 +1,6 @@
 ﻿using AccionSocial.web.Services.Auth;
-using AccionSocialModels;
+using AccionSocialModels.DTO;
+using AccionSocialModels.Response;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -175,7 +176,7 @@ namespace AccionSocial.web.Controllers
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                var apiUrl = _configuration["ApiSettings:BaseUrl"] + "/auth/api/register";
+                var apiUrl = _configuration["ApiSettings:BaseUrl"] + "/auth/register";
 
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccionSocialModels
+namespace AccionSocialModels.Response
 {
-    internal class CurrentUserResponse
+    public class CurrentUserResponse
     {
         public string Username { get; set; }
         public string Email { get; set; }

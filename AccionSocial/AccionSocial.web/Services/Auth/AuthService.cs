@@ -1,5 +1,6 @@
 ﻿using AccionSocial.web.Services.Auth;
-using AccionSocialModels;
+using AccionSocialModels.DTO;
+using AccionSocialModels.Response;
 public class AuthService : IAuthService
 {
     private readonly HttpClient _httpClient;
@@ -85,7 +86,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("/api/auth/register", registerDto);
+            var response = await _httpClient.PostAsJsonAsync("/auth/register", registerDto);
 
             if (!response.IsSuccessStatusCode)
             {

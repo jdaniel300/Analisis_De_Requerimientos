@@ -1,4 +1,5 @@
-﻿using AccionSocialModels;
+﻿using AccionSocialModels.DTO;
+using AccionSocialModels.Response;
 
 namespace AccionSocial.web.Services.Auth
 {

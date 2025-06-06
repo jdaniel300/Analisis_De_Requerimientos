@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccionSocialModels
+namespace AccionSocialModels.Response
 {
     public class ErrorResponse
     {

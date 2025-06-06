@@ -1,6 +1,4 @@
-﻿
-
-namespace AccionSocialModels
+﻿namespace AccionSocialModels.Response
 {
     public class LoginResponse
     {
