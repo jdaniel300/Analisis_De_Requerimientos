@@ -92,13 +92,13 @@ namespace AccionSocial.web.Controllers
             {
                 _logger.LogWarning("Intento de inicio de sesión fallido: {Message}", ex.Message);
                 ModelState.AddModelError(string.Empty, "Credenciales inválidas");
-                return View(model);
+                return PartialView("_Login", model); // Cambiado de View a PartialView
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al iniciar sesión");
                 ModelState.AddModelError(string.Empty, "Ocurrió un error al iniciar sesión");
-                return View(model);
+                return PartialView("_Login", model); // Cambiado de View a PartialView
             }
         }
 
