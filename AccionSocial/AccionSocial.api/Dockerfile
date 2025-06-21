@@ -1,7 +1,8 @@
 # Etapa base
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 8081
+
+# First update and install packages
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     iputils-ping \
@@ -10,6 +11,11 @@ RUN apt-get update && \
     net-tools && \
     rm -rf /var/lib/apt/lists/*
 
+# Then create directories and set permissions
+RUN mkdir -p /app/keys && \
+    chmod -R 770 /app/keys
+
+EXPOSE 8081
 ENV ASPNETCORE_URLS=http://*:8081
 ENV ASPNETCORE_ENVIRONMENT=Development
 

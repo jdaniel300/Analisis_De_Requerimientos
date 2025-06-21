@@ -1,0 +1,144 @@
+﻿@using AccionSocialModels.Response
+@using AccionSocialModels.DTO
+@model PaginacionResponse<ListaUsuariosDTO>
+@{
+    ViewData["Title"] = "Administración de Usuarios";
+    Layout = "_LayoutPlantilla";
+}
+
+<div class="container m-5">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Administración de Usuarios</h4>
+            </div>
+            <div class="card-body">
+                <!-- Debugging info (temporary) -->
+                <div class="alert alert-info d-none">
+                    <p>Total usuarios: @Model?.Total</p>
+                    <p>Página actual: @Model?.Pagina</p>
+                    <p>Usuarios recibidos: @Model?.Datos?.Count</p>
+                </div>
+
+                <!-- Main content -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a asp-action="AdministracionUsuarios"
+                                       asp-route-sortOrder="@ViewData["NameSortParam"]"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                                        Usuario
+                                    </a>
+                                </th>
+                                <th>Nombre Completo</th>
+                                <th>
+                                    <a asp-action="AdministracionUsuarios"
+                                       asp-route-sortOrder="@ViewData["EmailSortParam"]"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                                        Email
+                                    </a>
+                                </th>
+                                <th>Roles</th>
+                                <th>
+                                    <a asp-action="AdministracionUsuarios"
+                                       asp-route-sortOrder="@ViewData["DateSortParam"]"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                                        Fecha Creación
+                                    </a>
+                                </th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model?.Datos?.Any() == true)
+                            {
+                                foreach (var usuario in Model.Datos)
+                                {
+                                    <tr>
+                                        <td>@usuario.UserName</td>
+                                        <td>@usuario.NombreCompleto</td>
+                                        <td>@usuario.Email</td>
+                                        <td>@string.Join(", ", usuario.Roles)</td>
+                                        <td>@usuario.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            <span class="badge @(usuario.Estado ? "badge-success" : "badge-danger")">
+                                                @(usuario.Estado ? "Activo" : "Inactivo")
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("AdministracionUsuarios", new { selectedUserId = usuario.Id })"
+                                               class="btn btn-sm btn-info">Detalles</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center">No se encontraron usuarios</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                @if (Model?.Total > 0)
+                {
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item @(Model.Pagina == 1 ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-action="AdministracionUsuarios"
+                                   asp-route-pageNumber="@(Model.Pagina - 1)"
+                                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                   asp-route-sortOrder="@ViewData["CurrentSort"]">Anterior</a>
+                            </li>
+
+                            @for (int i = 1; i <= Math.Ceiling((double)Model.Total / Model.TamanoPagina); i++)
+                            {
+                                <li class="page-item @(i == Model.Pagina ? "active" : "")">
+                                    <a class="page-link"
+                                       asp-action="AdministracionUsuarios"
+                                       asp-route-pageNumber="@i"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                       asp-route-sortOrder="@ViewData["CurrentSort"]">@i</a>
+                                </li>
+                            }
+
+                            <li class="page-item @(Model.Pagina >= Math.Ceiling((double)Model.Total / Model.TamanoPagina) ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-action="AdministracionUsuarios"
+                                   asp-route-pageNumber="@(Model.Pagina + 1)"
+                                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                   asp-route-sortOrder="@ViewData["CurrentSort"]">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Debugging - show the alert if in development
+            if (window.location.hostname === "localhost") {
+                $('.alert-info').removeClass('d-none');
+            }
+
+            // Handle details panel if coming from a selected user
+            @if (ViewBag.ShowDetails == true)
+            {
+                    <text>
+                    $('#userDetailsModal').modal('show');
+                    </text>
+            }
+        });
+    </script>
+}

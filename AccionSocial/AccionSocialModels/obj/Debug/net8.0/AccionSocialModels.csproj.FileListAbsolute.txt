@@ -28,6 +28,17 @@ D:\AccionSocialApp\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\ob
 D:\AccionSocialApp\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.pdb
 D:\AccionSocialApp\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\AccionSocialModels.genruntimeconfig.cache
 D:\AccionSocialApp\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\obj\Debug\net8.0\ref\AccionSocialModels.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\BrowserDebugHost.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\BrowserDebugHost.runtimeconfig.json
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\BrowserDebugProxy.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\Microsoft.CodeAnalysis.CSharp.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\Microsoft.CodeAnalysis.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\Microsoft.CodeAnalysis.Scripting.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\Microsoft.FileFormats.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\Microsoft.NET.WebAssembly.Webcil.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\Microsoft.SymbolStore.dll
+D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\BlazorDebugProxy\Newtonsoft.Json.dll
 D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\AccionSocialModels.deps.json
 D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\AccionSocialModels.runtimeconfig.json
 D:\Analisis_De_Requerimientos\AccionSocial\AccionSocialModels\bin\Debug\net8.0\AccionSocialModels.dll

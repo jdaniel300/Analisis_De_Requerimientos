@@ -37,8 +37,10 @@ services:
       - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=AccionDB;User Id=sa;Password=AccionSocialDb123!;TrustServerCertificate=True;Connect Timeout=60
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://*:8081
+      - DataProtection__KeysDirectory=/app/keys
+      - DataProtection__ApplicationName=AccionSocial
     volumes:
-      - dataprotection_keys:/app/keys
+      - shared_dataprotection_keys:/app/keys
       - app_uploads:/app/uploads
 
   accionsocial.web:
@@ -56,15 +58,29 @@ services:
       default:
         aliases:
           - accionsocial.web
+    volumes:
+      - shared_dataprotection_keys:/app/keys
     environment:
-     - AuthApi__BaseUrl=http://accionsocial.api:8081
-     - ASPNETCORE_ENVIRONMENT=Development
+     AuthApi__BaseUrl: "http://accionsocial.api:8081"
+     ApiSettings__BaseUrl: "http://accionsocial.api:8081"
+     ASPNETCORE_ENVIRONMENT: "Development"
+     DataProtection__KeysDirectory: "/app/keys"
+     DataProtection__ApplicationName: "AccionSocial"
+     ASPNETCORE_URLS=http://*: 8080
+     Cookie__Domain: accionsocial.web
+     Cookie__SecurePolicy: SameAsRequest
      
 
 volumes:
   sql_data:
-  dataprotection_keys:
+  shared_dataprotection_keys:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./dataprotection_keys
+      o: bind
   app_uploads:
+    driver: local
 
 networks:
   default:

@@ -7,8 +7,9 @@
         public string Email { get; set; }
         public string NombreCompleto { get; set; }
         public DateTime FechaCreacion { get; set; }
+        public DateTime? UltimoAcceso { get; set; }
+        public DateOnly FechaCaducidadContrasena { get; set; }
         public bool Estado { get; set; }
-
-        public List<string> Roles { get; set; } = new List<string>();
+        public List<string> Roles { get; set; }
     }
 }
