@@ -5,6 +5,7 @@ using Jose;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+    options.HttpOnly = HttpOnlyPolicy.Always;
+    options.Secure = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
+
+    // Opcional: configuración para consentimiento de cookies
+    options.CheckConsentNeeded = context => false; // O true si manejas consentimiento
+    options.ConsentCookieValue = "true";
+});
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddLogging();
 builder.Services.AddMemoryCache();
@@ -75,12 +89,14 @@ builder.Services.AddAuthentication(options =>
 {
     options.LoginPath = "/Login/Login";
     options.AccessDeniedPath = "/Login/AccessDenied";
-    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SameSite = SameSiteMode.Lax; // Cambiado de Strict a Lax para mejor compatibilidad
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.ExpireTimeSpan = TimeSpan.FromHours(1); // Aumentado a 1 hora
     options.SlidingExpiration = true;
-    options.Cookie.Name = "YourApp.Auth";
+    options.Cookie.Name = "AccionSocial.Auth"; // Usa un nombre específico de tu app
     options.Cookie.HttpOnly = true;
+    options.Cookie.Domain = builder.Configuration["CookieDomain"]; // Opcional: si necesitas dominio específico
+    options.Cookie.Path = "/"; // Asegúrate que esté en root
 })
 .AddJwtBearer(options =>
 {
@@ -166,6 +182,7 @@ app.UseRouting();
 
 app.UseCors("AllowedOrigins");
 
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 

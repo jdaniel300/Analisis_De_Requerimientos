@@ -7,5 +7,9 @@
         Task RemoveTokenAsync();
 
         Task<bool> HasTokenAsync();
+
+        Task SetRefreshTokenAsync(string refreshToken);
+        Task<string> GetRefreshTokenAsync();
+        Task RemoveRefreshTokenAsync();
     }
 }

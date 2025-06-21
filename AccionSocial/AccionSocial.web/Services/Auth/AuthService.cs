@@ -65,29 +65,8 @@ public class AuthService : IAuthService
             }
 
             _logger.LogInformation("Autenticación exitosa para {Username}", result.User?.userName);
-
-            // 5. Almacenamiento del token con verificación
-            try
-            {
-                await _tokenService.SetTokenAsync(result.Token);
-
-                // Verificación en 2 pasos
-                var storedToken = await _tokenService.GetTokenAsync();
-                if (storedToken != result.Token)
-                {
-                    _logger.LogWarning("El token no se almacenó correctamente. Se usará en memoria para esta sesión.");
-                    // Mantenemos el token en el objeto de respuesta como fallback
-                }
-                else
-                {
-                    _logger.LogDebug("Token almacenado correctamente");
-                }
-            }
-            catch (Exception storageEx)
-            {
-                _logger.LogError(storageEx, "Error al almacenar el token. Se usará en memoria.");
-                // Continuamos devolviendo el response aunque falle el almacenamiento
-            }
+            await _tokenService.SetTokenAsync(result.Token);
+            
 
             return result;
         }
