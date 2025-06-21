@@ -10,6 +10,7 @@ namespace AccionSocialModels
         public MyIdentityDbContext(DbContextOptions<MyIdentityDbContext> options)
             : base(options) { }
 
+        DbSet<Taller> Talleres { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -46,6 +47,19 @@ namespace AccionSocialModels
                 b.Property(r => r.Name).HasMaxLength(256);
                 b.Property(r => r.NormalizedName).HasMaxLength(256);
                 b.Property(r => r.ConcurrencyStamp).HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<Taller>(b =>
+            {
+                b.ToTable("Talleres");
+
+                // Configuración de la clave primaria
+                b.HasKey(t => t.Id);
+                b.Property(t => t.Id).ValueGeneratedOnAdd().IsRequired(); // Autoincremental 
+                                                                                // Configuración de las propiedades
+                b.Property(t => t.Nombre).HasMaxLength(200).IsRequired();
+                b.Property(t => t.Descripcion).HasMaxLength(1000).IsRequired();
+               
             });
         }
     }

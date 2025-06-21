@@ -1,4 +1,5 @@
 ﻿using AccionSocial.web.Services.Auth;
+using AccionSocial.web.Services.Token;
 using AccionSocialModels.DTO;
 using AccionSocialModels.Response;
 using Microsoft.AspNetCore.Authentication;
@@ -6,25 +7,23 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace AccionSocial.web.Controllers
 {
     public class LoginController : Controller
     {
         private readonly IAuthService _authService;
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IConfiguration _configuration;
+        private readonly ITokenStorageService _tokenStorage;
         private readonly ILogger<LoginController> _logger;
 
         public LoginController(
-           IAuthService authService,
-           IHttpClientFactory httpClientFactory,
-           IConfiguration configuration,
-           ILogger<LoginController> logger)
+            IAuthService authService,
+            ITokenStorageService tokenStorage,
+            ILogger<LoginController> logger)
         {
             _authService = authService;
-            _httpClientFactory = httpClientFactory;
-            _configuration = configuration;
+            _tokenStorage = tokenStorage;
             _logger = logger;
         }
 
@@ -32,130 +31,84 @@ namespace AccionSocial.web.Controllers
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View("_Login"); ;
+            return View("_Login");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDTO model, string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-
             if (!ModelState.IsValid)
-            {
-                return PartialView("_Login", model);
-            }
+                return View("_Login", model);
 
             try
             {
+                var response = await _authService.AuthenticateAsync(model);
 
-                var response = await LoginViaApi(model);
-
-                // Crear la identidad del usuario
-                var claims = new List<Claim>
+                if (response == null || string.IsNullOrEmpty(response.Token))
                 {
-                    new Claim(ClaimTypes.NameIdentifier, response.Username),
-                    new Claim(ClaimTypes.Name, response.Username),
-                    new Claim(ClaimTypes.Email, response.Email),
-                    new Claim("FullName", response.NombreCompleto)
-                };
-
-                foreach (var role in response.Roles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
+                    ModelState.AddModelError(string.Empty, "Invalid authentication response");
+                    return View("_Login", model);
                 }
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                // Store token in both storage mechanisms
+                await _tokenStorage.SetTokenAsync(response.Token);
+
+                // Create authentication cookie
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, response.User.userName),
+                    new Claim(ClaimTypes.Name, response.User.userName),
+                    new Claim(ClaimTypes.Email, response.User.email ?? string.Empty),
+                    new Claim("FullName", response.User.nombreCompleto ?? string.Empty)
+                };
+
+                if (response.User.roles != null)
+                {
+                    claims.AddRange(response.User.roles.Select(role =>
+                        new Claim(ClaimTypes.Role, role)));
+                }
 
                 var authProperties = new AuthenticationProperties
                 {
                     IsPersistent = model.RememberMe,
                     ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7),
-                    AllowRefresh = true,
-                    IssuedUtc = DateTimeOffset.UtcNow
+                    AllowRefresh = true
                 };
 
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
+                    new ClaimsPrincipal(new ClaimsIdentity(
+                        claims,
+                        CookieAuthenticationDefaults.AuthenticationScheme)),
                     authProperties);
 
-                _logger.LogInformation("Usuario {Username} ha iniciado sesión correctamente", response.Username);
-
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                {
-                    return Redirect(returnUrl);
-                }
-                return RedirectToAction("Index", "Home");
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogWarning("Intento de inicio de sesión fallido: {Message}", ex.Message);
-                ModelState.AddModelError(string.Empty, "Credenciales inválidas");
-                return PartialView("_Login", model); // Cambiado de View a PartialView
+                return RedirectToLocal(returnUrl);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al iniciar sesión");
-                ModelState.AddModelError(string.Empty, "Ocurrió un error al iniciar sesión");
-                return PartialView("_Login", model); // Cambiado de View a PartialView
+                _logger.LogError(ex, "Login failed");
+                ModelState.AddModelError(string.Empty, "Login failed. Please try again.");
+                return View("_Login", model);
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout(string timeout = null)
+        public async Task<IActionResult> Logout()
         {
-            try
-            {
-                // Llama al servicio para hacer logout en el API
-                await _authService.LogoutAsync();
-
-                // Limpia la autenticación local
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-                // Manejo específico para cierre por inactividad
-                if (!string.IsNullOrEmpty(timeout) && timeout == "true")
-                {
-                    TempData["TimeoutMessage"] = "Tu sesión ha expirado por inactividad. Por favor inicia sesión nuevamente.";
-                }
-
-                return RedirectToAction("Login", "Login");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al cerrar sesión");
-                TempData["ErrorMessage"] = "Ocurrió un error al cerrar la sesión";
-                return RedirectToAction("Index", "Home");
-            }
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await _tokenStorage.RemoveTokenAsync();
+            return RedirectToAction("Index", "Home");
         }
 
-        private async Task<LoginResponse> LoginViaApi(LoginDTO model)
+        private IActionResult RedirectToLocal(string returnUrl)
         {
-            var client = _httpClientFactory.CreateClient();
-            var apiUrl = _configuration["ApiSettings:BaseUrl"] + "/auth/login";
-
-            // Agregar headers
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
+            if (Url.IsLocalUrl(returnUrl))
             {
-                Content = JsonContent.Create(model)
-            };
-
-            var response = await client.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogError($"Error en login: {response.StatusCode} - {errorContent}");
-                throw new UnauthorizedAccessException("Credenciales inválidas");
+                return Redirect(returnUrl);
             }
-
-            return await response.Content.ReadFromJsonAsync<LoginResponse>();
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -175,20 +128,36 @@ namespace AccionSocial.web.Controllers
 
             try
             {
-                var client = _httpClientFactory.CreateClient();
-                var apiUrl = _configuration["ApiSettings:BaseUrl"] + "/auth/register";
+                // Usar el servicio de autenticación en lugar de llamar directamente a la API
+                var response = await _authService.RegisterAsync(model);
 
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var response = await client.PostAsJsonAsync(apiUrl, model);
-
-                if (!response.IsSuccessStatusCode)
+                // Si el registro incluye autologin (tiene token)
+                if (!string.IsNullOrEmpty(response?.Token))
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    ModelState.AddModelError(string.Empty, errorContent);
-                    return View("_Registro", model);
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, model.UserName),
+                        new Claim(ClaimTypes.Email, model.Email),
+                        new Claim("FullName", $"{model.Nombre} {model.Apellidos}"),
+                        new Claim("JwtToken", response.Token)
+                    };
+
+                    if (!string.IsNullOrEmpty(model.Rol))
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, model.Rol));
+                    }
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
+                        new AuthenticationProperties
+                        {
+                            IsPersistent = false,
+                            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(1)
+                        });
+
+                    TempData["SuccessMessage"] = "¡Registro y autenticación exitosos!";
+                    return RedirectToAction("Index", "Home");
                 }
 
                 TempData["SuccessMessage"] = "¡Registro exitoso! Por favor inicia sesión.";
@@ -197,11 +166,21 @@ namespace AccionSocial.web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error durante el registro");
-                ModelState.AddModelError(string.Empty, "Ocurrió un error durante el registro. Por favor inténtalo de nuevo.");
+
+                // Manejar errores de validación del API
+                if (ex.Message.Contains("Error en el registro") && ex.InnerException is JsonException)
+                {
+                    ModelState.AddModelError(string.Empty, "Error en los datos proporcionados");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        !string.IsNullOrEmpty(ex.Message) ? ex.Message : "Ocurrió un error durante el registro. Por favor inténtalo de nuevo.");
+                }
+
                 return View("_Registro", model);
             }
         }
-
     }
 }
 

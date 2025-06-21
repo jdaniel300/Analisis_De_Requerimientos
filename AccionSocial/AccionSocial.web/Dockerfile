@@ -2,23 +2,23 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 
-# Create wwwroot user and group first
+# Create wwwroot user/group and install tools
 RUN groupadd -r wwwroot && \
     useradd -r -g wwwroot wwwroot && \
     mkdir -p /app/keys && \
-    chown -R wwwroot:wwwroot /app/keys
-
-# Install network diagnostic tools (optional)
-RUN apt-get update && \
+    chown -R wwwroot:wwwroot /app/keys && \
+    chmod -R 700 /app/keys && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
-    iputils-ping \
-    dnsutils \
-    curl \
-    net-tools && \
+      iputils-ping \
+      dnsutils \
+      curl \
+      net-tools && \
     rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://*:8080
+ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build

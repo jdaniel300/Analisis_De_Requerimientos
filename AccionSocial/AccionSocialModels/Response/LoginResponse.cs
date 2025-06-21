@@ -2,10 +2,15 @@
 {
     public class LoginResponse
     {
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string NombreCompleto { get; set; }
-        public IEnumerable<string> Roles { get; set; }
         public string Token { get; set; }
+        public UserData User { get; set; }
+
+        public class UserData
+        {
+            public string userName { get; set; }
+            public string email { get; set; }
+            public string nombreCompleto { get; set; }
+            public List<string> roles { get; set; }
+        }
     }
 }
