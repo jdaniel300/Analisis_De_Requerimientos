@@ -10,8 +10,8 @@ namespace AccionSocialModels
         public MyIdentityDbContext(DbContextOptions<MyIdentityDbContext> options)
             : base(options) { }
 
-        DbSet<Taller> Talleres { get; set; }
-        DbSet<Participantes> Participantes { get; set; }
+       public DbSet<Taller> Talleres { get; set; }
+        public DbSet<Participantes> Participantes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -60,7 +60,18 @@ namespace AccionSocialModels
                                                                                 // Configuración de las propiedades
                 b.Property(t => t.Nombre).HasMaxLength(200).IsRequired();
                 b.Property(t => t.Descripcion).HasMaxLength(1000).IsRequired();
-               
+                b.Property(t => t.Estado).HasMaxLength(50); // Si el estado tiene valores fijos
+                b.Property(t => t.Objetivos).HasMaxLength(2000); // Para limitar el tamaño
+                b.Property(t => t.FechaCreacion).IsRequired(); // Para asegurar fecha de creación
+                b.Property(t => t.FechaActualizacion).IsRequired(); // Para asegurar fecha de actualización// Configuración de la relación con Usuario
+                b.HasOne(t => t.Encargado)
+                    .WithMany()
+                    .HasForeignKey(t => t.EncargadoId)
+                    .OnDelete(DeleteBehavior.Restrict); // Restrict para evitar borrados en cascada
+
+                // Índice opcional para el nombre del taller
+                b.HasIndex(t => t.Nombre).IsUnique();
+
             });
             modelBuilder.Entity<Participantes>(b =>
             {
