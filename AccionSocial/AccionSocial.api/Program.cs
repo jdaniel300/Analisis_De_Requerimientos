@@ -1,5 +1,5 @@
 
-using AccionSocial.web.Services.Token;
+using AccionSocial.api.Services.Token;
 using AccionSocialModels;
 using AccionSocialModels.DTO;
 using AccionSocialModels.Response;
@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -89,7 +90,7 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-
+        ClockSkew = TimeSpan.Zero,
         NameClaimType = ClaimTypes.NameIdentifier,
         RoleClaimType = ClaimTypes.Role
     };
@@ -104,6 +105,16 @@ builder.Services.AddAuthentication(options =>
             {
                 context.Fail("Invalid user ID format");
             }
+
+        },
+
+        OnAuthenticationFailed = context =>
+        {
+            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+            {
+                context.Response.Headers.Add("Token-Expired", "true");
+            }
+            return Task.CompletedTask;
         }
     };
 })
@@ -427,23 +438,71 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
         });
     }).WithName("Login").WithOpenApi();
 
+    group.MapPost("/refresh-token", async (
+    [FromBody] RefreshTokenRequest request,
+    [FromServices] ITokenService tokenService,
+    [FromServices] UserManager<Usuario> userManager,
+    [FromServices] ILogger<Program> logger,
+    [FromServices] IOptions<JwtSettings> jwtSettings) =>
+    {
+        // Validar el token principal
+        var principal = tokenService.GetPrincipalFromToken(request.Token);
+        if (principal == null)
+            return Results.Unauthorized();
+
+        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return Results.Unauthorized();
+
+        var user = await userManager.FindByIdAsync(userId);
+        if (user == null || user.RefreshToken != request.RefreshToken ||
+            user.RefreshTokenExpiry <= DateTime.UtcNow)
+            return Results.Unauthorized();
+
+        // Generar nuevo token
+        var roles = await userManager.GetRolesAsync(user);
+        var newToken = tokenService.GenerateJwtToken(user, roles);
+
+        // Opcional: generar nuevo refresh token
+        var newRefreshToken = tokenService.GenerateRefreshToken();
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpireDays);
+        await userManager.UpdateAsync(user);
+
+        return Results.Ok(new
+        {
+            Token = newToken,
+            RefreshToken = newRefreshToken
+        });
+    }).WithName("RefreshToken").WithOpenApi();
+
     // Logout
     group.MapPost("/logout", async (
-        [FromServices] ILogger<Program> logger,
-        [FromServices] IMemoryCache cache,
-        HttpContext httpContext) =>
+    [FromServices] ITokenService tokenService,
+    [FromServices] UserManager<Usuario> userManager,
+    [FromServices] ILogger<Program> logger,
+    HttpContext httpContext) =>
     {
         try
         {
             var token = httpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
-            if (!string.IsNullOrEmpty(token) && new JwtSecurityTokenHandler().CanReadToken(token))
+            // Invalidar el token
+            await tokenService.InvalidateTokenAsync(token);
+
+            // Opcional: limpiar refresh token del usuario
+            var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
             {
-                var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
-                cache.Set(token, "invalid", jwtToken.ValidTo - DateTime.UtcNow);
-                logger.LogInformation("Token invalidado en el servidor");
+                var user = await userManager.FindByIdAsync(userId);
+                if (user != null)
+                {
+                    user.RefreshToken = null;
+                    await userManager.UpdateAsync(user);
+                }
             }
 
+            logger.LogInformation("Token invalidado en el servidor");
             return Results.Ok(new { message = "Sesión cerrada correctamente" });
         }
         catch (Exception ex)

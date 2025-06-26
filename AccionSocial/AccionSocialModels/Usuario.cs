@@ -12,6 +12,7 @@ namespace AccionSocialModels
         public bool Estado { get; set; }
         public DateOnly FechaCaducidadContrasena { get; set; }
 
-        
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiry { get; set; }
     }
 }

@@ -3,72 +3,60 @@
   "WorkspaceRootPath": "D:\\Analisis_De_Requerimientos\\AccionSocial\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\token\\tokenrefreshservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\token\\tokenrefreshservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\token\\itokenrefreshservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\token\\itokenrefreshservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\token\\browserstorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\token\\browserstorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\token\\itokenstorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\token\\itokenstorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\token\\authtokenhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\token\\authtokenhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\migrations\\myidentitydbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\migrations\\myidentitydbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\auth\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\auth\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\views\\admin\\administracionusuarios.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\views\\admin\\administracionusuarios.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\dto\\listausuariosdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\dto\\listausuariosdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\response\\paginacionresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\response\\paginacionresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|solutionrelative:accionsocial.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.api\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|solutionrelative:accionsocial.api\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocial.api\\services\\itokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|solutionrelative:accionsocial.api\\services\\itokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\dto\\refreshtokenrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\dto\\refreshtokenrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\jwtsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\jwtsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
     {
-      "Orientation": 1,
+      "Orientation": 0,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 133,
+          "DockedWidth": 103,
           "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Program.cs",
               "RelativeDocumentMoniker": "AccionSocial.api\\Program.cs",
               "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Program.cs",
               "RelativeToolTip": "AccionSocial.api\\Program.cs",
-              "ViewState": "AgIAAB8DAAAAAAAAAAAwwGgDAAAmAAAAAAAAAA==",
+              "ViewState": "AgIAANABAAAAAAAAAAApwAACAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-21T00:08:17.286Z",
               "IsPinned": true,
@@ -77,131 +65,79 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "TokenRefreshService.cs",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\TokenRefreshService.cs",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Token\\TokenRefreshService.cs",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\TokenRefreshService.cs",
-              "RelativeToolTip": "AccionSocial.web\\Services\\Token\\TokenRefreshService.cs",
-              "ViewState": "AgIAADAAAAAAAAAAAAAowFkAAAAAAAAAAAAAAA==",
+              "Title": "MyIdentityDbContextModelSnapshot.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Migrations\\MyIdentityDbContextModelSnapshot.cs",
+              "RelativeDocumentMoniker": "AccionSocialModels\\Migrations\\MyIdentityDbContextModelSnapshot.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Migrations\\MyIdentityDbContextModelSnapshot.cs",
+              "RelativeToolTip": "AccionSocialModels\\Migrations\\MyIdentityDbContextModelSnapshot.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T19:59:01.081Z",
+              "WhenOpened": "2025-06-26T20:42:49.391Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "ITokenRefreshService.cs",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\ITokenRefreshService.cs",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Token\\ITokenRefreshService.cs",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\ITokenRefreshService.cs",
-              "RelativeToolTip": "AccionSocial.web\\Services\\Token\\ITokenRefreshService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T19:58:39.602Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "BrowserStorageService.cs",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\BrowserStorageService.cs",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Token\\BrowserStorageService.cs",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\BrowserStorageService.cs",
-              "RelativeToolTip": "AccionSocial.web\\Services\\Token\\BrowserStorageService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAG0AAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T19:56:22.728Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ITokenStorageService.cs",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\ITokenStorageService.cs",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Token\\ITokenStorageService.cs",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\ITokenStorageService.cs",
-              "RelativeToolTip": "AccionSocial.web\\Services\\Token\\ITokenStorageService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T19:55:27.485Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "AuthTokenHandler.cs",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\AuthTokenHandler.cs",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Token\\AuthTokenHandler.cs",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Token\\AuthTokenHandler.cs",
-              "RelativeToolTip": "AccionSocial.web\\Services\\Token\\AuthTokenHandler.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T19:52:37.978Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
               "Title": "AuthService.cs",
               "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\AuthService.cs",
               "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Auth\\AuthService.cs",
               "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\AuthService.cs",
               "RelativeToolTip": "AccionSocial.web\\Services\\Auth\\AuthService.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAgwFcAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAL8AAAAAAAAAAAAiwOIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T19:49:02.838Z",
+              "WhenOpened": "2025-06-26T20:38:12.738Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "PaginacionResponse.cs",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Response\\PaginacionResponse.cs",
-              "RelativeDocumentMoniker": "AccionSocialModels\\Response\\PaginacionResponse.cs",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Response\\PaginacionResponse.cs",
-              "RelativeToolTip": "AccionSocialModels\\Response\\PaginacionResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "RefreshTokenRequest.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\DTO\\RefreshTokenRequest.cs",
+              "RelativeDocumentMoniker": "AccionSocialModels\\DTO\\RefreshTokenRequest.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\DTO\\RefreshTokenRequest.cs",
+              "RelativeToolTip": "AccionSocialModels\\DTO\\RefreshTokenRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T19:27:13.96Z",
+              "WhenOpened": "2025-06-26T19:48:30.745Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "ListaUsuariosDTO.cs",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\DTO\\ListaUsuariosDTO.cs",
-              "RelativeDocumentMoniker": "AccionSocialModels\\DTO\\ListaUsuariosDTO.cs",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\DTO\\ListaUsuariosDTO.cs",
-              "RelativeToolTip": "AccionSocialModels\\DTO\\ListaUsuariosDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAFAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "ITokenService.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Services\\ITokenService.cs",
+              "RelativeDocumentMoniker": "AccionSocial.api\\Services\\ITokenService.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Services\\ITokenService.cs",
+              "RelativeToolTip": "AccionSocial.api\\Services\\ITokenService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T19:27:01.253Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "AdministracionUsuarios.cshtml",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Admin\\AdministracionUsuarios.cshtml",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Views\\Admin\\AdministracionUsuarios.cshtml",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Admin\\AdministracionUsuarios.cshtml",
-              "RelativeToolTip": "AccionSocial.web\\Views\\Admin\\AdministracionUsuarios.cshtml",
-              "ViewState": "AgIAAGIAAAAAAAAAAAAswJ8AAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-21T19:06:38.36Z",
+              "WhenOpened": "2025-06-26T19:42:25.342Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Program.cs",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Program.cs",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Program.cs",
-              "RelativeToolTip": "AccionSocial.web\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADkAAAAAAAAAAAAAAA==",
+              "Title": "RefreshToken.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\RefreshToken.cs",
+              "RelativeDocumentMoniker": "AccionSocialModels\\RefreshToken.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\RefreshToken.cs",
+              "RelativeToolTip": "AccionSocialModels\\RefreshToken.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T17:48:27.455Z",
+              "WhenOpened": "2025-06-26T19:41:50.676Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "JwtSettings.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\JwtSettings.cs",
+              "RelativeDocumentMoniker": "AccionSocialModels\\JwtSettings.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\JwtSettings.cs",
+              "RelativeToolTip": "AccionSocialModels\\JwtSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-26T19:36:37.347Z",
               "EditorCaption": ""
             },
             {
@@ -235,18 +171,37 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 98,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TokenService.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Services\\TokenService.cs",
+              "RelativeDocumentMoniker": "AccionSocial.api\\Services\\TokenService.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Services\\TokenService.cs",
+              "RelativeToolTip": "AccionSocial.api\\Services\\TokenService.cs",
+              "ViewState": "AgIAAGEAAAAAAAAAAAAUwBUAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-26T20:02:29.239Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "AdminController.cs",
-              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Controllers\\AdminController.cs",
-              "RelativeDocumentMoniker": "AccionSocial.web\\Controllers\\AdminController.cs",
-              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Controllers\\AdminController.cs",
-              "RelativeToolTip": "AccionSocial.web\\Controllers\\AdminController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADUAAAAAAAAAAAAAAA==",
+              "Title": "Usuario.cs",
+              "DocumentMoniker": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Usuario.cs",
+              "RelativeDocumentMoniker": "AccionSocialModels\\Usuario.cs",
+              "ToolTip": "D:\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Usuario.cs",
+              "RelativeToolTip": "AccionSocialModels\\Usuario.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-21T06:27:19.306Z",
+              "WhenOpened": "2025-06-26T20:00:11.668Z",
               "EditorCaption": ""
             }
           ]
