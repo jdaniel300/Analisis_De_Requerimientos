@@ -10,7 +10,8 @@ namespace AccionSocialModels
         public MyIdentityDbContext(DbContextOptions<MyIdentityDbContext> options)
             : base(options) { }
 
-        DbSet<Taller> Talleres { get; set; } = null!;
+        DbSet<Taller> Talleres { get; set; }
+        DbSet<Participantes> Participantes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -61,6 +62,43 @@ namespace AccionSocialModels
                 b.Property(t => t.Descripcion).HasMaxLength(1000).IsRequired();
                
             });
+            modelBuilder.Entity<Participantes>(b =>
+            {
+                b.ToTable("Participantes");
+
+                // Configuración EXPLÍCITA de la clave primaria (esto faltaba)
+                b.HasKey(p => p.Id);
+                b.Property(p => p.Id).ValueGeneratedOnAdd().IsRequired();
+
+                // Configuración de propiedades
+                b.Property(p => p.IdUsuario).IsRequired();
+                b.Property(p => p.IdTaller).IsRequired();
+
+                b.Property(p => p.FechaInscripcion)
+                    .IsRequired()
+                    .HasColumnType("datetime");
+
+                b.Property(p => p.Estado)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasDefaultValue("true");
+
+                // Configuración de relaciones
+                b.HasOne(p => p.Usuario)
+                    .WithMany()
+                    .HasForeignKey(p => p.IdUsuario)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(p => p.Taller)
+                    .WithMany()
+                    .HasForeignKey(p => p.IdTaller)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Índice único opcional
+                b.HasIndex(p => new { p.IdUsuario, p.IdTaller })
+                    .IsUnique();
+            });
+
         }
     }
 }

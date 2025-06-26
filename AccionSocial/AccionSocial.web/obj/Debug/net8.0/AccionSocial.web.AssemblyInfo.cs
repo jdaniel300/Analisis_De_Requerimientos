@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AccionSocial.web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0e8d87387f2b99b459fd0c477c1b61d0aa858fd2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+71f138319db9ff91a1de12f0499af3801b9f8fad")]
 [assembly: System.Reflection.AssemblyProductAttribute("AccionSocial.web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AccionSocial.web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

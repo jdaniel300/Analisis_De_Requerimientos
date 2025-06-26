@@ -59,7 +59,12 @@ namespace AccionSocial.api.Services.Token
 
         public bool ValidateToken(string token)
         {
+            if (string.IsNullOrEmpty(token) || IsTokenInvalidated(token))
+                return false;
+
             var tokenHandler = new JwtSecurityTokenHandler();
+
+           
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Key);
 
             try
@@ -82,6 +87,11 @@ namespace AccionSocial.api.Services.Token
             {
                 return false;
             }
+        }
+        public bool IsTokenInvalidated(string token)
+        {
+            var cacheKey = $"invalid_token_{token}";
+            return _cache.TryGetValue(cacheKey, out _);
         }
 
         public ClaimsPrincipal GetPrincipalFromToken(string token)

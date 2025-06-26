@@ -8,7 +8,7 @@ namespace AccionSocial.web.Services.Token
         private readonly IJSRuntime _jsRuntime;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<BrowserTokenStorage> _logger;
-        private string _memoryToken; // Fallback en memoria
+        private string _memoryToken;
 
         public BrowserTokenStorage(
             IJSRuntime jsRuntime,
@@ -24,9 +24,9 @@ namespace AccionSocial.web.Services.Token
         {
             try
             {
-                _memoryToken = token; // Siempre guardar en memoria
+                _memoryToken = token;
 
-                // 1. Almacenar en cookies (para SSR)
+                // Almacenar en cookies (SSR)
                 var response = _httpContextAccessor.HttpContext?.Response;
                 if (response != null)
                 {
@@ -35,146 +35,88 @@ namespace AccionSocial.web.Services.Token
                         HttpOnly = true,
                         Secure = _httpContextAccessor.HttpContext.Request.IsHttps,
                         SameSite = SameSiteMode.Lax,
-                        Expires = DateTimeOffset.Now.AddDays(1),
-                        Domain = _httpContextAccessor.HttpContext.Request.Host.Host
+                        Expires = DateTimeOffset.Now.AddDays(1)
                     });
-                    _logger.LogInformation("Token almacenado en cookies");
                 }
 
-                // 2. Almacenar en localStorage (para WASM)
+                // Almacenar en localStorage (WASM)
                 if (IsClientSide())
                 {
                     await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", token);
-                    _logger.LogInformation("Token almacenado en localStorage");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al almacenar token. Usando fallback en memoria.");
-                // El token ya está guardado en _memoryToken
+                _logger.LogError(ex, "Error al almacenar token");
             }
         }
 
         public async Task<string> GetTokenAsync()
         {
-            const string cookieName = "authToken";
             try
             {
-                // 1. Check memory first (fastest)
                 if (!string.IsNullOrEmpty(_memoryToken))
-                {
-                    _logger.LogDebug("Token recuperado de memoria");
                     return _memoryToken;
-                }
 
-                // 2. Check HttpContext cookies if available
-                if (_httpContextAccessor.HttpContext != null)
+                if (_httpContextAccessor.HttpContext?.Request.Cookies.TryGetValue("authToken", out var cookieToken) == true)
                 {
-                    // Only check Request.Cookies - Response.Cookies is for writing only
-                    var cookieToken = _httpContextAccessor.HttpContext.Request.Cookies[cookieName];
-                    if (!string.IsNullOrEmpty(cookieToken))
-                    {
-                        _memoryToken = cookieToken;
-                        _logger.LogDebug("Token recuperado de cookies HTTP");
-                        return cookieToken;
-                    }
+                    _memoryToken = cookieToken;
+                    return cookieToken;
                 }
 
-                // 3. Check localStorage for WASM
                 if (IsClientSide())
                 {
-                    try
+                    var jsToken = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+                    if (!string.IsNullOrEmpty(jsToken))
                     {
-                        var jsToken = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", cookieName);
-                        if (!string.IsNullOrEmpty(jsToken))
-                        {
-                            _memoryToken = jsToken;
-                            _logger.LogDebug("Token recuperado de localStorage");
-                            return jsToken;
-                        }
-                    }
-                    catch (Exception jsEx)
-                    {
-                        _logger.LogError(jsEx, "Error al acceder a localStorage");
+                        _memoryToken = jsToken;
+                        return jsToken;
                     }
                 }
-                _logger.LogWarning("No se pudo recuperar el token de ningún almacenamiento");
+
                 return null;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al recuperar token");
-                return _memoryToken;
+                _logger.LogError(ex, "Error al obtener token");
+                return null;
             }
         }
-        
-        private bool IsClientSide()
-        {
-            
-            return OperatingSystem.IsBrowser();
-        }
-
-        private bool IsStaticRendering()
-        {
-            // If HttpContext is null, we're likely in static rendering
-            return _httpContextAccessor.HttpContext == null;
-        }
-
-
-       
 
         public async Task RemoveTokenAsync()
         {
             try
             {
-                // Remove server-side token first (always works)
-                RemoveServerSideToken();
+                _memoryToken = null;
+                _httpContextAccessor.HttpContext?.Response.Cookies.Delete("authToken");
 
-                // Only attempt localStorage removal if running on the client (not during static rendering)
-                if (IsClientSide() && !IsStaticRendering())
+                if (IsClientSide())
                 {
                     await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "JS Interop not available during token removal");
-                // Fallback to server-side removal only
-                RemoveServerSideToken();
-            }
-        }
-
-        private void RemoveServerSideToken()
-        {
-            var response = _httpContextAccessor.HttpContext?.Response;
-            if (response != null)
-            {
-                response.Cookies.Delete("authToken");
+                _logger.LogError(ex, "Error al eliminar token");
             }
         }
 
         public async Task<bool> HasTokenAsync()
         {
-            var token = await GetTokenAsync();
-            return !string.IsNullOrEmpty(token);
+            return !string.IsNullOrEmpty(await GetTokenAsync());
         }
 
         public async Task SetRefreshTokenAsync(string refreshToken)
         {
             try
             {
-                // Similar a SetTokenAsync pero para refresh token
-                var response = _httpContextAccessor.HttpContext?.Response;
-                if (response != null)
+                _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
                 {
-                    response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Secure = true,
-                        SameSite = SameSiteMode.Strict,
-                        Expires = DateTimeOffset.Now.AddDays(30)
-                    });
-                }
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTimeOffset.Now.AddDays(30)
+                });
 
                 if (IsClientSide())
                 {
@@ -183,7 +125,7 @@ namespace AccionSocial.web.Services.Token
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error storing refresh token");
+                _logger.LogError(ex, "Error al almacenar refresh token");
             }
         }
 
@@ -191,17 +133,11 @@ namespace AccionSocial.web.Services.Token
         {
             try
             {
-                // 1. Check cookies first
-                if (_httpContextAccessor.HttpContext != null)
+                if (_httpContextAccessor.HttpContext?.Request.Cookies.TryGetValue("refreshToken", out var cookieToken) == true)
                 {
-                    var cookieToken = _httpContextAccessor.HttpContext.Request.Cookies["refreshToken"];
-                    if (!string.IsNullOrEmpty(cookieToken))
-                    {
-                        return cookieToken;
-                    }
+                    return cookieToken;
                 }
 
-                // 2. Check localStorage for WASM
                 if (IsClientSide())
                 {
                     return await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "refreshToken");
@@ -211,7 +147,7 @@ namespace AccionSocial.web.Services.Token
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting refresh token");
+                _logger.LogError(ex, "Error al obtener refresh token");
                 return null;
             }
         }
@@ -220,10 +156,8 @@ namespace AccionSocial.web.Services.Token
         {
             try
             {
-                // Remove from cookies
                 _httpContextAccessor.HttpContext?.Response.Cookies.Delete("refreshToken");
 
-                // Remove from localStorage
                 if (IsClientSide())
                 {
                     await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "refreshToken");
@@ -231,8 +165,10 @@ namespace AccionSocial.web.Services.Token
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error removing refresh token");
+                _logger.LogError(ex, "Error al eliminar refresh token");
             }
         }
+
+        private bool IsClientSide() => OperatingSystem.IsBrowser();
     }
 }

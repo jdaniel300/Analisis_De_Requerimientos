@@ -8,7 +8,7 @@ namespace AccionSocial.web.Services.Token
         private readonly HttpClient _httpClient;
         private readonly ITokenStorageService _tokenStorage;
         private readonly ILogger<TokenRefreshService> _logger;
-        private readonly string _refreshEndpoint = "/api/auth/refresh";
+        private const string RefreshEndpoint = "/api/auth/refresh-token";
 
         public TokenRefreshService(
             HttpClient httpClient,
@@ -24,53 +24,57 @@ namespace AccionSocial.web.Services.Token
         {
             try
             {
-                // 1. Verificar si tenemos un refresh token disponible
                 var refreshToken = await _tokenStorage.GetRefreshTokenAsync();
-                if (string.IsNullOrEmpty(refreshToken))
+                var currentToken = await _tokenStorage.GetTokenAsync();
+
+                if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(currentToken))
                 {
-                    _logger.LogWarning("No refresh token available");
+                    _logger.LogWarning("No hay token o refresh token disponible");
                     return null;
                 }
 
-                // 2. Crear la solicitud de refresh
-                var request = new HttpRequestMessage(HttpMethod.Post, _refreshEndpoint);
-                request.Content = new StringContent(
-                    JsonSerializer.Serialize(new { refreshToken }),
-                    Encoding.UTF8,
-                    "application/json");
+                var request = new HttpRequestMessage(HttpMethod.Post, RefreshEndpoint)
+                {
+                    Content = new StringContent(
+                        JsonSerializer.Serialize(new
+                        {
+                            Token = currentToken,
+                            RefreshToken = refreshToken
+                        }),
+                        Encoding.UTF8,
+                        "application/json")
+                };
 
-                // 3. Enviar la solicitud
                 var response = await _httpClient.SendAsync(request);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Refresh failed with status: {response.StatusCode}");
+                    await ClearTokens();
                     return null;
                 }
 
-                // 4. Leer la respuesta
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var authResult = JsonSerializer.Deserialize<AuthResult>(responseContent);
 
                 if (string.IsNullOrEmpty(authResult?.Token))
                 {
-                    _logger.LogError("Invalid refresh response - missing token");
+                    await ClearTokens();
                     return null;
                 }
 
-                // 5. Almacenar el nuevo token
                 await _tokenStorage.SetTokenAsync(authResult.Token);
+
                 if (!string.IsNullOrEmpty(authResult.RefreshToken))
                 {
                     await _tokenStorage.SetRefreshTokenAsync(authResult.RefreshToken);
                 }
 
-                _logger.LogInformation("Token refreshed successfully");
                 return authResult.Token;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error refreshing token");
+                _logger.LogError(ex, "Error al refrescar token");
+                await ClearTokens();
                 return null;
             }
         }
@@ -78,6 +82,12 @@ namespace AccionSocial.web.Services.Token
         public async Task<bool> TryRefreshTokenAsync()
         {
             return await RefreshTokenAsync() != null;
+        }
+
+        private async Task ClearTokens()
+        {
+            await _tokenStorage.RemoveTokenAsync();
+            await _tokenStorage.RemoveRefreshTokenAsync();
         }
 
         private class AuthResult

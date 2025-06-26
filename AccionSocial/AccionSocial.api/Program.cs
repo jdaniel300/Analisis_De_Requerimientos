@@ -445,6 +445,10 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
     [FromServices] ILogger<Program> logger,
     [FromServices] IOptions<JwtSettings> jwtSettings) =>
     {
+        // Validar que el token no esté invalidado
+        if (await tokenService.IsTokenInvalidatedAsync(request.Token))
+            return Results.Unauthorized();
+
         // Validar el token principal
         var principal = tokenService.GetPrincipalFromToken(request.Token);
         if (principal == null)

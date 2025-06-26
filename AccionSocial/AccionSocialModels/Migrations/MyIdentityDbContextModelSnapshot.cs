@@ -22,6 +22,39 @@ namespace AccionSocialModels.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AccionSocialModels.Participantes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Estado")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("FechaInscripcion")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("IdTaller")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdTaller");
+
+                    b.HasIndex("IdUsuario", "IdTaller")
+                        .IsUnique();
+
+                    b.ToTable("Participantes", (string)null);
+                });
+
             modelBuilder.Entity("AccionSocialModels.Rol", b =>
                 {
                     b.Property<int>("Id")
@@ -284,6 +317,25 @@ namespace AccionSocialModels.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("AccionSocialModels.Participantes", b =>
+                {
+                    b.HasOne("AccionSocialModels.Taller", "Taller")
+                        .WithMany()
+                        .HasForeignKey("IdTaller")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AccionSocialModels.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Taller");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

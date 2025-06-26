@@ -39,6 +39,11 @@ builder.WebHost.ConfigureKestrel(serverOptions => {
     serverOptions.ListenAnyIP(8080);
 });
 
+builder.Services.AddScoped<ITokenStorageService, BrowserTokenStorage>();
+builder.Services.AddScoped<ITokenRefreshService, TokenRefreshService>();
+builder.Services.AddScoped<AuthTokenHandler>();
+
+
 builder.Services.AddHttpClient("AccionSocialApi", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]

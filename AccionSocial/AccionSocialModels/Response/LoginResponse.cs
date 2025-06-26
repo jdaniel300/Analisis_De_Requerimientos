@@ -4,7 +4,7 @@
     {
         public string Token { get; set; }
         public UserData User { get; set; }
-
+        public string RefreshToken { get; set; }
         public class UserData
         {
             public string userName { get; set; }

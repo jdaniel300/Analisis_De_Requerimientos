@@ -2,14 +2,15 @@
 {
     public interface ITokenStorageService
     {
-        Task SetTokenAsync(string token);
         Task<string> GetTokenAsync();
+        Task SetTokenAsync(string token);
         Task RemoveTokenAsync();
-
         Task<bool> HasTokenAsync();
 
-        Task SetRefreshTokenAsync(string refreshToken);
         Task<string> GetRefreshTokenAsync();
+        Task SetRefreshTokenAsync(string refreshToken);
         Task RemoveRefreshTokenAsync();
+
     }
+
 }
