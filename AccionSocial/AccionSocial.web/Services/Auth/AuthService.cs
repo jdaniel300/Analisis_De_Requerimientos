@@ -3,6 +3,7 @@ using AccionSocial.web.Services.Token;
 using AccionSocialModels.DTO;
 using AccionSocialModels.Response;
 using Microsoft.Extensions.Caching.Memory;
+using Polly.Caching;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -345,7 +346,41 @@ public class AuthService : IAuthService
             return new Exception(errorContent);
         }
     }
+    public async Task<ResultadoDTO> RegisterByAdminAsync(RegistroDTO registerDto)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/auth/admin/register", registerDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<ResultadoDTO>();
+                return result ?? new ResultadoDTO { Success = true, Message = "Usuario registrado exitosamente" };
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogError("Error al registrar usuario por admin: {Error}", errorContent);
+
+            return new ResultadoDTO
+            {
+                Success = false,
+                Message = "Error al registrar usuario",
+                Errors = new List<string> { errorContent }
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al registrar usuario por admin");
+            return new ResultadoDTO
+            {
+                Success = false,
+                Message = "Error interno al registrar usuario",
+                Errors = new List<string> { ex.Message }
+            };
+        }
+    }
 }
+
 
 public class ServiceUnavailableException : Exception
 {

@@ -4,6 +4,7 @@ using AccionSocialModels.DTO;
 using AccionSocialModels.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Polly.Caching;
 using System.Diagnostics;
 using System.Net;
 
@@ -62,6 +63,32 @@ namespace AccionSocial.web.Controllers
                     RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
                 });
             }
+
+        }
+        [HttpPost("registrar-usuario")]
+        public async Task<IActionResult> RegistrarUsuario([FromBody] RegistroDTO registerDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ResultadoDTO
+                {
+                    Success = false,
+                    Message = "Datos inválidos",
+                    Errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList()
+                });
+            }
+
+            var result = await _adminService.RegistrarUsuarioAsync(registerDto);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
     }
 }

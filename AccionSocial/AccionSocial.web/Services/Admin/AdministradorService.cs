@@ -5,6 +5,7 @@ using AccionSocialModels.DTO;
 using AccionSocialModels.Response;
 using Microsoft.AspNetCore.WebUtilities;
 using NuGet.Protocol;
+using Polly.Caching;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -17,16 +18,19 @@ namespace AccionSocial.web.Services.Admin
         private readonly HttpClient _httpClient;
         private readonly ILogger<AdministradorService> _logger;
         private readonly ITokenStorageService _tokenService;
+        private readonly IAuthService _authService;
 
         // Usamos este constructor (inyectamos HttpClient directamente)
         public AdministradorService(
             HttpClient httpClient,
             ILogger<AdministradorService> logger,
-            ITokenStorageService tokenService)
+            ITokenStorageService tokenService,
+            IAuthService authService)
         {
             _httpClient = httpClient;
             _logger = logger;
             _tokenService = tokenService;
+            _authService = authService;
         }
 
         public async Task<PaginacionResponse<ListaUsuariosDTO>> ObtenerUsuariosPaginados(
@@ -117,7 +121,24 @@ namespace AccionSocial.web.Services.Admin
                 throw new ApplicationException("Error al obtener la lista de usuarios. Por favor intente nuevamente.", ex);
             }
         }
-
-
+        public async Task<ResultadoDTO> RegistrarUsuarioAsync(RegistroDTO registerDto)
+        {
+            try
+            {
+                return await _authService.RegisterByAdminAsync(registerDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al registrar usuario como administrador");
+                return new ResultadoDTO
+                {
+                    Success = false,
+                    Message = "Error al registrar usuario",
+                    Errors = new List<string> { ex.Message }
+                };
+            }
+        }
     }
+
 }
+

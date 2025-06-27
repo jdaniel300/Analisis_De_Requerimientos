@@ -1,6 +1,6 @@
 ﻿@using AccionSocialModels.Response
 @using AccionSocialModels.DTO
-@model PaginacionResponse<ListaUsuariosDTO>
+@model PaginacionResponse<ListaUsuariosDTO> 
 @{
     ViewData["Title"] = "Administración de Usuarios";
     Layout = "_LayoutPlantilla";
@@ -166,52 +166,86 @@
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title">
-                    <span class="fw-mediumbold"> New</span>
-                    <span class="fw-light"> Row </span>
+                    <span class="fw-mediumbold">Nuevo</span>
+                    <span class="fw-light">Usuario</span>
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <p class="small">
-                    Create a new row using this form, make sure you
-                    fill them all
-                </p>
-                <form>
+            <form method="post" action="/admin/registrar-usuario">
+                <div class="modal-body">
+                    <p class="small">
+                        Complete todos los campos para registrar un nuevo usuario
+                    </p>
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group form-group-default">
-                                <label>Name</label>
-                                <input id="addName" type="text" class="form-control" placeholder="fill name">
+                                <label>Nombre de Usuario</label>
+                                <input name="UserName" type="text" class="form-control" placeholder="Nombre de usuario" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group form-group-default">
+                                <label>Correo Electrónico</label>
+                                <input name="Email" type="email" class="form-control" placeholder="Correo electrónico" required>
                             </div>
                         </div>
                         <div class="col-md-6 pe-0">
                             <div class="form-group form-group-default">
-                                <label>Position</label>
-                                <input id="addPosition" type="text" class="form-control" placeholder="fill position">
+                                <label>Nombre</label>
+                                <input name="Nombre" type="text" class="form-control" placeholder="Nombre" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-group-default">
-                                <label>Office</label>
-                                <input id="addOffice" type="text" class="form-control" placeholder="fill office">
+                                <label>Apellidos</label>
+                                <input name="Apellidos" type="text" class="form-control" placeholder="Apellidos" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pe-0">
+                            <div class="form-group form-group-default">
+                                <label>Teléfono</label>
+                                <input name="PhoneNumber" type="tel" class="form-control" placeholder="Teléfono">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>Rol</label>
+                                <select name="Rol" class="form-control">
+                                    <option value="">Participante (por defecto)</option>
+                                    <option value="Admin">Administrador</option>
+                                    <option value="Participante">Participante</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pe-0">
+                            <div class="form-group form-group-default">
+                                <label>Contraseña</label>
+                                <input name="Password" type="password" class="form-control" placeholder="Contraseña" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>Confirmar Contraseña</label>
+                                <input name="ConfirmPassword" type="password" class="form-control" placeholder="Confirmar contraseña" required>
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" id="addRowButton" class="btn btn-primary">
-                    Add
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Close
-                </button>
-            </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="submit" class="btn btn-primary">
+                        Registrar
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        Cerrar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     <script>

@@ -78,8 +78,9 @@ builder.Services.AddScoped<IAdministradorService>(provider =>
                           .CreateClient("AccionSocialApi");
     var logger = provider.GetRequiredService<ILogger<AdministradorService>>();
     var tokenService = provider.GetRequiredService<ITokenStorageService>();
+    var authService = provider.GetRequiredService<IAuthService>();
 
-    return new AdministradorService(httpClient, logger, tokenService);
+    return new AdministradorService(httpClient, logger, tokenService, authService);
 });
 
 builder.Services.AddScoped<ITokenStorageService, BrowserTokenStorage>();

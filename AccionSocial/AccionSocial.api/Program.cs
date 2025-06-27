@@ -264,6 +264,7 @@ var authGroup = app.MapGroup("/api/auth").WithTags("Autenticacion");
 var consGroup = app.MapGroup("/api/consultas").WithTags("Consultas");
 var modGroup = app.MapGroup("/api/mod").WithTags("Modificaciones");
 
+
 ConfigureAuthEndpoints(authGroup);
 ConfigureConsultaEndpoints(consGroup);
 ConfigureModificacionEndpoints(modGroup);

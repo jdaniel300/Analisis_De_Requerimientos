@@ -1,5 +1,6 @@
 ﻿using AccionSocialModels.DTO;
 using AccionSocialModels.Response;
+using Polly.Caching;
 
 namespace AccionSocial.web.Services.Auth
 {
@@ -9,5 +10,8 @@ namespace AccionSocial.web.Services.Auth
         Task LogoutAsync();
         Task<LoginResponse> GetCurrentUserAsync();
         Task<RegisterResponse> RegisterAsync(RegistroDTO registerDto);
+        Task<ResultadoDTO> RegisterByAdminAsync(RegistroDTO registerDto);
+
+        
     }
 }

@@ -3,16 +3,36 @@
   "WorkspaceRootPath": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\taller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\taller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocial.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D77A77A-D8B8-44FB-81B9-A220A2F6C5DE}|AccionSocial.api\\AccionSocial.api.csproj|solutionrelative:accionsocial.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\migrations\\20250626224856_referenciatallerusuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\migrations\\20250626224856_referenciatallerusuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\auth\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\auth\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\myidentitydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\myidentitydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\auth\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\auth\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\admin\\iadministradorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\admin\\iadministradorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\services\\admin\\administradorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\services\\admin\\administradorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocial.web\\views\\admin\\administracionusuarios.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{BEF78ACD-4843-4ED1-A48F-ACBCEB66A16C}|AccionSocial.web\\AccionSocial.web.csproj|solutionrelative:accionsocial.web\\views\\admin\\administracionusuarios.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|d:\\repositorios\\analisis_de_requerimientos\\accionsocial\\accionsocialmodels\\dto\\registrodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C99ABCB7-3A6C-4600-866D-7470D67F96EF}|AccionSocialModels\\AccionSocialModels.csproj|solutionrelative:accionsocialmodels\\dto\\registrodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1072,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 15,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,41 +78,106 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "20250626224856_ReferenciaTallerUsuario.cs",
-              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Migrations\\20250626224856_ReferenciaTallerUsuario.cs",
-              "RelativeDocumentMoniker": "AccionSocialModels\\Migrations\\20250626224856_ReferenciaTallerUsuario.cs",
-              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Migrations\\20250626224856_ReferenciaTallerUsuario.cs",
-              "RelativeToolTip": "AccionSocialModels\\Migrations\\20250626224856_ReferenciaTallerUsuario.cs",
-              "ViewState": "AgIAAEYAAAAAAAAAAAAgwFIAAAArAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "RegistroDTO.cs",
+              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\DTO\\RegistroDTO.cs",
+              "RelativeDocumentMoniker": "AccionSocialModels\\DTO\\RegistroDTO.cs",
+              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\DTO\\RegistroDTO.cs",
+              "RelativeToolTip": "AccionSocialModels\\DTO\\RegistroDTO.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAwwCIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-26T22:49:06.827Z",
+              "WhenOpened": "2025-06-27T01:28:25.656Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Taller.cs",
-              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Taller.cs",
-              "RelativeDocumentMoniker": "AccionSocialModels\\Taller.cs",
-              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\Taller.cs",
-              "RelativeToolTip": "AccionSocialModels\\Taller.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAxwA4AAAAqAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "AdministracionUsuarios.cshtml",
+              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Admin\\AdministracionUsuarios.cshtml",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Views\\Admin\\AdministracionUsuarios.cshtml",
+              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Views\\Admin\\AdministracionUsuarios.cshtml",
+              "RelativeToolTip": "AccionSocial.web\\Views\\Admin\\AdministracionUsuarios.cshtml",
+              "ViewState": "AgIAAIoAAAAAAAAAAADwv/YAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-27T01:02:12.886Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AdministradorService.cs",
+              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Admin\\AdministradorService.cs",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Admin\\AdministradorService.cs",
+              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Admin\\AdministradorService.cs",
+              "RelativeToolTip": "AccionSocial.web\\Services\\Admin\\AdministradorService.cs",
+              "ViewState": "AgIAAHQAAAAAAAAAAADwv4sAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-26T22:18:43.719Z",
+              "WhenOpened": "2025-06-27T00:54:40.137Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IAdministradorService.cs",
+              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Admin\\IAdministradorService.cs",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Admin\\IAdministradorService.cs",
+              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Admin\\IAdministradorService.cs",
+              "RelativeToolTip": "AccionSocial.web\\Services\\Admin\\IAdministradorService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-27T00:54:00.089Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\IAuthService.cs",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Auth\\IAuthService.cs",
+              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\IAuthService.cs",
+              "RelativeToolTip": "AccionSocial.web\\Services\\Auth\\IAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-27T00:39:00.368Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "MyIdentityDbContext.cs",
-              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\MyIdentityDbContext.cs",
-              "RelativeDocumentMoniker": "AccionSocialModels\\MyIdentityDbContext.cs",
-              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocialModels\\MyIdentityDbContext.cs",
-              "RelativeToolTip": "AccionSocialModels\\MyIdentityDbContext.cs",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAQwEgAAAA1AAAAAAAAAA==",
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Controllers\\AdminController.cs",
+              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "AccionSocial.web\\Controllers\\AdminController.cs",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAUwF0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-26T22:17:11.623Z",
+              "WhenOpened": "2025-06-27T00:37:47.854Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\AuthService.cs",
+              "RelativeDocumentMoniker": "AccionSocial.web\\Services\\Auth\\AuthService.cs",
+              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.web\\Services\\Auth\\AuthService.cs",
+              "RelativeToolTip": "AccionSocial.web\\Services\\Auth\\AuthService.cs",
+              "ViewState": "AgIAAFABAAAAAAAAAAAswFwBAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-27T00:36:54.406Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Program.cs",
+              "RelativeDocumentMoniker": "AccionSocial.api\\Program.cs",
+              "ToolTip": "D:\\Repositorios\\Analisis_De_Requerimientos\\AccionSocial\\AccionSocial.api\\Program.cs",
+              "RelativeToolTip": "AccionSocial.api\\Program.cs",
+              "ViewState": "AgIAAO8CAAAAAAAAAAAAAP4CAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-27T00:32:47.885Z",
               "EditorCaption": ""
             }
           ]

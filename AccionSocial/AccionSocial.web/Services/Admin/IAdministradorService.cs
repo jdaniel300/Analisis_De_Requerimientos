@@ -1,5 +1,6 @@
 ﻿using AccionSocialModels.DTO;
 using AccionSocialModels.Response;
+using Polly.Caching;
 
 namespace AccionSocial.web.Services.Admin
 {
@@ -10,5 +11,6 @@ namespace AccionSocial.web.Services.Admin
         int tamanoPagina = 10,
         string filtro = "",
         string sortOrder = "");
+        Task<ResultadoDTO> RegistrarUsuarioAsync(RegistroDTO registerDto);
     }
 }
