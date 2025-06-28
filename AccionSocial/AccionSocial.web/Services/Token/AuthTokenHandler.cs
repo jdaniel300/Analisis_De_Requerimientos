@@ -43,8 +43,11 @@ namespace AccionSocial.web.Services.Token
 
         private bool IsAuthEndpoint(Uri requestUri)
         {
-            return requestUri?.AbsolutePath.EndsWith("/api/auth/login", StringComparison.OrdinalIgnoreCase) == true ||
-                   requestUri?.AbsolutePath.EndsWith("/api/auth/refresh-token", StringComparison.OrdinalIgnoreCase) == true;
+            if (requestUri == null) return false;
+        
+        var authEndpoints = new[] { "/api/auth/login", "/api/auth/refresh" };
+        return authEndpoints.Any(endpoint => 
+            requestUri.AbsolutePath.Contains(endpoint, StringComparison.OrdinalIgnoreCase));
         }
 
         private async Task AttachTokenAsync(HttpRequestMessage request)

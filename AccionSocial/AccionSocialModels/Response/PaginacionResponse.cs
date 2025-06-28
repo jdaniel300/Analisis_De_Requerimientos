@@ -1,5 +1,7 @@
 ﻿
 
+using AccionSocialModels.DTO;
+
 namespace AccionSocialModels.Response
 {
     public class PaginacionResponse <T>
@@ -9,5 +11,6 @@ namespace AccionSocialModels.Response
         public int Total { get; set; }
 
         public List<T> Datos { get; set; }
+
     }
 }

@@ -17,57 +17,38 @@ namespace AccionSocial.web.Services.Admin
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<AdministradorService> _logger;
-        private readonly ITokenStorageService _tokenService;
-        private readonly IAuthService _authService;
+       
 
         // Usamos este constructor (inyectamos HttpClient directamente)
         public AdministradorService(
-            HttpClient httpClient,
-            ILogger<AdministradorService> logger,
-            ITokenStorageService tokenService,
-            IAuthService authService)
+            IHttpClientFactory httpClientFactory,
+            ILogger<AdministradorService> logger
+            )
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("AccionSocialApi");
             _logger = logger;
-            _tokenService = tokenService;
-            _authService = authService;
+            
         }
 
         public async Task<PaginacionResponse<ListaUsuariosDTO>> ObtenerUsuariosPaginados(
-     int pagina = 1,
-     int tamanoPagina = 10,
-     string filtro = "",
-     string sortOrder = "")
+        int pagina = 1, int tamanoPagina = 10, string filtro = "", string sortOrder = "")
         {
             _logger.LogInformation("Iniciando ObtenerUsuariosPaginados - Página: {Pagina}, Tamaño: {TamanoPagina}", pagina, tamanoPagina);
 
             try
             {
-                // 1. Validación de parámetros
+                // Validación de parámetros
                 pagina = Math.Max(1, pagina);
                 tamanoPagina = Math.Clamp(tamanoPagina, 1, 100);
 
-                // 2. Obtención y validación del token
-                var token = await _tokenService.GetTokenAsync();
-                if (string.IsNullOrEmpty(token))
-                {
-                    _logger.LogWarning("No se encontró token de autenticación");
-                    throw new UnauthorizedAccessException("No authentication token available");
-                }
-
-                // 3. Configuración del HttpClient
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                _httpClient.DefaultRequestHeaders.Accept.Clear();
-                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                // 4. Configuración de serialización JSON
+                // Configuración de serialización
                 var jsonOptions = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
                     Converters = { new DateOnlyJsonConverter() }
                 };
 
-                // 5. Construcción de la URL
+                // Construcción de la URL
                 var queryParams = new Dictionary<string, string>
                 {
                     ["pagina"] = pagina.ToString(),
@@ -79,25 +60,12 @@ namespace AccionSocial.web.Services.Admin
                 var requestUri = QueryHelpers.AddQueryString("api/consultas/admin/usuarios", queryParams);
                 _logger.LogDebug("Solicitando datos a: {RequestUri}", requestUri);
 
-                // 6. Ejecución de la solicitud HTTP
+                // Ejecución de la solicitud (el token se maneja automáticamente por AuthTokenHandler)
                 var response = await _httpClient.GetAsync(requestUri);
 
-                // 7. Manejo de errores HTTP
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    _logger.LogError("Error en la API - Código: {StatusCode}, Respuesta: {ErrorContent}",
-                        response.StatusCode, errorContent);
+                // Procesamiento de la respuesta
+                response.EnsureSuccessStatusCode(); // Lanza excepción si hay error
 
-                    if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        throw new UnauthorizedAccessException("Access denied. Please login again.");
-                    }
-
-                    response.EnsureSuccessStatusCode(); // Lanza excepción para otros códigos de error
-                }
-
-                // 8. Procesamiento de la respuesta
                 var content = await response.Content.ReadAsStringAsync();
                 _logger.LogDebug("Respuesta recibida: {Content}", content);
 
@@ -115,17 +83,57 @@ namespace AccionSocial.web.Services.Admin
                     Datos = new List<ListaUsuariosDTO>()
                 };
             }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                _logger.LogWarning("Acceso no autorizado - Redirigiendo a login");
+                throw new UnauthorizedAccessException("Acceso denegado. Por favor inicie sesión nuevamente.", ex);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error crítico en ObtenerUsuariosPaginados");
                 throw new ApplicationException("Error al obtener la lista de usuarios. Por favor intente nuevamente.", ex);
             }
         }
+
         public async Task<ResultadoDTO> RegistrarUsuarioAsync(RegistroDTO registerDto)
         {
+            _logger.LogInformation("Iniciando registro de nuevo usuario como administrador");
+
             try
             {
-                return await _authService.RegisterByAdminAsync(registerDto);
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new DateOnlyJsonConverter() }
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("/api/admin/register", registerDto);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("Error en el registro. Código: {StatusCode}, Respuesta: {Response}",
+                        response.StatusCode, responseContent);
+
+                    var errorResult = JsonSerializer.Deserialize<ResultadoDTO>(responseContent, jsonOptions)
+                        ?? new ResultadoDTO
+                        {
+                            Success = false,
+                            Message = "Error desconocido durante el registro",
+                            Errors = new List<string> { responseContent }
+                        };
+
+                    return errorResult;
+                }
+
+                _logger.LogInformation("Usuario registrado exitosamente");
+                return JsonSerializer.Deserialize<ResultadoDTO>(responseContent, jsonOptions)
+                    ?? new ResultadoDTO { Success = true, Message = "Usuario registrado exitosamente" };
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                _logger.LogWarning("Acceso no autorizado durante el registro de usuario");
+                throw new UnauthorizedAccessException("Acceso denegado. Por favor inicie sesión nuevamente.", ex);
             }
             catch (Exception ex)
             {
@@ -136,6 +144,28 @@ namespace AccionSocial.web.Services.Admin
                     Message = "Error al registrar usuario",
                     Errors = new List<string> { ex.Message }
                 };
+            }
+        }
+
+        public async Task<IEnumerable<Rol>> ObtenerRolesAsync()
+        {
+            try
+            {
+                // Hacer la solicitud GET al endpoint
+                var response = await _httpClient.GetAsync("api/consultas/roles/");
+
+                // Verificar si la respuesta fue exitosa
+                response.EnsureSuccessStatusCode();
+
+                // Leer y deserializar la respuesta
+                var roles = await response.Content.ReadFromJsonAsync<IEnumerable<Rol>>();
+
+                return roles ?? Enumerable.Empty<Rol>();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Error al obtener los roles");
+                throw; // Puedes manejar esto de otra forma si lo prefieres
             }
         }
     }

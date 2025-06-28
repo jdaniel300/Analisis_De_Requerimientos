@@ -261,13 +261,13 @@ await InitializeDatabase(app);
 
 /* ==================== ENDPOINTS ==================== */
 var authGroup = app.MapGroup("/api/auth").WithTags("Autenticacion");
-var consGroup = app.MapGroup("/api/consultas").WithTags("Consultas");
-var modGroup = app.MapGroup("/api/mod").WithTags("Modificaciones");
-
-
 ConfigureAuthEndpoints(authGroup);
+var consGroup = app.MapGroup("/api/consultas").WithTags("Consultas");
 ConfigureConsultaEndpoints(consGroup);
+var modGroup = app.MapGroup("/api/mod").WithTags("Modificaciones");
 ConfigureModificacionEndpoints(modGroup);
+
+
 
 //--------------------PUEBAS------------------------>
 // PARA PRUEBAS -> Ejemplo de endpoint protegido 
@@ -401,42 +401,65 @@ async Task InitializeRolesAndAdminUser(IServiceProvider services, ILogger<Progra
     }
 }
 
+
+//AHUTENTICACION
 void ConfigureAuthEndpoints(RouteGroupBuilder group)
 {
     // Login
     group.MapPost("/login", async (
-        [FromBody] LoginDTO request,
-        [FromServices] UserManager<Usuario> userManager,
-        [FromServices] SignInManager<Usuario> signInManager,
-        [FromServices] ITokenService tokenService,
-        [FromServices] ILogger<Program> logger) =>
+     [FromBody] LoginDTO request,
+     [FromServices] UserManager<Usuario> userManager,
+     [FromServices] SignInManager<Usuario> signInManager,
+     [FromServices] ITokenService tokenService,
+     [FromServices] IOptions<JwtSettings> jwtSettings,
+     [FromServices] ILogger<Program> logger) =>
     {
+        // 1. Buscar usuario por email o nombre de usuario
         var user = await userManager.FindByEmailAsync(request.UsernameOrEmail) ??
                    await userManager.FindByNameAsync(request.UsernameOrEmail);
 
         if (user == null || !user.Estado)
+        {
+            logger.LogWarning("Intento de login fallido para {UsernameOrEmail}", request.UsernameOrEmail);
             return Results.Unauthorized();
+        }
 
+        // 2. Verificar contraseña
         var result = await signInManager.PasswordSignInAsync(
             user.UserName, request.Password, request.RememberMe, lockoutOnFailure: true);
 
         if (!result.Succeeded)
+        {
+            logger.LogWarning("Credenciales inválidas para usuario {UserId}", user.Id);
             return Results.Unauthorized();
+        }
 
+        // 3. Generar tokens
         var roles = await userManager.GetRolesAsync(user);
         var token = tokenService.GenerateJwtToken(user, roles);
+        var refreshToken = tokenService.GenerateRefreshToken();
 
-        return Results.Ok(new
+        // 4. Actualizar usuario con refresh token
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpireDays);
+        await userManager.UpdateAsync(user);
+
+        // 5. Preparar respuesta
+        var response = new
         {
             Token = token,
+            RefreshToken = refreshToken,
             User = new
             {
-                user.UserName,
-                user.Email,
-                NombreCompleto = $"{user.Nombre} {user.Apellidos}",
-                Roles = roles
+                userName = user.UserName,
+                email = user.Email,
+                nombreCompleto = $"{user.Nombre} {user.Apellidos}",
+                roles = roles.ToList()
             }
-        });
+        };
+
+        logger.LogInformation("Login exitoso para usuario {UserId}", user.Id);
+        return Results.Ok(response);
     }).WithName("Login").WithOpenApi();
 
     group.MapPost("/refresh-token", async (
@@ -446,39 +469,64 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
     [FromServices] ILogger<Program> logger,
     [FromServices] IOptions<JwtSettings> jwtSettings) =>
     {
-        // Validar que el token no esté invalidado
-        if (await tokenService.IsTokenInvalidatedAsync(request.Token))
-            return Results.Unauthorized();
-
-        // Validar el token principal
-        var principal = tokenService.GetPrincipalFromToken(request.Token);
-        if (principal == null)
-            return Results.Unauthorized();
-
-        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-            return Results.Unauthorized();
-
-        var user = await userManager.FindByIdAsync(userId);
-        if (user == null || user.RefreshToken != request.RefreshToken ||
-            user.RefreshTokenExpiry <= DateTime.UtcNow)
-            return Results.Unauthorized();
-
-        // Generar nuevo token
-        var roles = await userManager.GetRolesAsync(user);
-        var newToken = tokenService.GenerateJwtToken(user, roles);
-
-        // Opcional: generar nuevo refresh token
-        var newRefreshToken = tokenService.GenerateRefreshToken();
-        user.RefreshToken = newRefreshToken;
-        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpireDays);
-        await userManager.UpdateAsync(user);
-
-        return Results.Ok(new
+        try
         {
-            Token = newToken,
-            RefreshToken = newRefreshToken
-        });
+            // Validar que el token no esté invalidado
+            if (await tokenService.IsTokenInvalidatedAsync(request.Token))
+            {
+                logger.LogWarning("Intento de refresh con token invalidado");
+                return Results.Unauthorized();
+            }
+
+            // Validar el token principal (ignorando expiración)
+            var principal = tokenService.GetPrincipalFromToken(request.Token);
+            if (principal == null)
+            {
+                logger.LogWarning("Token principal inválido");
+                return Results.Unauthorized();
+            }
+
+            var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                logger.LogWarning("Token no contiene userId");
+                return Results.Unauthorized();
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null || user.RefreshToken != request.RefreshToken ||
+                user.RefreshTokenExpiry <= DateTime.UtcNow)
+            {
+                logger.LogWarning("Refresh token no coincide o ha expirado");
+                return Results.Unauthorized();
+            }
+
+            // Invalidar el token anterior
+            await tokenService.InvalidateTokenAsync(request.Token);
+
+            // Generar nuevo token
+            var roles = await userManager.GetRolesAsync(user);
+            var newToken = tokenService.GenerateJwtToken(user, roles);
+
+            // Generar nuevo refresh token
+            var newRefreshToken = tokenService.GenerateRefreshToken();
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpireDays);
+            await userManager.UpdateAsync(user);
+
+            logger.LogInformation("Token refrescado exitosamente para el usuario {UserId}", userId);
+
+            return Results.Ok(new AuthResult
+            {
+                Token = newToken,
+                RefreshToken = newRefreshToken
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error inesperado en el endpoint de refresh-token");
+            return Results.Problem("Error interno del servidor");
+        }
     }).WithName("RefreshToken").WithOpenApi();
 
     // Logout
@@ -825,7 +873,7 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
     // [Resto de endpoints de autenticación...]
     // (Mantener la misma estructura para los demás endpoints)
 }
-
+//CONSILTAS
 void ConfigureConsultaEndpoints(RouteGroupBuilder group)
 {
     // Endpoints de consulta
@@ -838,7 +886,7 @@ void ConfigureConsultaEndpoints(RouteGroupBuilder group)
     }).WithName("ObtenerRolPorId").WithOpenApi();
 
     // Obtener lista de todos los roles
-    group.MapGet("/consulta/roles/", async (
+    group.MapGet("/roles/", async (
         [FromServices] RoleManager<Rol> roleManager) =>
     {
         var roles = roleManager.Roles.ToList();
@@ -958,7 +1006,7 @@ void ConfigureConsultaEndpoints(RouteGroupBuilder group)
     });
 
 }
-
+//MODIFICACIONES
 void ConfigureModificacionEndpoints(RouteGroupBuilder group)
 {
 

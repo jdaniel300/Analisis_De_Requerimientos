@@ -1,9 +1,13 @@
-﻿@using AccionSocialModels.Response
+﻿@using AccionSocial.web.Views.ViewModel
+@using AccionSocialModels.Response
 @using AccionSocialModels.DTO
-@model PaginacionResponse<ListaUsuariosDTO> 
+
+
 @{
     ViewData["Title"] = "Administración de Usuarios";
     Layout = "_LayoutPlantilla";
+    @model AdminUsuariosViewModel
+    
 }
 
 <div class="container m-5">
@@ -63,9 +67,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if (Model?.Datos?.Any() == true)
+                                    @if (Model?.Usuarios.Datos?.Any() == true)
                                     {
-                                        foreach (var usuario in Model.Datos)
+                                        foreach (var usuario in Model.Usuarios.Datos)
                                         {
                                             <tr>
                                                 <td>@usuario.UserName</td>
@@ -93,7 +97,7 @@
                                                 @if (Model != null)
                                                 {
                                                     <div class="small text-muted">
-                                                        Total registros: @Model.Total
+                                                        Total registros: @Model.Usuarios.Total
                                                     </div>
                                                 }
                                             </td>
@@ -103,18 +107,18 @@
                             </table>
                             
                             <!-- Paginación -->
-                            @if (Model != null && Model.Total > 0)
+                            @if (Model != null && Model.Usuarios.Total > 0)
                             {
-                                var totalPaginas = (int)Math.Ceiling((double)Model.Total / Model.TamanoPagina);
+                                var totalPaginas = (int)Math.Ceiling((double)Model.Usuarios.Total / Model.Usuarios.TamanoPagina);
                                 
                                 <div class="row">
                                     <div class="col-md-12">
                                         <nav aria-label="Page navigation">
                                             <ul class="pagination justify-content-center">
-                                                <li class="page-item @(Model.Pagina == 1 ? "disabled" : "")">
+                                                <li class="page-item @(Model.Usuarios.Pagina == 1 ? "disabled" : "")">
                                                     <a class="page-link" 
                                                        asp-action="AdministracionUsuarios"
-                                                       asp-route-pagina="@(Model.Pagina - 1)"
+                                                       asp-route-pagina="@(Model.Usuarios.Pagina - 1)"
                                                        asp-route-sortOrder="@ViewData["CurrentSort"]"
                                                        asp-route-currentFilter="@ViewData["CurrentFilter"]">
                                                         Anterior
@@ -123,7 +127,7 @@
                                                 
                                                 @for (int i = 1; i <= totalPaginas; i++)
                                                 {
-                                                    <li class="page-item @(i == Model.Pagina ? "active" : "")">
+                                                    <li class="page-item @(i == Model.Usuarios.Pagina ? "active" : "")">
                                                         <a class="page-link" 
                                                            asp-action="AdministracionUsuarios"
                                                            asp-route-pagina="@i"
@@ -134,10 +138,10 @@
                                                     </li>
                                                 }
                                                 
-                                                <li class="page-item @(Model.Pagina == totalPaginas ? "disabled" : "")">
+                                                <li class="page-item @(Model.Usuarios.Pagina == totalPaginas ? "disabled" : "")">
                                                     <a class="page-link" 
                                                        asp-action="AdministracionUsuarios"
-                                                       asp-route-pagina="@(Model.Pagina + 1)"
+                                                       asp-route-pagina="@(Model.Usuarios.Pagina + 1)"
                                                        asp-route-sortOrder="@ViewData["CurrentSort"]"
                                                        asp-route-currentFilter="@ViewData["CurrentFilter"]">
                                                         Siguiente
@@ -150,8 +154,8 @@
                                 
                                 <div class="row">
                                     <div class="col-md-12 text-center text-muted small">
-                                        Mostrando página @Model.Pagina de @totalPaginas - 
-                                        Registros @((Model.Pagina - 1) * Model.TamanoPagina + 1) a @Math.Min(Model.Pagina * Model.TamanoPagina, Model.Total) de @Model.Total
+                                        Mostrando página @Model.Usuarios.Pagina de @totalPaginas - 
+                                        Registros @((Model.Usuarios.Pagina - 1) * Model.Usuarios.TamanoPagina + 1) a @Math.Min(Model.Usuarios.Pagina * Model.Usuarios.TamanoPagina, Model.Usuarios.Total) de @Model.Usuarios.Total
                                     </div>
                                 </div>
                             }
@@ -173,8 +177,21 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <form method="post" action="/admin/registrar-usuario">
+            <form method="post" asp-controller="Admin" asp-action="RegistrarUsuario">
                 <div class="modal-body">
+                     <div id="generalErrorsContainer"></div>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    
                     <p class="small">
                         Complete todos los campos para registrar un nuevo usuario
                     </p>
@@ -182,53 +199,66 @@
                         <div class="col-sm-12">
                             <div class="form-group form-group-default">
                                 <label>Nombre de Usuario</label>
-                                <input name="UserName" type="text" class="form-control" placeholder="Nombre de usuario" required>
+                                <input asp-for="RegistroModel.UserName" type="text" class="form-control" placeholder="Nombre de usuario" required>
+                                <span asp-validation-for="RegistroModel.UserName" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group form-group-default">
                                 <label>Correo Electrónico</label>
-                                <input name="Email" type="email" class="form-control" placeholder="Correo electrónico" required>
+                                <input asp-for="RegistroModel.Email" type="email" class="form-control" placeholder="Correo electrónico" required>
+                                <span asp-validation-for="RegistroModel.Email" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6 pe-0">
                             <div class="form-group form-group-default">
                                 <label>Nombre</label>
-                                <input name="Nombre" type="text" class="form-control" placeholder="Nombre" required>
+                                <input asp-for="RegistroModel.Nombre" type="text" class="form-control" placeholder="Nombre" required>
+                                <span asp-validation-for="RegistroModel.Nombre" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-group-default">
                                 <label>Apellidos</label>
-                                <input name="Apellidos" type="text" class="form-control" placeholder="Apellidos" required>
+                                <input asp-for="RegistroModel.Apellidos" type="text" class="form-control" placeholder="Apellidos" required>
+                                <span asp-validation-for="RegistroModel.Apellidos" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6 pe-0">
                             <div class="form-group form-group-default">
                                 <label>Teléfono</label>
-                                <input name="PhoneNumber" type="tel" class="form-control" placeholder="Teléfono">
+                                <input asp-for="RegistroModel.PhoneNumber" type="tel" class="form-control" placeholder="Teléfono">
+                                <span asp-validation-for="RegistroModel.PhoneNumber" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-group-default">
                                 <label>Rol</label>
-                                <select name="Rol" class="form-control">
+                                <select asp-for="RegistroModel.Rol" class="form-control" id="selectRol">
                                     <option value="">Participante (por defecto)</option>
-                                    <option value="Admin">Administrador</option>
-                                    <option value="Participante">Participante</option>
+                                    @if (ViewBag.Roles != null)
+                                    {
+                                        foreach (var rol in ViewBag.Roles)
+                                        {
+                                            <option value="@rol.Name">@rol.Name</option>
+                                        }
+                                    }
                                 </select>
+                                <span asp-validation-for="RegistroModel.Rol" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6 pe-0">
                             <div class="form-group form-group-default">
                                 <label>Contraseña</label>
-                                <input name="Password" type="password" class="form-control" placeholder="Contraseña" required>
+                                <input asp-for="RegistroModel.Password" type="password" class="form-control" placeholder="Contraseña" required>
+                                <span asp-validation-for="RegistroModel.Password" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-group-default">
                                 <label>Confirmar Contraseña</label>
-                                <input name="ConfirmPassword" type="password" class="form-control" placeholder="Confirmar contraseña" required>
+                                <input asp-for="RegistroModel.ConfirmPassword" type="password" class="form-control" placeholder="Confirmar contraseña" required>
+                                <span asp-validation-for="RegistroModel.ConfirmPassword" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -246,7 +276,6 @@
     </div>
 </div>
 
-
 @section Scripts {
     <script>
         $(document).ready(function() {
@@ -263,5 +292,102 @@
                     </text>
             }
         });
+
+        $('#addRowModal form').on('submit', function(e) {
+        e.preventDefault();
+        
+        var form = $(this);
+        var url = form.attr('action');
+        var formData = form.serialize();
+        
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: formData,
+            dataType: "json", // Esperamos una respuesta JSON
+            success: function(response) {
+                if (response.success) {
+                    // Cierra el modal y recarga la página o actualiza la tabla
+                    $('#addRowModal').modal('hide');
+                    // Opción 1: Recargar la página
+                    location.reload();
+                    // Opción 2: Actualizar solo la tabla de usuarios
+                    // refreshUserTable();
+                } else {
+                    // Muestra los errores en el modal
+                    showErrorsInModal(response.errors);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                // Muestra un mensaje genérico de error
+                showErrorsInModal(["Ocurrió un error al procesar la solicitud"]);
+            }
+            });
+        });
+        
+        function showErrorsInModal(errors) {
+            // 1. Limpia errores anteriores
+            $('.text-danger').text(''); // Limpia mensajes de campo específicos
+            $('.alert-danger').remove(); // Elimina alertas generales
+            
+            // 2. Agrupa errores por campo
+            var fieldErrors = {
+                // Mapea nombres de errores a campos del formulario
+                "correo electrónico": "RegistroModel.Email",
+                "nombre": "RegistroModel.Nombre",
+                "contraseña": "RegistroModel.Password",
+                "nombre de usuario": "RegistroModel.UserName",
+                "apellidos": "RegistroModel.Apellidos",
+                "phonenumber": "RegistroModel.PhoneNumber",
+                "confirmación de contraseña": "RegistroModel.ConfirmPassword"
+            };
+            
+            var generalErrors = [];
+            
+            // 3. Procesa cada error
+            errors.forEach(function(error) {
+                var matched = false;
+                
+                // Busca si el error corresponde a un campo específico
+                for (var key in fieldErrors) {
+                    if (error.toLowerCase().includes(key)) {
+                        var fieldName = fieldErrors[key];
+                        var $field = $('[name="' + fieldName + '"]');
+                        if ($field.length) {
+                            $field.siblings('.text-danger').text(error);
+                            matched = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Si no coincide con ningún campo, agrega a errores generales
+                if (!matched) {
+                    generalErrors.push(error);
+                }
+            });
+            
+            // 4. Muestra errores generales si existen
+            if (generalErrors.length > 0) {
+                var alertHtml = '<div class="alert alert-danger"><ul>';
+                
+                generalErrors.forEach(function(error) {
+                    alertHtml += '<li>' + error + '</li>';
+                });
+                
+                alertHtml += '</ul></div>';
+                
+                // Inserta la alerta después del título del modal
+                $('.modal-title').after(alertHtml);
+            }
+        }
+        
+        // Limpia los errores cuando se cierra el modal
+        $('#addRowModal').on('hidden.bs.modal', function () {
+            $('.text-danger').text('');
+            $('.alert-danger').remove();
+        });
+
     </script>
 }
