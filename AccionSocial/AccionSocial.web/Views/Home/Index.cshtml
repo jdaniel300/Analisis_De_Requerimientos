@@ -3,12 +3,39 @@
     Layout = "_LayoutPlantilla";
 }
 
+<style>
+    body, .card, .card * {
+        color: #406e7b !important;
+    }
+
+    .logo-bar {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        margin-bottom: 15px;
+    }
+
+    .logo-bar img {
+        height: 50px;
+        margin-left: 10px;
+    }
+</style>
+
 <div class="container mt-5">
     <div class="page-inner">
+        <div class="logo-bar">
+            <form class="d-flex me-2">
+                <input class="form-control me-2" type="search" placeholder="Buscar..." aria-label="Buscar">
+                <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+            </form>
+            <img src="~/Logo.jfif" alt="Logo" />
+        </div>
+
         <div>
             <h3 class="fw-bold mb-3">Reportes</h3>
         </div>
     </div>
+
     <div class="row">
         <div class="col-sm-6 col-md-3">
             <div class="card card-stats card-round">
@@ -87,6 +114,7 @@
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-6">
             <div class="card">
@@ -108,8 +136,7 @@
                 </div>
                 <div class="card-body">
                     <div class="chart-container">
-                        <canvas id="pieChart"
-                                style="width: 50%; height: 50%"></canvas>
+                        <canvas id="pieChart" style="width: 50%; height: 50%"></canvas>
                     </div>
                 </div>
             </div>
