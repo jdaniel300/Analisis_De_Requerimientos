@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace AccionSocialModels.DTO
 {
@@ -30,5 +31,7 @@ namespace AccionSocialModels.DTO
         public string ConfirmPassword { get; set; }
 
         public string? Rol { get; set; }
+
+        public List<SelectListItem> RolesDisponibles { get; set; } = new List<SelectListItem>();
     }
 }

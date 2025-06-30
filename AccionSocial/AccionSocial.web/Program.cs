@@ -11,11 +11,39 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Polly;
+using Polly.Extensions.Http;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == HttpStatusCode.Unauthorized)
+        .WaitAndRetryAsync(
+            retryCount: 3,
+            sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+            onRetry: (outcome, delay, retryCount, context) =>
+            {
+                // Log opcional si se pasa un logger en el contexto
+                if (context.TryGetValue("logger", out var loggerObj) && loggerObj is ILogger logger)
+                {
+                    logger.LogWarning(
+                        $"Reintento #{retryCount} debido a: {outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString()}");
+                }
+            });
+}
 
+static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .CircuitBreakerAsync(
+            handledEventsAllowedBeforeBreaking: 5,
+            durationOfBreak: TimeSpan.FromSeconds(30));
+}
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<CookiePolicyOptions>(options =>
@@ -39,9 +67,12 @@ builder.WebHost.ConfigureKestrel(serverOptions => {
     serverOptions.ListenAnyIP(8080);
 });
 
-builder.Services.AddScoped<ITokenStorageService, BrowserTokenStorage>();
+
+
+builder.Services.AddScoped<IAdministradorService, AdministradorService>();
 builder.Services.AddScoped<ITokenRefreshService, TokenRefreshService>();
-builder.Services.AddScoped<AuthTokenHandler>();
+builder.Services.AddScoped<ITokenStorageService, BrowserTokenStorage>();
+builder.Services.AddTransient<AuthTokenHandler>();
 
 
 builder.Services.AddHttpClient("AccionSocialApi", client =>
@@ -60,6 +91,18 @@ builder.Services.AddHttpClient("AccionSocialApi", client =>
 .AddPolicyHandler(GetRetryPolicy())
 .AddPolicyHandler(GetCircuitBreakerPolicy());
 
+builder.Services.AddHttpClient<ITokenRefreshService, TokenRefreshService>(client =>
+{
+    var baseUrl = builder.Configuration["ApiSettings:BaseUrl"]
+        ?? throw new InvalidOperationException("Missing ApiSettings:BaseUrl");
+    client.BaseAddress = new Uri(baseUrl);
+
+    // Configuración específica para refresh tokens
+    client.DefaultRequestHeaders.Accept.Clear();
+    client.DefaultRequestHeaders.Accept.Add(
+        new MediaTypeWithQualityHeaderValue("application/json"));
+});
+
 
 builder.Services.AddScoped<IAuthService>(provider =>
 {
@@ -72,19 +115,7 @@ builder.Services.AddScoped<IAuthService>(provider =>
     return new AuthService(httpClient, tokenService, logger, cache);
 });
 
-builder.Services.AddScoped<IAdministradorService>(provider =>
-{
-    var httpClient = provider.GetRequiredService<IHttpClientFactory>()
-                          .CreateClient("AccionSocialApi");
-    var logger = provider.GetRequiredService<ILogger<AdministradorService>>();
-    var tokenService = provider.GetRequiredService<ITokenStorageService>();
-    var authService = provider.GetRequiredService<IAuthService>();
 
-    return new AdministradorService(httpClient, logger, tokenService, authService);
-});
-
-builder.Services.AddScoped<ITokenStorageService, BrowserTokenStorage>();
-builder.Services.AddTransient<AuthTokenHandler>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -130,9 +161,16 @@ builder.Services.AddCors(options =>
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials() // Crucial para autenticación
+            .AllowCredentials() 
             .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
     });
+});
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+    options.HttpOnly = HttpOnlyPolicy.Always;
+    options.Secure = CookieSecurePolicy.Always;
 });
 
 builder.Services.AddAntiforgery(options =>
@@ -212,21 +250,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+
+
 app.Run();
-
-static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-{
-    return Policy<HttpResponseMessage>
-        .Handle<HttpRequestException>()
-        .OrResult(x => !x.IsSuccessStatusCode)
-        .WaitAndRetryAsync(3, retryAttempt =>
-            TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-}
-
-static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
-{
-    return Policy<HttpResponseMessage>
-        .Handle<HttpRequestException>()
-        .OrResult(x => (int)x.StatusCode >= 500)
-        .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
-}

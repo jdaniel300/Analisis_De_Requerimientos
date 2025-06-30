@@ -45,32 +45,50 @@ public class AuthService : IAuthService
             _logger.LogInformation("Iniciando autenticación para {Username}", loginDto.UsernameOrEmail);
 
             var response = await _httpClient.PostAsJsonAsync("/api/auth/login", loginDto);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            _logger.LogDebug("Respuesta de la API: {StatusCode} - {Content}",
-                response.StatusCode, responseContent);
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning("Autenticación fallida. Status: {StatusCode}", response.StatusCode);
-                throw new UnauthorizedAccessException(
-                    response.StatusCode == HttpStatusCode.Unauthorized
-                        ? "Credenciales inválidas"
-                        : $"Error en el servidor: {response.StatusCode}");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("Autenticación fallida. Status: {StatusCode} - {Content}",
+                    response.StatusCode, errorContent);
+                throw new UnauthorizedAccessException("Credenciales inválidas");
             }
 
-            var result = JsonSerializer.Deserialize<LoginResponse>(responseContent, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            }) ?? throw new InvalidOperationException("Respuesta inválida del servidor");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            _logger.LogDebug("Respuesta de login: {Content}", responseContent);
 
-            if (string.IsNullOrWhiteSpace(result.Token))
+            // Deserializar la respuesta
+            var responseObj = JsonSerializer.Deserialize<JsonElement>(responseContent);
+
+            // Validar y extraer token
+            if (!responseObj.TryGetProperty("token", out var tokenProp) ||
+                string.IsNullOrEmpty(tokenProp.GetString()))
             {
-                _logger.LogError("Token recibido es nulo o vacío");
-                throw new InvalidOperationException("Token inválido recibido del servidor");
+                throw new InvalidOperationException("Token inválido o faltante en la respuesta");
             }
 
-            // Almacenar token y refresh token
+            // Construir objeto de respuesta
+            var result = new LoginResponse
+            {
+                Token = tokenProp.GetString()!,
+                RefreshToken = responseObj.TryGetProperty("refreshToken", out var rt) ? rt.GetString() : null,
+                User = new LoginResponse.UserData()
+            };
+
+            // Extraer datos de usuario si existen
+            if (responseObj.TryGetProperty("user", out var userProp))
+            {
+                result.User.userName = userProp.TryGetProperty("userName", out var un) ? un.GetString() : null;
+                result.User.email = userProp.TryGetProperty("email", out var em) ? em.GetString() : null;
+                result.User.nombreCompleto = userProp.TryGetProperty("nombreCompleto", out var nc) ? nc.GetString() : null;
+
+                if (userProp.TryGetProperty("roles", out var rolesProp))
+                {
+                    result.User.roles = JsonSerializer.Deserialize<List<string>>(rolesProp.ToString());
+                }
+            }
+
+            // Almacenar tokens
             await _tokenService.SetTokenAsync(result.Token);
             if (!string.IsNullOrEmpty(result.RefreshToken))
             {
@@ -80,19 +98,9 @@ public class AuthService : IAuthService
             _logger.LogInformation("Autenticación exitosa para {Username}", result.User?.userName);
             return result;
         }
-        catch (JsonException ex)
-        {
-            _logger.LogError(ex, "Error al deserializar la respuesta del servidor");
-            throw new InvalidOperationException("Formato de respuesta inválido", ex);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "Error de conexión con el servidor");
-            throw new ServiceUnavailableException("No se pudo conectar con el servidor", ex);
-        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error inesperado durante la autenticación");
+            _logger.LogError(ex, "Error durante la autenticación");
             throw;
         }
     }
@@ -388,15 +396,5 @@ public class ServiceUnavailableException : Exception
         : base(message, inner) { }
 }
 
-public class RefreshTokenResponse
-{
-    public string Token { get; set; }
-    public string RefreshToken { get; set; }
-}
-
-public class ErrorResponse
-{
-    public string Message { get; set; }
-}
 
 
