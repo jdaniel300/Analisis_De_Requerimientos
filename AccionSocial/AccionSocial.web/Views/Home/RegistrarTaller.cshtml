@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "Registrar Taller";
+    Layout = "_LayoutPlantilla";
+}
+
+<div class="container mt-4">
+    <div class="page-inner">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold">Registrar Taller</h3>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdveYeJYieakBF_F7wtHnPjBiG0dl0OPWlqE4eWzIsIuOjAlw/viewform" target="_blank" class="btn btn-outline-primary">
+                    Llenar encuesta de talleres anteriores
+                </a>
+            </div>
+        </div>
+
+        <!-- Filtro por días -->
+        <div class="row mb-4">
+            <div class="col d-flex justify-content-center">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-secondary" onclick="filtrarPorDia('lunes')">Lunes</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="filtrarPorDia('martes')">Martes</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="filtrarPorDia('miercoles')">Miércoles</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="filtrarPorDia('jueves')">Jueves</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="filtrarPorDia('viernes')">Viernes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas de talleres -->
+        <div id="contenedor-talleres" class="row">
+            <!-- Taller lunes -->
+            <div class="col-sm-6 col-lg-4 taller-card" data-dia="lunes">
+                <div class="card card-stats card-round">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 d-flex align-items-center justify-content-center">
+                                <div class="icon-big text-center icon-primary bubble-shadow-small">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <div class="numbers">
+                                    <p class="card-category">Taller de Liderazgo</p>
+                                    <h4 class="card-title">10:00 AM</h4>
+                                    <p class="card-category">Participantes: 18</p>
+                                    <button class="btn btn-success btn-sm">📷 Escanear QR</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Taller martes -->
+            <div class="col-sm-6 col-lg-4 taller-card" data-dia="martes">
+                <div class="card card-stats card-round">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 d-flex align-items-center justify-content-center">
+                                <div class="icon-big text-center icon-info bubble-shadow-small">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <div class="numbers">
+                                    <p class="card-category">Taller de Comunicación</p>
+                                    <h4 class="card-title">2:00 PM</h4>
+                                    <p class="card-category">Participantes: 25</p>
+                                    <button class="btn btn-success btn-sm">📷 Escanear QR</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filtrarPorDia(dia) {
+        const cards = document.querySelectorAll('.taller-card');
+        cards.forEach(c => c.style.display = c.dataset.dia === dia ? 'block' : 'none');
+    }
+</script>

@@ -20,6 +20,10 @@ namespace AccionSocial.web.Controllers
             return View();
         }
 
+        public IActionResult RegistrarTaller()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
