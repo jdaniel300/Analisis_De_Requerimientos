@@ -1,25 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\",
+  "WorkspaceRootPath": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\home\\moodle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\home\\moodle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\shared\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|c:\\users\\quesa\\onedrive\\documentos\\github\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\shared\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\shared\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|d:\\proyectosvs\\prograavanzada\\dise\u00F1odesarrollo\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\shared\\_layoutplantilla.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|c:\\users\\quesa\\onedrive\\documentos\\github\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|c:\\users\\quesa\\onedrive\\documentos\\github\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|c:\\users\\quesa\\onedrive\\documentos\\github\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\home\\moodle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\home\\moodle.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|c:\\users\\quesa\\onedrive\\documentos\\github\\analisis_de_requerimientos\\plataformaaccionsocial\\plataformaaccionsocial\\views\\shared\\_layoutplantilla.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{2BB68B14-9AC1-4E39-B736-19AA49276773}|PlataformaAccionSocial\\PlataformaAccionSocial.csproj|solutionrelative:plataformaaccionsocial\\views\\shared\\_layoutplantilla.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
@@ -29,8 +29,8 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 133,
-          "SelectedChildIndex": 8,
+          "DockedHeight": 349,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -68,22 +68,22 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "HomeController.cs",
-              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Controllers\\HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Controllers\\HomeController.cs",
-              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Controllers\\HomeController.cs",
               "RelativeToolTip": "PlataformaAccionSocial\\Controllers\\HomeController.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAA9wBwAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAAAowBwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-15T15:53:47.209Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Moodle.cshtml",
-              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
+              "DocumentMoniker": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
-              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
+              "ToolTip": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
               "RelativeToolTip": "PlataformaAccionSocial\\Views\\Home\\Moodle.cshtml",
               "ViewState": "AgIAAGMAAAAAAAAAAAAAAHQAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -91,23 +91,24 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "_SideBar.cshtml",
-              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
+              "DocumentMoniker": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
-              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
+              "ToolTip": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
               "RelativeToolTip": "PlataformaAccionSocial\\Views\\Shared\\_SideBar.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADAAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-15T05:59:59.476Z"
+              "WhenOpened": "2025-04-15T05:59:59.476Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "_LayoutPlantilla.cshtml",
-              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
+              "DocumentMoniker": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
-              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
+              "ToolTip": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
               "RelativeToolTip": "PlataformaAccionSocial\\Views\\Shared\\_LayoutPlantilla.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -116,18 +117,18 @@
           ]
         },
         {
-          "DockedHeight": 471,
+          "DockedHeight": 255,
           "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
-              "ToolTip": "D:\\ProyectosVS\\PrograAvanzada\\Dise\u00F1oDesarrollo\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\quesa\\OneDrive\\Documentos\\GitHub\\Analisis_De_Requerimientos\\PlataformaAccionSocial\\PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
               "RelativeToolTip": "PlataformaAccionSocial\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAqwAsAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-04-15T06:02:20.31Z",
               "EditorCaption": ""

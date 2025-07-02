@@ -31,7 +31,7 @@
         <div id="contenedor-talleres" class="row">
             <!-- Taller lunes -->
             <div class="col-sm-6 col-lg-4 taller-card" data-dia="lunes">
-                <div class="card card-stats card-round">
+                <div class="card card-stats card-round" onclick="mostrarDetalleTaller('Taller de Liderazgo', '10:00 AM', 18)">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-4 d-flex align-items-center justify-content-center">
@@ -54,7 +54,7 @@
 
             <!-- Taller martes -->
             <div class="col-sm-6 col-lg-4 taller-card" data-dia="martes">
-                <div class="card card-stats card-round">
+                <div class="card card-stats card-round" onclick="mostrarDetalleTaller('Taller de Comunicación', '2:00 PM', 25)">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-4 d-flex align-items-center justify-content-center">
@@ -75,6 +75,20 @@
                 </div>
             </div>
         </div>
+
+        <!-- Detalle del taller -->
+        <div id="detalle-taller" class="card mt-5" style="display: none;">
+            <div class="card-header">
+                <h4 class="fw-bold" id="detalle-nombre">Detalle del Taller</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Hora:</strong> <span id="detalle-hora"></span></p>
+                <p><strong>Participantes:</strong> <span id="detalle-participantes"></span></p>
+                <div class="mt-3">
+                    <button class="btn btn-success">📷 Escanear QR</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -82,5 +96,13 @@
     function filtrarPorDia(dia) {
         const cards = document.querySelectorAll('.taller-card');
         cards.forEach(c => c.style.display = c.dataset.dia === dia ? 'block' : 'none');
+        document.getElementById('detalle-taller').style.display = 'none';
+    }
+
+    function mostrarDetalleTaller(nombre, hora, participantes) {
+        document.getElementById('detalle-nombre').innerText = nombre;
+        document.getElementById('detalle-hora').innerText = hora;
+        document.getElementById('detalle-participantes').innerText = participantes;
+        document.getElementById('detalle-taller').style.display = 'block';
     }
 </script>
