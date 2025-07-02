@@ -205,8 +205,8 @@ D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.Extensions.Config
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.Extensions.Options.ConfigurationExtensions.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Swashbuckle.AspNetCore.Swagger.dll
-D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Polly.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\System.Text.Json.dll
+D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Polly.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.JSInterop.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.Extensions.Http.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.Extensions.Logging.dll

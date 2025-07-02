@@ -107,7 +107,7 @@ namespace AccionSocial.web.Services.Admin
                     Converters = { new DateOnlyJsonConverter() }
                 };
 
-                var response = await _httpClient.PostAsJsonAsync("/api/admin/register", registerDto);
+                var response = await _httpClient.PostAsJsonAsync("/api/auth/admin/register", registerDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -115,20 +115,50 @@ namespace AccionSocial.web.Services.Admin
                     _logger.LogWarning("Error en el registro. Código: {StatusCode}, Respuesta: {Response}",
                         response.StatusCode, responseContent);
 
-                    var errorResult = JsonSerializer.Deserialize<ResultadoDTO>(responseContent, jsonOptions)
-                        ?? new ResultadoDTO
+                    try
+                    {
+                        var errorResponse = JsonSerializer.Deserialize<Dictionary<string, object>>(responseContent, jsonOptions);
+                        return new ResultadoDTO
                         {
                             Success = false,
-                            Message = "Error desconocido durante el registro",
+                            Message = errorResponse?.ContainsKey("Message") == true ?
+                                      errorResponse["Message"].ToString() : "Error en el registro",
+                            Errors = errorResponse?.ContainsKey("Errors") == true ?
+                                     ((JsonElement)errorResponse["Errors"]).EnumerateArray().Select(x => x.ToString()).ToList() :
+                                     new List<string> { responseContent }
+                        };
+                    }
+                    catch
+                    {
+                        return new ResultadoDTO
+                        {
+                            Success = false,
+                            Message = "Error en el registro",
                             Errors = new List<string> { responseContent }
                         };
-
-                    return errorResult;
+                    }
                 }
 
                 _logger.LogInformation("Usuario registrado exitosamente");
-                return JsonSerializer.Deserialize<ResultadoDTO>(responseContent, jsonOptions)
-                    ?? new ResultadoDTO { Success = true, Message = "Usuario registrado exitosamente" };
+
+                try
+                {
+                    var successResponse = JsonSerializer.Deserialize<Dictionary<string, object>>(responseContent, jsonOptions);
+                    return new ResultadoDTO
+                    {
+                        Success = true,
+                        Message = successResponse?.ContainsKey("Message") == true ?
+                                  successResponse["Message"].ToString() : "Usuario registrado exitosamente"
+                    };
+                }
+                catch
+                {
+                    return new ResultadoDTO
+                    {
+                        Success = true,
+                        Message = "Usuario registrado exitosamente"
+                    };
+                }
             }
             catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
             {

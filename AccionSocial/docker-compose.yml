@@ -54,6 +54,7 @@ services:
       - "8090:8080"
     depends_on:
       - accionsocial.api
+      - sqlserver
     networks:
       default:
         aliases:

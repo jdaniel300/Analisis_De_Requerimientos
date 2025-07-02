@@ -173,24 +173,14 @@
                     <span class="fw-mediumbold">Nuevo</span>
                     <span class="fw-light">Usuario</span>
                 </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <form method="post" asp-controller="Admin" asp-action="RegistrarUsuario">
+            <form id="registerUserForm" method="post" asp-controller="Admin" asp-action="RegistrarUsuario">
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
-                     <div id="generalErrorsContainer"></div>
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                                {
-                                    <li>@error.ErrorMessage</li>
-                                }
-                            </ul>
-                        </div>
-                    }
+                    <div id="generalErrorsContainer" class="alert alert-danger d-none"></div>
                     
                     <p class="small">
                         Complete todos los campos para registrar un nuevo usuario
@@ -199,42 +189,42 @@
                         <div class="col-sm-12">
                             <div class="form-group form-group-default">
                                 <label>Nombre de Usuario</label>
-                                <input asp-for="RegistroModel.UserName" type="text" class="form-control" placeholder="Nombre de usuario" required>
+                                <input asp-for="RegistroModel.UserName" id="UserName" name="UserName" type="text" class="form-control" placeholder="Nombre de usuario">
                                 <span asp-validation-for="RegistroModel.UserName" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group form-group-default">
                                 <label>Correo Electrónico</label>
-                                <input asp-for="RegistroModel.Email" type="email" class="form-control" placeholder="Correo electrónico" required>
+                                <input asp-for="RegistroModel.Email" id="Email" name="Email" type="email" class="form-control" placeholder="Correo electrónico">
                                 <span asp-validation-for="RegistroModel.Email" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6 pe-0">
                             <div class="form-group form-group-default">
                                 <label>Nombre</label>
-                                <input asp-for="RegistroModel.Nombre" type="text" class="form-control" placeholder="Nombre" required>
+                                <input asp-for="RegistroModel.Nombre" id="Nombre" name="Nombre" type="text" class="form-control" placeholder="Nombre">
                                 <span asp-validation-for="RegistroModel.Nombre" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-group-default">
                                 <label>Apellidos</label>
-                                <input asp-for="RegistroModel.Apellidos" type="text" class="form-control" placeholder="Apellidos" required>
+                                <input asp-for="RegistroModel.Apellidos" id="Apellidos" name="Apellidos" type="text" class="form-control" placeholder="Apellidos">
                                 <span asp-validation-for="RegistroModel.Apellidos" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6 pe-0">
                             <div class="form-group form-group-default">
                                 <label>Teléfono</label>
-                                <input asp-for="RegistroModel.PhoneNumber" type="tel" class="form-control" placeholder="Teléfono">
+                                <input asp-for="RegistroModel.PhoneNumber" id="PhoneNumber" name="PhoneNumber" type="tel" class="form-control" placeholder="Teléfono">
                                 <span asp-validation-for="RegistroModel.PhoneNumber" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-group-default">
                                 <label>Rol</label>
-                                <select asp-for="RegistroModel.Rol" class="form-control" id="selectRol">
+                                <select asp-for="RegistroModel.Rol" id="Rol" name="Rol" class="form-control">
                                     <option value="">Participante (por defecto)</option>
                                     @if (ViewBag.Roles != null)
                                     {
@@ -250,14 +240,14 @@
                         <div class="col-md-6 pe-0">
                             <div class="form-group form-group-default">
                                 <label>Contraseña</label>
-                                <input asp-for="RegistroModel.Password" type="password" class="form-control" placeholder="Contraseña" required>
+                                <input asp-for="RegistroModel.Password" id="Password" name="Password" type="password" class="form-control" placeholder="Contraseña">
                                 <span asp-validation-for="RegistroModel.Password" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-group-default">
                                 <label>Confirmar Contraseña</label>
-                                <input asp-for="RegistroModel.ConfirmPassword" type="password" class="form-control" placeholder="Confirmar contraseña" required>
+                                <input asp-for="RegistroModel.ConfirmPassword" id="ConfirmPassword" name="ConfirmPassword" type="password" class="form-control" placeholder="Confirmar contraseña">
                                 <span asp-validation-for="RegistroModel.ConfirmPassword" class="text-danger"></span>
                             </div>
                         </div>
@@ -267,7 +257,7 @@
                     <button type="submit" class="btn btn-primary">
                         Registrar
                     </button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                         Cerrar
                     </button>
                 </div>
@@ -279,115 +269,133 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Debugging - show the alert if in development
-            if (window.location.hostname === "localhost") {
-                $('.alert-info').removeClass('d-none');
-            }
-
-            // Handle details panel if coming from a selected user
-            @if (ViewBag.ShowDetails == true)
-            {
-                    <text>
-                    $('#userDetailsModal').modal('show');
-                    </text>
-            }
-        });
-
-        $('#addRowModal form').on('submit', function(e) {
-        e.preventDefault();
-        
-        var form = $(this);
-        var url = form.attr('action');
-        var formData = form.serialize();
-        
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: formData,
-            dataType: "json", // Esperamos una respuesta JSON
-            success: function(response) {
-                if (response.success) {
-                    // Cierra el modal y recarga la página o actualiza la tabla
-                    $('#addRowModal').modal('hide');
-                    // Opción 1: Recargar la página
-                    location.reload();
-                    // Opción 2: Actualizar solo la tabla de usuarios
-                    // refreshUserTable();
-                } else {
-                    // Muestra los errores en el modal
-                    showErrorsInModal(response.errors);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-                // Muestra un mensaje genérico de error
-                showErrorsInModal(["Ocurrió un error al procesar la solicitud"]);
-            }
-            });
-        });
-        
-        function showErrorsInModal(errors) {
-            // 1. Limpia errores anteriores
-            $('.text-danger').text(''); // Limpia mensajes de campo específicos
-            $('.alert-danger').remove(); // Elimina alertas generales
-            
-            // 2. Agrupa errores por campo
-            var fieldErrors = {
-                // Mapea nombres de errores a campos del formulario
-                "correo electrónico": "RegistroModel.Email",
-                "nombre": "RegistroModel.Nombre",
-                "contraseña": "RegistroModel.Password",
-                "nombre de usuario": "RegistroModel.UserName",
-                "apellidos": "RegistroModel.Apellidos",
-                "phonenumber": "RegistroModel.PhoneNumber",
-                "confirmación de contraseña": "RegistroModel.ConfirmPassword"
-            };
-            
-            var generalErrors = [];
-            
-            // 3. Procesa cada error
-            errors.forEach(function(error) {
-                var matched = false;
+            // Función para mostrar errores
+            function showErrors(errors) {
+                if (!errors || errors.length === 0) return;
                 
-                // Busca si el error corresponde a un campo específico
-                for (var key in fieldErrors) {
-                    if (error.toLowerCase().includes(key)) {
-                        var fieldName = fieldErrors[key];
-                        var $field = $('[name="' + fieldName + '"]');
-                        if ($field.length) {
-                            $field.siblings('.text-danger').text(error);
-                            matched = true;
-                            break;
+                var errorContainer = $('#generalErrorsContainer');
+                errorContainer.empty().removeClass('d-none');
+                
+                // Manejar tanto arrays como objetos de errores
+                if (Array.isArray(errors)) {
+                    errors.slice(0, 5).forEach(function(error) {
+                        errorContainer.append('<div class="text-danger">' + error + '</div>');
+                    });
+                } else if (typeof errors === 'object') {
+                    // Manejar errores en formato { campo: ["error1", "error2"] }
+                    for (var field in errors) {
+                        if (errors.hasOwnProperty(field)) {
+                            errors[field].forEach(function(error) {
+                                errorContainer.append('<div class="text-danger">' + error + '</div>');
+                            });
                         }
                     }
                 }
+            }
+
+            // Configuración del formulario
+            $('#registerUserForm').on('submit', function(e) {
+                e.preventDefault();
                 
-                // Si no coincide con ningún campo, agrega a errores generales
-                if (!matched) {
-                    generalErrors.push(error);
+                // Limpiar errores previos
+                $('.text-danger').text('');
+                $('#generalErrorsContainer').addClass('d-none').empty();
+            
+                var submitBtn = $(this).find('button[type="submit"]');
+                var modal = $('#addRowModal');
+                submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando...');
+            
+                // Validación básica del lado del cliente
+                var errors = [];
+                if (!$('#UserName').val()) errors.push("El nombre de usuario es requerido");
+                if (!$('#Email').val()) errors.push("El correo electrónico es requerido");
+                if (!$('#Nombre').val()) errors.push("El nombre es requerido");
+                if (!$('#Apellidos').val()) errors.push("Los apellidos son requeridos");
+                if (!$('#PhoneNumber').val()) errors.push("El teléfono es requerido");
+                if (!$('#Password').val()) errors.push("La contraseña es requerida");
+                if (!$('#ConfirmPassword').val()) errors.push("La confirmación de contraseña es requerida");
+                if ($('#Password').val() !== $('#ConfirmPassword').val()) errors.push("Las contraseñas no coinciden");
+            
+                if (errors.length > 0) {
+                    showErrors(errors);
+                    submitBtn.prop('disabled', false).text('Registrar');
+                    return;
                 }
+            
+                // Enviar datos al servidor
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val(),
+                        'Accept': 'application/json'
+                    },
+                    success: function(response) {
+                        console.log("Respuesta exitosa del servidor:", response);
+                        
+                        if (response && response.success) {
+                            toastr.success(response.message || 'Usuario registrado correctamente');
+                            
+                            // Configurar el evento de cierre ANTES de cerrar el modal
+                            modal.one('hidden.bs.modal', function() {
+                                // Recargar la página después de cerrar el modal
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 500);
+                            });
+                            
+                            // Cerrar el modal
+                            modal.modal('hide');
+                        } else {
+                            // Manejar respuesta con error pero código 200
+                            var errorMsg = response?.message || 'Error al registrar usuario';
+                            toastr.error(errorMsg);
+                            
+                            if (response?.errors) {
+                                showErrors(response.errors.General || response.errors);
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error en la petición AJAX:", xhr.responseText, status, error);
+                        
+                        try {
+                            var errorResponse = JSON.parse(xhr.responseText);
+                            var errorMsg = errorResponse.message || 'Error en el registro';
+                            
+                            if (errorResponse.errors && errorResponse.errors.General) {
+                                showErrors(errorResponse.errors.General);
+                            } else if (errorResponse.errors) {
+                                showErrors(errorResponse.errors);
+                            } else {
+                                showErrors([errorMsg]);
+                            }
+                            
+                            toastr.error(errorMsg);
+                        } catch (e) {
+                            var errorMsg = xhr.responseText || "Error desconocido al procesar la solicitud";
+                            toastr.error(errorMsg);
+                            showErrors([errorMsg]);
+                        }
+                    },
+                    complete: function() {
+                        submitBtn.prop('disabled', false).text('Registrar');
+                    }
+                });
             });
             
-            // 4. Muestra errores generales si existen
-            if (generalErrors.length > 0) {
-                var alertHtml = '<div class="alert alert-danger"><ul>';
-                
-                generalErrors.forEach(function(error) {
-                    alertHtml += '<li>' + error + '</li>';
-                });
-                
-                alertHtml += '</ul></div>';
-                
-                // Inserta la alerta después del título del modal
-                $('.modal-title').after(alertHtml);
-            }
-        }
-        
-        // Limpia los errores cuando se cierra el modal
-        $('#addRowModal').on('hidden.bs.modal', function () {
-            $('.text-danger').text('');
-            $('.alert-danger').remove();
-        });
+            // Limpiar el modal cuando se cierre
+            $('#addRowModal').on('hidden.bs.modal', function() {
+                $('#registerUserForm')[0].reset();
+                $('.text-danger').text('');
+                $('#generalErrorsContainer').addClass('d-none').empty();
+            });
 
+            // Manejo de botones de cierre del modal
+            $(document).on('click', '[data-dismiss="modal"], .close-modal', function() {
+                $('#addRowModal').modal('hide');
+            });
+        });
     </script>
 }

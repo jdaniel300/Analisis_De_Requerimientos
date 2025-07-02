@@ -5,8 +5,9 @@
     "\\AccionSocial\\AccionSocial.api",
     "\\AccionSocial\\AccionSocial.web",
     "\\AccionSocial\\AccionSocial.web\\Views",
+    "\\AccionSocial\\AccionSocial.web\\Views\\Admin",
     "\\AccionSocial\\AccionSocial.web\\Views\\Home"
   ],
-  "SelectedNode": "\\AccionSocial\\AccionSocial.api\\Program.cs",
+  "SelectedNode": "\\AccionSocial\\AccionSocial.web\\Views\\Admin\\AdministracionUsuarios.cshtml",
   "PreviewInSolutionExplorer": false
 }

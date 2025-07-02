@@ -105,81 +105,86 @@ namespace AccionSocial.web.Controllers
             }
         }
 
-        [HttpPost("registrar-usuario")] 
-        public async Task<IActionResult> RegistrarUsuario(RegistroDTO registerDto) 
+        [HttpPost("registrar-usuario")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegistrarUsuario(RegistroDTO model)
         {
             try
             {
                 _logger.LogInformation("Iniciando registro de nuevo usuario");
-                _logger.LogDebug("Datos recibidos: {@RegisterDto}", registerDto);
+                _logger.LogDebug("Datos recibidos: {@RegisterDto}", model);
 
                 bool tokenValido = await _tokenRefreshService.TryRefreshTokenAsync();
                 if (!tokenValido)
                 {
                     _logger.LogWarning("No se pudo validar el token - redirigiendo a login");
-                    return RedirectToLogin();
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Sesión expirada",
+                        errors = new Dictionary<string, string[]> {
+                    { "General", new[] { "Su sesión ha expirado, por favor inicie sesión nuevamente" } }
+                }
+                    });
                 }
 
                 if (!ModelState.IsValid)
                 {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-
-                    _logger.LogWarning("Datos de registro inválidos. Errores: {@Errors}", errors);
-
-                    return BadRequest(new ResultadoDTO
+                    var errors = new Dictionary<string, string[]>();
+                    foreach (var key in ModelState.Keys)
                     {
-                        Success = false,
-                        Message = "Datos inválidos",
-                        Errors = errors
-                    });
+                        var state = ModelState[key];
+                        if (state.Errors.Count > 0)
+                        {
+                            // Simplificar el nombre de la clave para que coincida con el frontend
+                            var simplifiedKey = key.Replace("RegistroModel.", "");
+                            errors[simplifiedKey] = state.Errors.Select(e => e.ErrorMessage).ToArray();
+                        }
+                    }
+
+                    return Json(new { success = false, errors = errors });
                 }
 
-
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-
-                    _logger.LogWarning("Datos de registro inválidos. Errores: {@Errors}", errors);
-
-                    // Devuelve los errores como JSON
-                    return Json(new ResultadoDTO
-                    {
-                        Success = false,
-                        Message = "Datos inválidos",
-                        Errors = errors
-                    });
-                }
-
-
-                var result = await _adminService.RegistrarUsuarioAsync(registerDto);
+                var result = await _adminService.RegistrarUsuarioAsync(model);
 
                 if (result.Success)
                 {
-                    _logger.LogInformation($"Usuario {registerDto.Email} registrado exitosamente");
-                    return Ok(result);
+                    _logger.LogInformation($"Usuario {model.Email} registrado exitosamente");
+                    return Json(new
+                    {
+                        success = true,
+                        message = result.Message ?? "Usuario registrado correctamente"
+                    });
                 }
 
                 _logger.LogWarning("Error al registrar usuario: {Errores}", result.Errors);
-                return BadRequest(result);
+
+                // Convertir los errores a un formato compatible
+                var errorDict = new Dictionary<string, string[]>();
+                if (result.Errors != null && result.Errors.Any())
+                {
+                    errorDict["General"] = result.Errors.ToArray();
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    message = result.Message ?? "Error al registrar usuario",
+                    errors = errorDict
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error inesperado al registrar usuario");
-                ModelState.AddModelError("", "Error interno del servidor");
-                return Json(new ResultadoDTO
+                return Json(new
                 {
-                    Success = false,
-                    Message = "Error interno",
-                    Errors = new List<string> { ex.Message }
+                    success = false,
+                    message = "Error interno del servidor",
+                    errors = new Dictionary<string, string[]> {
+                { "General", new[] { ex.Message } }
+            }
                 });
             }
-
         }
         private IActionResult RedirectToLogin()
         {

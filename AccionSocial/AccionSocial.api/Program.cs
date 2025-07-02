@@ -740,26 +740,46 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
         var currentUser = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
         if (currentUser == null || !(await userManager.IsInRoleAsync(currentUser, "Admin")))
         {
-            return Results.Unauthorized();
+            return Results.Json(new
+            {
+                success = false,
+                message = "No autorizado",
+                errors = new List<string> { "No tiene permisos de administrador" }
+            }, statusCode: 401);
         }
 
-        // Validaciones básicas (igual que en el registro normal)
+        // Validaciones básicas
         if (registerUserDto.Password != registerUserDto.ConfirmPassword)
         {
-            return Results.BadRequest("Las contraseñas no coinciden.");
+            return Results.Json(new
+            {
+                success = false,
+                message = "Error de validación",
+                errors = new List<string> { "Las contraseñas no coinciden." }
+            }, statusCode: 400);
         }
 
         // Verificar si el usuario ya existe
         var existingUser = await userManager.FindByNameAsync(registerUserDto.UserName);
         if (existingUser != null)
         {
-            return Results.BadRequest("El nombre de usuario ya está en uso.");
+            return Results.Json(new
+            {
+                success = false,
+                message = "Error de validación",
+                errors = new List<string> { "El nombre de usuario ya está en uso." }
+            }, statusCode: 400);
         }
 
         existingUser = await userManager.FindByEmailAsync(registerUserDto.Email);
         if (existingUser != null)
         {
-            return Results.BadRequest("El correo electrónico ya está registrado.");
+            return Results.Json(new
+            {
+                success = false,
+                message = "Error de validación",
+                errors = new List<string> { "El correo electrónico ya está registrado." }
+            }, statusCode: 400);
         }
 
         // Crear el nuevo usuario
@@ -811,7 +831,14 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
 
             return Results.Ok(new
             {
-                Message = $"Usuario registrado exitosamente con rol {roleName}"
+                success = true,
+                message = $"Usuario registrado exitosamente con rol {roleName}",
+                data = new
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    Role = roleName
+                }
             });
         }
         else
