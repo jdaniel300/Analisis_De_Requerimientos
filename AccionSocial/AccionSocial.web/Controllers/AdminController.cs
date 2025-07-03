@@ -190,5 +190,7 @@ namespace AccionSocial.web.Controllers
         {
             return RedirectToAction("Login", "Login", new { returnUrl = Url.Action() });
         }
+       
     }
+
 }
