@@ -77,14 +77,23 @@ namespace AccionSocial.web.Services.Token
             var response = _httpContextAccessor.HttpContext?.Response;
             if (response != null && !response.HasStarted)
             {
-                response.Cookies.Append("authToken", token, new CookieOptions
+                _logger.LogDebug("Setting authToken cookie. Response has started: {HasStarted}", response.HasStarted);
+
+                var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Lax,
                     Expires = DateTimeOffset.Now.AddDays(1),
-                    Path = "/"  // Asegurarse de que la cookie esté disponible en todas las rutas
-                });
+                    Path = "/"
+                };
+
+                response.Cookies.Append("authToken", token, cookieOptions);
+                _logger.LogInformation("AuthToken cookie set successfully");
+            }
+            else
+            {
+                _logger.LogWarning("Cannot set authToken cookie - Response is null or has started");
             }
         }
 
