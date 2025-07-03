@@ -19,7 +19,6 @@
             </div>
             <div class="card-body">
                 <div class="ratio ratio-16x9">
-                    <!-- REEMPLAZAR con embed de Power BI -->
                     <iframe src="https://app.powerbi.com/view?r=TU_EMBED_URL_ADMIN" frameborder="0" allowfullscreen></iframe>
                 </div>
             </div>
@@ -63,7 +62,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Estos datos deben venir desde base de datos -->
                             <tr>
                                 <td>2025-07-01</td>
                                 <td>Cuotas de participación</td>
@@ -88,20 +86,32 @@
 
 <!-- Exportación PDF y Excel -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
     async function exportarPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        doc.text("Reporte Financiero por Taller", 20, 20);
 
-        let filaY = 30;
-        document.querySelectorAll("#tablaFinanciera tbody tr").forEach((row, index) => {
-            const celdas = row.querySelectorAll("td");
-            let filaTexto = Array.from(celdas).map(c => c.innerText).join(" | ");
-            doc.text(filaTexto, 20, filaY);
-            filaY += 10;
+        doc.setFontSize(14);
+        doc.text("Reporte Financiero por Taller", 14, 15);
+
+        const tabla = document.querySelector("#tablaFinanciera");
+        const rows = [];
+
+        tabla.querySelectorAll("tbody tr").forEach(row => {
+            const rowData = Array.from(row.querySelectorAll("td")).map(cell => cell.innerText);
+            rows.push(rowData);
+        });
+
+        doc.autoTable({
+            startY: 25,
+            head: [["Fecha", "Concepto", "Ingreso", "Gasto", "Saldo"]],
+            body: rows,
+            theme: 'grid',
+            headStyles: { fillColor: [41, 128, 185] },
+            styles: { fontSize: 10 },
         });
 
         doc.save("reporte_financiero.pdf");
