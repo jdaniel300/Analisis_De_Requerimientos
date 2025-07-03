@@ -15,8 +15,5 @@ namespace AccionSocialModels
         public string Estado { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaActualizacion { get; set; }
-        public Usuario Encargado { get; set; } = null!; // Relación con Usuario
-        public int EncargadoId { get; set; } // Clave foránea para Usuario
-
     }
 }

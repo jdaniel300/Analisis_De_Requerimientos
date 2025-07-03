@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using AccionSocialModels.Relaciones;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -11,6 +12,7 @@ namespace AccionSocialModels
             : base(options) { }
 
        public DbSet<Taller> Talleres { get; set; }
+        public DbSet<EncargadoTaller> EncargadoTaller { get; set; }
         public DbSet<Participantes> Participantes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,10 +66,6 @@ namespace AccionSocialModels
                 b.Property(t => t.Objetivos).HasMaxLength(2000); // Para limitar el tamaño
                 b.Property(t => t.FechaCreacion).IsRequired(); // Para asegurar fecha de creación
                 b.Property(t => t.FechaActualizacion).IsRequired(); // Para asegurar fecha de actualización// Configuración de la relación con Usuario
-                b.HasOne(t => t.Encargado)
-                    .WithMany()
-                    .HasForeignKey(t => t.EncargadoId)
-                    .OnDelete(DeleteBehavior.Restrict); // Restrict para evitar borrados en cascada
 
                 // Índice opcional para el nombre del taller
                 b.HasIndex(t => t.Nombre).IsUnique();
@@ -108,6 +106,46 @@ namespace AccionSocialModels
                 // Índice único opcional
                 b.HasIndex(p => new { p.IdUsuario, p.IdTaller })
                     .IsUnique();
+            });
+
+            modelBuilder.Entity<EncargadoTaller>(b =>
+            {
+                b.ToTable("EncargadosTaller"); // Nombre de tabla en plural
+
+                // Configuración de clave primaria
+                b.HasKey(e => e.Id);
+                b.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .IsRequired();
+
+                // Configuración de claves foráneas
+                b.Property(e => e.IdTaller)
+                    .IsRequired();
+
+                b.Property(e => e.IdUsuario)
+                    .IsRequired();
+
+                // Configuración de propiedad de fecha
+                b.Property(e => e.FechaAsigmacion) // Nota: Hay un typo en "Asigmacion" (debería ser "Asignacion")
+                    .IsRequired()
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("GETDATE()"); // Valor por defecto fecha actual
+
+                // Configuración de relaciones
+                b.HasOne(e => e.taller) // Corrección: usar "Taller" (mayúscula) para coincidir con la propiedad
+                    .WithMany() // Asumiendo que Taller no tiene colección de EncargadoTaller
+                    .HasForeignKey(e => e.IdTaller)
+                    .OnDelete(DeleteBehavior.Cascade); // O Restrict según necesidades
+
+                b.HasOne(e => e.usuario) // Corrección: usar "Usuario" (mayúscula)
+                    .WithMany() // Asumiendo que Usuario no tiene colección de EncargadoTaller
+                    .HasForeignKey(e => e.IdUsuario)
+                    .OnDelete(DeleteBehavior.Cascade); // O Restrict según necesidades
+
+                // Índice único para evitar asignaciones duplicadas
+                b.HasIndex(e => new { e.IdTaller, e.IdUsuario })
+                    .IsUnique()
+                    .HasDatabaseName("IX_Unique_Encargado_Taller");
             });
 
         }

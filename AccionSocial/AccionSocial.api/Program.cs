@@ -2,6 +2,7 @@
 using AccionSocial.api.Services.Token;
 using AccionSocialModels;
 using AccionSocialModels.DTO;
+using AccionSocialModels.Relaciones;
 using AccionSocialModels.Response;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -266,6 +267,8 @@ var consGroup = app.MapGroup("/api/consultas").WithTags("Consultas");
 ConfigureConsultaEndpoints(consGroup);
 var modGroup = app.MapGroup("/api/mod").WithTags("Modificaciones");
 ConfigureModificacionEndpoints(modGroup);
+var tallerGroup = app.MapGroup("/api/taller").WithTags("Talleres");
+ConfigureTalleresEndpoints(tallerGroup);
 
 
 
@@ -1233,8 +1236,67 @@ void ConfigureModificacionEndpoints(RouteGroupBuilder group)
     .Produces(StatusCodes.Status401Unauthorized)
     .Produces(StatusCodes.Status500InternalServerError);
 }
+void ConfigureTalleresEndpoints(RouteGroupBuilder group)
+{
+    group.MapPost("/taller/crear", async (
+     CrearTallerDTO tallerdto,
+     MyIdentityDbContext context,
+     ILogger<Program> logger) =>
+    {
+        try
+        {
+            // Crear el taller
+            var taller = new Taller
+            {
+                Nombre = tallerdto.Nombre,
+                Descripcion = tallerdto.Descripcion,
+                Objetivos = tallerdto.Objetivos,
+                Estado = "Activo", // Estado por defecto
+                FechaActualizacion = DateTime.UtcNow,
+                FechaCreacion = DateTime.UtcNow
+            };
 
+            context.Talleres.Add(taller);
+            await context.SaveChangesAsync();
 
+            logger.LogInformation("Taller creado con éxito: {Nombre} (ID: {Id})", taller.Nombre, taller.Id);
+
+            return Results.Ok(new
+            {
+                success = true,
+                message = $"Taller '{taller.Nombre}' registrado exitosamente",
+                data = new
+                {
+                    Taller = new
+                    {
+                        Id = taller.Id,
+                        Nombre = taller.Nombre,
+                        Descripcion = taller.Descripcion,
+                        Objetivos = taller.Objetivos,
+                        Estado = taller.Estado,
+                        FechaCreacion = taller.FechaCreacion,
+                        FechaActualizacion = taller.FechaActualizacion
+                    }
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al crear el taller");
+            return Results.Json(new
+            {
+                success = false,
+                message = "Error interno del servidor",
+                error = ex.Message
+            }, statusCode: 500);
+        }
+    })
+ .WithName("CrearTaller")
+ .WithOpenApi()
+ .Produces(StatusCodes.Status200OK)
+ .Produces(StatusCodes.Status400BadRequest)
+ .Produces(StatusCodes.Status500InternalServerError);
+}
 
 //app.UseSwagger();
 //app.UseSwaggerUI(c =>
@@ -1242,7 +1304,7 @@ void ConfigureModificacionEndpoints(RouteGroupBuilder group)
 //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "AccionSocial API V1");
 //});
 
-//app.UseHttpsRedirection();
+    //app.UseHttpsRedirection();
 
 
 public class ErrorResponse
