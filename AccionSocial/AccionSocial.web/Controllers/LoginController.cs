@@ -5,9 +5,11 @@ using AccionSocialModels.Response;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Concurrent;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using static AuthService;
 
 namespace AccionSocial.web.Controllers
 {
@@ -34,19 +36,32 @@ namespace AccionSocial.web.Controllers
             return View("_Login");
         }
 
+        private static readonly ConcurrentDictionary<string, DateTime> FailedAttempts = new();
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDTO model, string returnUrl = null)
         {
-            if (!ModelState.IsValid)
+
+            if (FailedAttempts.TryGetValue(model.UsernameOrEmail, out var lastAttempt) &&
+               (DateTime.UtcNow - lastAttempt).TotalMinutes < 5)
+            {
+                ModelState.AddModelError(string.Empty, "Demasiados intentos fallidos. Espere 5 minutos.");
                 return View("_Login", model);
+            }
 
             try
             {
+                await _tokenStorage.ClearTokenAsync();
                 var response = await _authService.AuthenticateAsync(model);
-
+                FailedAttempts.TryRemove(model.UsernameOrEmail, out _);
                 if (response == null || string.IsNullOrEmpty(response.Token))
                 {
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        await _tokenStorage.ClearTokenAsync();
+                        return Unauthorized(new { message = "Credenciales inválidas" });
+                    }
+
                     ModelState.AddModelError(string.Empty, "Invalid authentication response");
                     return View("_Login", model);
                 }
@@ -76,6 +91,11 @@ namespace AccionSocial.web.Controllers
                     AllowRefresh = true
                 };
 
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Ok(new { redirectUrl = returnUrl ?? "/" });
+                }
+
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(new ClaimsIdentity(
@@ -83,12 +103,29 @@ namespace AccionSocial.web.Controllers
                         CookieAuthenticationDefaults.AuthenticationScheme)),
                     authProperties);
 
+
+
                 return RedirectToLocal(returnUrl);
+            }
+            catch (AuthException ex) when (ex.ErrorType == AuthErrorType.InvalidCredentials)
+            {
+                // Registrar intento fallido
+                FailedAttempts.AddOrUpdate(model.UsernameOrEmail,
+                    DateTime.UtcNow,
+                    (_, _) => DateTime.UtcNow);
+
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View("_Login", model);
+            }
+            catch (AuthException ex) when (ex.ErrorType == AuthErrorType.AccountLocked)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View("_Login", model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Login failed");
-                ModelState.AddModelError(string.Empty, "Login failed. Please try again.");
+                _logger.LogError(ex, "Error durante el login");
+                ModelState.AddModelError(string.Empty, "Error interno del servidor");
                 return View("_Login", model);
             }
         }

@@ -5,5 +5,7 @@
         Task<string?> RefreshTokenAsync();
         Task<bool> TryRefreshTokenAsync();
 
+        Task ClearTokens();
+
     }
 }
