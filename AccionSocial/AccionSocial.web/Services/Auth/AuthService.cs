@@ -7,7 +7,7 @@ using Polly.Caching;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using Xamarin.Auth;
+
 
 public class AuthService : IAuthService
 {
