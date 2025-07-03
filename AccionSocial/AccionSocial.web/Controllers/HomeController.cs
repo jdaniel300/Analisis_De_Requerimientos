@@ -24,6 +24,10 @@ namespace AccionSocial.web.Controllers
         {
             return View();
         }
+        public IActionResult Reportes()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
