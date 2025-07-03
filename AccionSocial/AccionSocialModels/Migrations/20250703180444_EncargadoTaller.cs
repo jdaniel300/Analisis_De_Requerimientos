@@ -19,6 +19,7 @@ namespace AccionSocialModels.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(50)",
                 oldMaxLength: 50);
+
         }
 
         /// <inheritdoc />
