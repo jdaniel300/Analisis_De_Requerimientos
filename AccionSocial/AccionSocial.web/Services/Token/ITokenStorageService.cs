@@ -11,6 +11,8 @@
         Task SetRefreshTokenAsync(string refreshToken);
         Task RemoveRefreshTokenAsync();
 
+        Task ClearTokenAsync();
+
     }
 
 }

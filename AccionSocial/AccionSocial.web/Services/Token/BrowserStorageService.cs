@@ -246,7 +246,12 @@ namespace AccionSocial.web.Services.Token
             return !string.IsNullOrEmpty(await GetTokenAsync());
         }
 
-        
+        public async Task ClearTokenAsync() {
+            RemoveTokenAsync();
+            RemoveRefreshTokenAsync();
+
+            
+        }
 
         public async Task RemoveRefreshTokenAsync()
         {

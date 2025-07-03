@@ -19,30 +19,20 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
 {
-    return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .OrResult(msg => msg.StatusCode == HttpStatusCode.Unauthorized)
-        .WaitAndRetryAsync(
-            retryCount: 3,
-            sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-            onRetry: (outcome, delay, retryCount, context) =>
-            {
-                // Log opcional si se pasa un logger en el contexto
-                if (context.TryGetValue("logger", out var loggerObj) && loggerObj is ILogger logger)
-                {
-                    logger.LogWarning(
-                        $"Reintento #{retryCount} debido a: {outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString()}");
-                }
-            });
+    return Policy<HttpResponseMessage>
+        .Handle<HttpRequestException>()
+        .OrResult(r => (int)r.StatusCode >= 500)
+        .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(1));
 }
+
+
 
 static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
 {
-    return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .CircuitBreakerAsync(
-            handledEventsAllowedBeforeBreaking: 5,
-            durationOfBreak: TimeSpan.FromSeconds(30));
+    return Policy<HttpResponseMessage>
+        .Handle<HttpRequestException>()
+        .OrResult(r => (int)r.StatusCode >= 500)
+        .CircuitBreakerAsync(3, TimeSpan.FromSeconds(10));
 }
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -86,9 +76,15 @@ builder.Services.AddHttpClient("AccionSocialApi", client =>
 
     // Opcional: Headers comunes para todas las requests
     client.DefaultRequestHeaders.Add("X-Application-Name", "AccionSocial.Web");
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    // Deshabilitar manejo automático de redirecciones/autenticación
+    AllowAutoRedirect = false,
+    AutomaticDecompression = DecompressionMethods.None,
+    UseCookies = false
 })
-.AddHttpMessageHandler<AuthTokenHandler>() // Manejo automático de tokens
-.AddPolicyHandler(GetRetryPolicy())
+.AddHttpMessageHandler<AuthTokenHandler>()
+.AddPolicyHandler(GetRetryPolicy())        
 .AddPolicyHandler(GetCircuitBreakerPolicy());
 
 builder.Services.AddHttpClient<ITokenRefreshService, TokenRefreshService>(client =>
@@ -244,6 +240,7 @@ app.Use(async (context, next) =>
 });
 
 app.MapControllers();
+
 
 
 app.MapControllerRoute(

@@ -39,5 +39,8 @@
   <ItemGroup>
     <ProjectReference Include="..\AccionSocialModels\AccionSocialModels.csproj" />
   </ItemGroup>
+<ItemGroup>
+  <Content Remove="wwwroot\css\site.css" />
+</ItemGroup>
 
 </Project>

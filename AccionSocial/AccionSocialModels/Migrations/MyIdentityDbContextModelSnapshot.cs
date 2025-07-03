@@ -55,6 +55,36 @@ namespace AccionSocialModels.Migrations
                     b.ToTable("Participantes", (string)null);
                 });
 
+            modelBuilder.Entity("AccionSocialModels.Relaciones.EncargadoTaller", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaAsigmacion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<int>("IdTaller")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.HasIndex("IdTaller", "IdUsuario")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Unique_Encargado_Taller");
+
+                    b.ToTable("EncargadosTaller", (string)null);
+                });
+
             modelBuilder.Entity("AccionSocialModels.Rol", b =>
                 {
                     b.Property<int>("Id")
@@ -100,9 +130,6 @@ namespace AccionSocialModels.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("EncargadoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -125,8 +152,6 @@ namespace AccionSocialModels.Migrations
                         .HasColumnType("nvarchar(2000)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EncargadoId");
 
                     b.HasIndex("Nombre")
                         .IsUnique();
@@ -362,15 +387,23 @@ namespace AccionSocialModels.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("AccionSocialModels.Taller", b =>
+            modelBuilder.Entity("AccionSocialModels.Relaciones.EncargadoTaller", b =>
                 {
-                    b.HasOne("AccionSocialModels.Usuario", "Encargado")
+                    b.HasOne("AccionSocialModels.Taller", "taller")
                         .WithMany()
-                        .HasForeignKey("EncargadoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("IdTaller")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Encargado");
+                    b.HasOne("AccionSocialModels.Usuario", "usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("taller");
+
+                    b.Navigation("usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
