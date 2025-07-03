@@ -62,7 +62,7 @@ namespace AccionSocialModels
                                                                                 // Configuración de las propiedades
                 b.Property(t => t.Nombre).HasMaxLength(200).IsRequired();
                 b.Property(t => t.Descripcion).HasMaxLength(1000).IsRequired();
-                b.Property(t => t.Estado).HasMaxLength(50); // Si el estado tiene valores fijos
+                b.Property(t => t.Estado).HasDefaultValue(true); // Si el estado tiene valores fijos
                 b.Property(t => t.Objetivos).HasMaxLength(2000); // Para limitar el tamaño
                 b.Property(t => t.FechaCreacion).IsRequired(); // Para asegurar fecha de creación
                 b.Property(t => t.FechaActualizacion).IsRequired(); // Para asegurar fecha de actualización// Configuración de la relación con Usuario

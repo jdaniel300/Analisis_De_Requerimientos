@@ -1236,9 +1236,11 @@ void ConfigureModificacionEndpoints(RouteGroupBuilder group)
     .Produces(StatusCodes.Status401Unauthorized)
     .Produces(StatusCodes.Status500InternalServerError);
 }
+
+//TALLERES
 void ConfigureTalleresEndpoints(RouteGroupBuilder group)
 {
-    group.MapPost("/taller/crear", async (
+    group.MapPost("/crear", async (
      CrearTallerDTO tallerdto,
      MyIdentityDbContext context,
      ILogger<Program> logger) =>
@@ -1251,7 +1253,7 @@ void ConfigureTalleresEndpoints(RouteGroupBuilder group)
                 Nombre = tallerdto.Nombre,
                 Descripcion = tallerdto.Descripcion,
                 Objetivos = tallerdto.Objetivos,
-                Estado = "Activo", // Estado por defecto
+                Estado = true, 
                 FechaActualizacion = DateTime.UtcNow,
                 FechaCreacion = DateTime.UtcNow
             };
