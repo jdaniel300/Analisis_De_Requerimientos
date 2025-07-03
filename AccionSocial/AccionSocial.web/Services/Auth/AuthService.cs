@@ -7,6 +7,7 @@ using Polly.Caching;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Xamarin.Auth;
 
 public class AuthService : IAuthService
 {
@@ -40,68 +41,45 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponse> AuthenticateAsync(LoginDTO loginDto)
     {
-        try
+        var response = await _httpClient.PostAsJsonAsync("api/auth/login", loginDto);
+
+        if (!response.IsSuccessStatusCode)
         {
-            _logger.LogInformation("Iniciando autenticación para {Username}", loginDto.UsernameOrEmail);
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("Autenticación fallida. Status: {StatusCode}", response.StatusCode);
 
-            var response = await _httpClient.PostAsJsonAsync("/api/auth/login", loginDto);
-
-            if (!response.IsSuccessStatusCode)
+            // Diferenciar entre distintos tipos de errores
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogWarning("Autenticación fallida. Status: {StatusCode} - {Content}",
-                    response.StatusCode, errorContent);
-                throw new UnauthorizedAccessException("Credenciales inválidas");
+                throw new AuthException("Credenciales inválidas", AuthErrorType.InvalidCredentials);
             }
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            _logger.LogDebug("Respuesta de login: {Content}", responseContent);
-
-            // Deserializar la respuesta
-            var responseObj = JsonSerializer.Deserialize<JsonElement>(responseContent);
-
-            // Validar y extraer token
-            if (!responseObj.TryGetProperty("token", out var tokenProp) ||
-                string.IsNullOrEmpty(tokenProp.GetString()))
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
             {
-                throw new InvalidOperationException("Token inválido o faltante en la respuesta");
+                throw new AuthException("Cuenta bloqueada temporalmente", AuthErrorType.AccountLocked);
             }
-
-            // Construir objeto de respuesta
-            var result = new LoginResponse
+            else
             {
-                Token = tokenProp.GetString()!,
-                RefreshToken = responseObj.TryGetProperty("refreshToken", out var rt) ? rt.GetString() : null,
-                User = new LoginResponse.UserData()
-            };
-
-            // Extraer datos de usuario si existen
-            if (responseObj.TryGetProperty("user", out var userProp))
-            {
-                result.User.userName = userProp.TryGetProperty("userName", out var un) ? un.GetString() : null;
-                result.User.email = userProp.TryGetProperty("email", out var em) ? em.GetString() : null;
-                result.User.nombreCompleto = userProp.TryGetProperty("nombreCompleto", out var nc) ? nc.GetString() : null;
-
-                if (userProp.TryGetProperty("roles", out var rolesProp))
-                {
-                    result.User.roles = JsonSerializer.Deserialize<List<string>>(rolesProp.ToString());
-                }
+                throw new AuthException($"Error en la autenticación: {errorContent}", AuthErrorType.ServerError);
             }
-
-            // Almacenar tokens
-            await _tokenService.SetTokenAsync(result.Token);
-            if (!string.IsNullOrEmpty(result.RefreshToken))
-            {
-                await _tokenService.SetRefreshTokenAsync(result.RefreshToken);
-            }
-
-            _logger.LogInformation("Autenticación exitosa para {Username}", result.User?.userName);
-            return result;
         }
-        catch (Exception ex)
+
+        return await response.Content.ReadFromJsonAsync<LoginResponse>();
+    }
+
+    public enum AuthErrorType
+    {
+        InvalidCredentials,
+        AccountLocked,
+        ServerError
+    }
+
+    public class AuthException : Exception
+    {
+        public AuthErrorType ErrorType { get; }
+
+        public AuthException(string message, AuthErrorType errorType) : base(message)
         {
-            _logger.LogError(ex, "Error durante la autenticación");
-            throw;
+            ErrorType = errorType;
         }
     }
 

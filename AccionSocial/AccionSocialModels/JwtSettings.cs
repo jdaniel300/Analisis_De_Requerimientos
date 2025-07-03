@@ -8,5 +8,6 @@ namespace AccionSocialModels
         public string Audience { get; set; }
         public int ExpireMinutes { get; set; } = 15;
         public int RefreshTokenExpireDays { get; set; } = 7; // Para refresh tokens
+        public double TokenExpireMinutes { get; set; }
     }
 }

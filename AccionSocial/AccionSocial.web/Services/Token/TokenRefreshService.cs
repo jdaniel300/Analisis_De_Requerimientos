@@ -32,16 +32,23 @@ namespace AccionSocial.web.Services.Token
 
         public async Task<string?> RefreshTokenAsync()
         {
-            await _refreshLock.WaitAsync();
+            // Bloqueo para evitar múltiples refrescos simultáneos
+            if (!await _refreshLock.WaitAsync(TimeSpan.Zero))
+            {
+                _logger.LogWarning("Operación de refresco ya en curso");
+                return null;
+            }
+
             try
             {
-                // Verificar primero si ya tenemos un token válido
+                // 1. Verificar si ya hay un token válido (evitar refresco innecesario)
                 var currentToken = await _tokenStorage.GetTokenAsync();
                 if (!string.IsNullOrEmpty(currentToken) && !IsTokenExpired(currentToken))
                 {
                     return currentToken;
                 }
 
+                // 2. Obtener refresh token
                 var refreshToken = await _tokenStorage.GetRefreshTokenAsync();
                 if (string.IsNullOrEmpty(refreshToken))
                 {
@@ -50,6 +57,7 @@ namespace AccionSocial.web.Services.Token
                     return null;
                 }
 
+                // 3. Preparar petición de refresco
                 var request = new HttpRequestMessage(HttpMethod.Post, RefreshEndpoint)
                 {
                     Content = new StringContent(
@@ -58,69 +66,71 @@ namespace AccionSocial.web.Services.Token
                         "application/json")
                 };
 
-                // Agregar token actual si existe (para invalidación en el servidor)
-                if (!string.IsNullOrEmpty(currentToken))
-                {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
-                }
-
-                _logger.LogInformation("Intentando refrescar token...");
+                // 4. Enviar petición SIN token de acceso (para evitar bucles)
+                _logger.LogInformation("Refrescando token...");
                 var response = await _httpClient.SendAsync(request);
 
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                // 5. Manejar respuesta
+                switch (response.StatusCode)
                 {
-                    _logger.LogWarning("Refresh token rechazado - eliminando tokens");
-                    await ClearTokens();
-                    return null;
+                    case HttpStatusCode.Unauthorized:
+                        _logger.LogWarning("Refresh token rechazado - Requiere nuevo login");
+                        await ClearTokens();
+                        return null;
+
+                    case HttpStatusCode.TooManyRequests:
+                        _logger.LogWarning("Demasiados intentos de refresco");
+                        await Task.Delay(5000); // Esperar antes de reintentar
+                        return null;
+
+                    default:
+                        response.EnsureSuccessStatusCode();
+                        break;
                 }
 
-                response.EnsureSuccessStatusCode();
+                // 6. Procesar nueva autenticación
+                var authResult = await ProcessAuthResponse(response);
+                if (authResult == null) return null;
 
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var authResult = JsonSerializer.Deserialize<AuthResult>(responseContent);
-
-                if (string.IsNullOrEmpty(authResult?.Token))
-                {
-                    _logger.LogWarning("Respuesta de refresco inválida");
-                    await ClearTokens();
-                    return null;
-                }
-
-                // Almacenar nuevos tokens
+                // 7. Actualizar almacenamiento
                 await _tokenStorage.SetTokenAsync(authResult.Token);
-
-                // Solo actualizar refresh token si viene uno nuevo
                 if (!string.IsNullOrEmpty(authResult.RefreshToken))
                 {
                     await _tokenStorage.SetRefreshTokenAsync(authResult.RefreshToken);
                 }
 
-                _logger.LogInformation("Token refrescado exitosamente");
                 return authResult.Token;
-            }
-            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                _logger.LogWarning("Refresh token inválido - eliminando tokens");
-                await ClearTokens();
-                return null;
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Error de red al refrescar token");
-                return null;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado al refrescar token");
-                await ClearTokens();
-                return null;
             }
             finally
             {
                 _refreshLock.Release();
             }
         }
-        
+
+        private async Task<AuthResult?> ProcessAuthResponse(HttpResponseMessage response)
+        {
+            try
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<AuthResult>(responseContent);
+
+                if (string.IsNullOrEmpty(result?.Token))
+                {
+                    _logger.LogWarning("Token no recibido en respuesta");
+                    await ClearTokens();
+                    return null;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error procesando respuesta de autenticación");
+                await ClearTokens();
+                return null;
+            }
+        }
+
 
         public async Task<bool> TryRefreshTokenAsync()
         {
@@ -135,7 +145,7 @@ namespace AccionSocial.web.Services.Token
             }
         }
 
-        private async Task ClearTokens()
+        public async Task ClearTokens()
         {
             try
             {

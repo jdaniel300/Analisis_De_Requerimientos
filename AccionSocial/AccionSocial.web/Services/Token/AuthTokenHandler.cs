@@ -21,23 +21,65 @@ namespace AccionSocial.web.Services.Token
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request, CancellationToken cancellationToken)
+    HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            // Skip auth for login and refresh endpoints
+            // 1. Saltar autenticación para endpoints de login/refresh
             if (IsAuthEndpoint(request.RequestUri))
             {
                 return await base.SendAsync(request, cancellationToken);
             }
 
+            // 2. Adjuntar token actual
             await AttachTokenAsync(request);
 
-            var response = await base.SendAsync(request, cancellationToken);
+            // 3. Configuración de reintentos
+            int maxRetryAttempts = 3;
+            int currentAttempt = 0;
+            HttpResponseMessage response = null;
 
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            while (currentAttempt < maxRetryAttempts)
             {
-                return await HandleUnauthorizedAsync(request, cancellationToken, response);
+                response = await base.SendAsync(request, cancellationToken);
+
+                // 4. Si la respuesta es exitosa (200-299), retornar inmediatamente
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+
+                // 5. Manejar 401 (token expirado o inválido)
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    currentAttempt++;
+                    _logger.LogWarning($"Intento {currentAttempt} de {maxRetryAttempts} fallido (401 Unauthorized)");
+
+                    // 6. Intentar refrescar el token (solo en el primer 401)
+                    if (currentAttempt == 1)
+                    {
+                        var newToken = await _tokenRefresh.RefreshTokenAsync();
+                        if (!string.IsNullOrEmpty(newToken))
+                        {
+                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newToken);
+                            continue; // Reintentar con el nuevo token
+                        }
+                    }
+
+                    // 7. Esperar antes de reintentar (solo si no es el último intento)
+                    if (currentAttempt < maxRetryAttempts)
+                    {
+                        await Task.Delay(1000, cancellationToken); // Esperar 1 segundo
+                    }
+                }
+                else
+                {
+                    // 8. Si no es 401, retornar la respuesta directamente (ej. 403, 404, 500)
+                    return response;
+                }
             }
 
+            // 9. Si se agotan los intentos, limpiar tokens y devolver el último 401
+            _logger.LogError("Se agotaron los intentos de autenticación");
+            await _tokenRefresh.ClearTokens();
             return response;
         }
 

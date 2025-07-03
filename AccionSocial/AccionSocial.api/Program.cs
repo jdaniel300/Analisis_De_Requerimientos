@@ -407,60 +407,149 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
 {
     // Login
     group.MapPost("/login", async (
-     [FromBody] LoginDTO request,
-     [FromServices] UserManager<Usuario> userManager,
-     [FromServices] SignInManager<Usuario> signInManager,
-     [FromServices] ITokenService tokenService,
-     [FromServices] IOptions<JwtSettings> jwtSettings,
-     [FromServices] ILogger<Program> logger) =>
+    [FromBody] LoginDTO request,
+    [FromServices] UserManager<Usuario> userManager,
+    [FromServices] SignInManager<Usuario> signInManager,
+    [FromServices] ITokenService tokenService,
+    [FromServices] IOptions<JwtSettings> jwtSettings,
+    [FromServices] ILogger<Program> logger) =>
     {
-        // 1. Buscar usuario por email o nombre de usuario
-        var user = await userManager.FindByEmailAsync(request.UsernameOrEmail) ??
-                   await userManager.FindByNameAsync(request.UsernameOrEmail);
-
-        if (user == null || !user.Estado)
+        // Validación del modelo
+        if (string.IsNullOrWhiteSpace(request.UsernameOrEmail) ||
+            string.IsNullOrWhiteSpace(request.Password))
         {
-            logger.LogWarning("Intento de login fallido para {UsernameOrEmail}", request.UsernameOrEmail);
-            return Results.Unauthorized();
+            logger.LogWarning("Intento de login con campos vacíos");
+            return Results.Problem(
+                title: "Datos inválidos",
+                detail: "Usuario/Email y contraseña son requeridos",
+                statusCode: StatusCodes.Status400BadRequest);
         }
 
-        // 2. Verificar contraseña
-        var result = await signInManager.PasswordSignInAsync(
-            user.UserName, request.Password, request.RememberMe, lockoutOnFailure: true);
-
-        if (!result.Succeeded)
+        try
         {
-            logger.LogWarning("Credenciales inválidas para usuario {UserId}", user.Id);
-            return Results.Unauthorized();
-        }
+            // 1. Buscar usuario - Mejorado para evitar consultas innecesarias
+            var user = await userManager.Users
+                .FirstOrDefaultAsync(u =>
+                    (u.NormalizedEmail == request.UsernameOrEmail.ToUpper()) ||
+                    (u.NormalizedUserName == request.UsernameOrEmail.ToUpper()));
 
-        // 3. Generar tokens
-        var roles = await userManager.GetRolesAsync(user);
-        var token = tokenService.GenerateJwtToken(user, roles);
-        var refreshToken = tokenService.GenerateRefreshToken();
-
-        // 4. Actualizar usuario con refresh token
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpireDays);
-        await userManager.UpdateAsync(user);
-
-        // 5. Preparar respuesta
-        var response = new
-        {
-            Token = token,
-            RefreshToken = refreshToken,
-            User = new
+            if (user == null || !user.Estado)
             {
-                userName = user.UserName,
-                email = user.Email,
-                nombreCompleto = $"{user.Nombre} {user.Apellidos}",
-                roles = roles.ToList()
+                logger.LogWarning("Intento de login fallido para {UsernameOrEmail}", request.UsernameOrEmail);
+                // Respuesta genérica por seguridad
+                return Results.Problem(
+                    title: "Autenticación fallida",
+                    detail: "Credenciales inválidas",
+                    statusCode: StatusCodes.Status401Unauthorized);
             }
-        };
 
-        logger.LogInformation("Login exitoso para usuario {UserId}", user.Id);
-        return Results.Ok(response);
-    }).WithName("Login").WithOpenApi();
+            // 2. Verificar contraseña - Con manejo de bloqueo
+            var result = await signInManager.PasswordSignInAsync(
+                user.UserName,
+                request.Password,
+                isPersistent: request.RememberMe,
+                lockoutOnFailure: true);
+
+            var accessFailedCount = await userManager.GetAccessFailedCountAsync(user);
+            var maxAttempts = userManager.Options.Lockout.MaxFailedAccessAttempts;
+            var remainingAttempts = maxAttempts - accessFailedCount - 1;
+
+            if (!result.Succeeded)
+            {
+                logger.LogWarning("Credenciales inválidas para usuario {UserId}", user.Id);
+                return Results.Problem(
+                    title: "Autenticación fallida",
+                    detail: remainingAttempts > 0
+                        ? $"Credenciales inválidas. Le quedan {remainingAttempts} intentos."
+                        : "Credenciales inválidas. Su cuenta será bloqueada en el próximo intento fallido.",
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    extensions: new Dictionary<string, object?>
+                    {
+                    {"remainingAttempts", remainingAttempts}
+                    });
+            }
+
+            if (result.IsLockedOut)
+            {
+                var lockoutEnd = await userManager.GetLockoutEndDateAsync(user);
+                var remainingLockoutTime = lockoutEnd - DateTimeOffset.UtcNow;
+
+                logger.LogWarning("Cuenta bloqueada temporalmente para {UserId}", user.Id);
+                return Results.Problem(
+                    title: "Cuenta bloqueada",
+                    detail: $"Demasiados intentos fallidos. Intente nuevamente en {remainingLockoutTime.Value.Minutes} minutos.",
+                    statusCode: StatusCodes.Status403Forbidden,
+                    extensions: new Dictionary<string, object?>
+                    {
+                     {"remainingTime",  remainingLockoutTime.Value.TotalMinutes},
+                     {"retryAfter", remainingLockoutTime.Value.TotalSeconds}
+                    });
+            }
+
+            
+
+            // 3. Generar tokens - Con validación adicional
+            var roles = await userManager.GetRolesAsync(user);
+            if (roles == null || !roles.Any())
+            {
+                logger.LogWarning("Usuario {UserId} no tiene roles asignados", user.Id);
+                roles = new List<string> { "Usuario" }; // Rol por defecto
+            }
+
+            var token = tokenService.GenerateJwtToken(user, roles);
+            var refreshToken = tokenService.GenerateRefreshToken();
+
+            // 4. Actualizar usuario - Con transacción
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpireDays);
+
+            var updateResult = await userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                logger.LogError("Error al actualizar refresh token para {UserId}: {Errors}",
+                    user.Id, string.Join(", ", updateResult.Errors));
+                return Results.Problem(
+                    title: "Error interno",
+                    detail: "No se pudo completar el login",
+                    statusCode: StatusCodes.Status500InternalServerError);
+            }
+
+            // 5. Preparar respuesta segura
+            var response = new
+            {
+                Token = token,
+                RefreshToken = refreshToken,
+                User = new
+                {
+                    userId = user.Id,
+                    userName = user.UserName,
+                    email = user.Email,
+                    nombreCompleto = $"{user.Nombre} {user.Apellidos}".Trim(),
+                    roles = roles.ToList()
+                },
+                ExpiresIn = DateTime.UtcNow.AddMinutes(jwtSettings.Value.TokenExpireMinutes)
+            };
+
+            logger.LogInformation("Login exitoso para usuario {UserId}", user.Id);
+            return Results.Ok(response);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error inesperado durante el login para {UsernameOrEmail}", request.UsernameOrEmail);
+            return Results.Problem(
+                title: "Error interno",
+                detail: "Ocurrió un error inesperado",
+                statusCode: StatusCodes.Status500InternalServerError);
+        }
+    })
+.WithName("Login")
+.WithOpenApi()
+.Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+.Produces<ProblemDetails>(StatusCodes.Status401Unauthorized)
+.Produces<ProblemDetails>(StatusCodes.Status403Forbidden)
+.Produces<ProblemDetails>(StatusCodes.Status429TooManyRequests)
+.Produces<ProblemDetails>(StatusCodes.Status500InternalServerError)
+.Produces(StatusCodes.Status200OK); ;
 
     group.MapPost("/refresh-token", async (
     [FromBody] RefreshTokenRequest request,
