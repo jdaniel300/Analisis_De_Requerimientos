@@ -7,37 +7,39 @@
     <div class="page-inner">
         <h3 class="fw-bold mb-4">Gestión de Códigos QR</h3>
 
-        <!-- 1. Generar QR por sesión -->
+        <!-- Generar QR para sesión de taller -->
         <div class="card mb-4">
             <div class="card-header"><strong>QR para sesión de taller</strong></div>
             <div class="card-body">
-                <p>Este QR representa una URL para registrar asistencia automáticamente.</p>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://tusitio.com/asistencia/registro?taller=123&size=200x200" alt="QR Taller">
-                <p class="mt-2"><strong>Escanea este QR durante la sesión</strong></p>
+                <p>Escanea este QR para registrar asistencia automática a la sesión.</p>
+                @{
+                    var idTaller = 123; // Cambia por datos reales dinámicos
+                    var participanteEjemplo = "456"; // También dinámico
+                    var urlAsistencia = Url.Action("RegistrarAsistencia", "Home", new { idParticipante = participanteEjemplo, idTaller = idTaller }, protocol: Request.Scheme);
+                    var qrUrl = $"https://api.qrserver.com/v1/create-qr-code/?data={Uri.EscapeDataString(urlAsistencia)}&size=200x200";
+                }
+                <img src="@qrUrl" alt="QR Taller" />
+                <p><strong>URL:</strong> <a href="@urlAsistencia" target="_blank">@urlAsistencia</a></p>
             </div>
         </div>
 
-        <!-- 2. Generar QR por carnet -->
+        <!-- Generar carnet QR para participante -->
         <div class="card mb-4">
             <div class="card-header"><strong>Carnet QR para participante</strong></div>
             <div class="card-body">
-                <p>Este QR es único para el participante (ID: 456)</p>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?data=IDPARTICIPANTE_456&size=150x150" alt="QR Carnet">
+                @{
+                    var participanteId = "456"; // Cambiar dinámico
+                    var urlCarnet = Url.Action("RegistrarAsistencia", "Home", new { idParticipante = participanteId, idTaller = idTaller }, protocol: Request.Scheme);
+                    var qrCarnetUrl = $"https://api.qrserver.com/v1/create-qr-code/?data={Uri.EscapeDataString(urlCarnet)}&size=150x150";
+                }
+                <img src="@qrCarnetUrl" alt="QR Carnet" />
                 <p><strong>Nombre:</strong> Ana Gómez</p>
-                <p><strong>ID:</strong> 456</p>
+                <p><strong>ID:</strong> @participanteId</p>
+                <p><strong>URL:</strong> <a href="@urlCarnet" target="_blank">@urlCarnet</a></p>
             </div>
         </div>
 
-        <!-- 3. Escanear QR con teléfono (participante) -->
-        <div class="card mb-4">
-            <div class="card-header"><strong>Registrar asistencia por escaneo (participante)</strong></div>
-            <div class="card-body">
-                <p>El participante escanea el QR desde su teléfono y accede a la URL que registra su asistencia automáticamente.</p>
-                <code>https://tusitio.com/asistencia/registro?id=456&taller=123</code>
-            </div>
-        </div>
-
-        <!-- 4. Escanear QR desde cámara (encargado) -->
+        <!-- Escaneo manual (encargado) -->
         <div class="card mb-5">
             <div class="card-header"><strong>Escanear QR manualmente (encargado)</strong></div>
             <div class="card-body">
@@ -48,17 +50,22 @@
     </div>
 </div>
 
-<!-- Librería QR -->
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
 <script>
     function onScanSuccess(decodedText) {
         document.getElementById('qr-result').innerText = "Escaneado: " + decodedText;
 
-        // Enviar al servidor para registrar asistencia manual
-        fetch(`/asistencia/manual?id=${decodedText}`)
-            .then(r => r.ok ? alert("Asistencia registrada para " + decodedText) : alert("Error al registrar"))
-            .catch(err => alert("Error de red"));
+        // Aquí asumimos decodedText es la URL completa para registrar asistencia
+        fetch(decodedText)
+            .then(response => {
+                if (response.ok) {
+                    alert("Asistencia registrada correctamente.");
+                    // Opcional: redirigir o actualizar UI
+                } else {
+                    alert("Error al registrar asistencia.");
+                }
+            })
+            .catch(() => alert("Error de red."));
     }
 
     const qrScanner = new Html5Qrcode("qr-reader");
