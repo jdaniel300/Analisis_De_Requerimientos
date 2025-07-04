@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccionSocialModels.Migrations
 {
     [DbContext(typeof(MyIdentityDbContext))]
-    [Migration("20250703180444_EncargadoTaller")]
-    partial class EncargadoTaller
+    [Migration("20250704010934_RemoveEncargadoIdFromTalleres")]
+    partial class RemoveEncargadoIdFromTalleres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
