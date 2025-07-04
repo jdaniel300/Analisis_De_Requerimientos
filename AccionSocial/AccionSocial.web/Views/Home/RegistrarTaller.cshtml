@@ -29,9 +29,8 @@
 
         <!-- Tarjetas de talleres -->
         <div id="contenedor-talleres" class="row">
-            <!-- Taller lunes -->
             <div class="col-sm-6 col-lg-4 taller-card" data-dia="lunes">
-                <div class="card card-stats card-round" onclick="mostrarDetalleTaller('Taller de Liderazgo', '10:00 AM', 18)">
+                <div class="card card-stats card-round" onclick="mostrarDetalleTaller('Taller de Liderazgo', '10:00 AM', 18, '20250710T150000Z/20250710T170000Z')">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-4 d-flex align-items-center justify-content-center">
@@ -50,28 +49,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Taller martes -->
-            <div class="col-sm-6 col-lg-4 taller-card" data-dia="martes">
-                <div class="card card-stats card-round" onclick="mostrarDetalleTaller('Taller de Comunicación', '2:00 PM', 25)">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4 d-flex align-items-center justify-content-center">
-                                <div class="icon-big text-center icon-info bubble-shadow-small">
-                                    <i class="fas fa-comments"></i>
-                                </div>
-                            </div>
-                            <div class="col-8">
-                                <div class="numbers">
-                                    <p class="card-category">Taller de Comunicación</p>
-                                    <h4 class="card-title">2:00 PM</h4>
-                                    <p class="card-category">Participantes: 25</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Detalle del taller -->
@@ -82,9 +59,11 @@
             <div class="card-body">
                 <p><strong>Hora:</strong> <span id="detalle-hora"></span></p>
                 <p><strong>Participantes:</strong> <span id="detalle-participantes"></span></p>
-                <div class="mt-3">
-                    <button class="btn btn-primary me-2" onclick="matricular()">✅ Matricular</button>
+                <div class="mt-3 d-flex flex-wrap gap-2">
+                    <button class="btn btn-primary" onclick="matricular()">✅ Matricular</button>
                     <button class="btn btn-danger" onclick="desmatricular()">❌ Desmatricular</button>
+                    <a id="btn-calendar" href="#" target="_blank" class="btn btn-outline-primary">📅 Agregar al Google Calendar</a>
+                    <button class="btn btn-outline-dark">📷 Escanear QR</button>
                 </div>
                 <div class="alert alert-success mt-3" id="alerta-matricula" style="display: none;">
                     Taller matriculado correctamente.
@@ -104,13 +83,16 @@
         document.getElementById('detalle-taller').style.display = 'none';
     }
 
-    function mostrarDetalleTaller(nombre, hora, participantes) {
+    function mostrarDetalleTaller(nombre, hora, participantes, fechaUtc) {
         document.getElementById('detalle-nombre').innerText = nombre;
         document.getElementById('detalle-hora').innerText = hora;
         document.getElementById('detalle-participantes').innerText = participantes;
         document.getElementById('detalle-taller').style.display = 'block';
         document.getElementById('alerta-matricula').style.display = 'none';
         document.getElementById('alerta-desmatricula').style.display = 'none';
+
+        const calendarLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(nombre)}&dates=${fechaUtc}&details=Sesión+semanal+del+taller&location=Sede+Central`;
+        document.getElementById('btn-calendar').href = calendarLink;
     }
 
     function matricular() {
