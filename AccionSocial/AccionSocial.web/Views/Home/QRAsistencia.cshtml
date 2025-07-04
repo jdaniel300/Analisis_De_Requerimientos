@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "Gestión de Códigos QR";
+    Layout = "_LayoutPlantilla";
+}
+
+<div class="container mt-4">
+    <div class="page-inner">
+        <h3 class="fw-bold mb-4">Gestión de Códigos QR</h3>
+
+        <!-- 1. Generar QR por sesión -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>QR para sesión de taller</strong></div>
+            <div class="card-body">
+                <p>Este QR representa una URL para registrar asistencia automáticamente.</p>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://tusitio.com/asistencia/registro?taller=123&size=200x200" alt="QR Taller">
+                <p class="mt-2"><strong>Escanea este QR durante la sesión</strong></p>
+            </div>
+        </div>
+
+        <!-- 2. Generar QR por carnet -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Carnet QR para participante</strong></div>
+            <div class="card-body">
+                <p>Este QR es único para el participante (ID: 456)</p>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?data=IDPARTICIPANTE_456&size=150x150" alt="QR Carnet">
+                <p><strong>Nombre:</strong> Ana Gómez</p>
+                <p><strong>ID:</strong> 456</p>
+            </div>
+        </div>
+
+        <!-- 3. Escanear QR con teléfono (participante) -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Registrar asistencia por escaneo (participante)</strong></div>
+            <div class="card-body">
+                <p>El participante escanea el QR desde su teléfono y accede a la URL que registra su asistencia automáticamente.</p>
+                <code>https://tusitio.com/asistencia/registro?id=456&taller=123</code>
+            </div>
+        </div>
+
+        <!-- 4. Escanear QR desde cámara (encargado) -->
+        <div class="card mb-5">
+            <div class="card-header"><strong>Escanear QR manualmente (encargado)</strong></div>
+            <div class="card-body">
+                <div id="qr-reader" style="width:300px"></div>
+                <div id="qr-result" class="mt-2 text-success fw-bold"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Librería QR -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+<script>
+    function onScanSuccess(decodedText) {
+        document.getElementById('qr-result').innerText = "Escaneado: " + decodedText;
+
+        // Enviar al servidor para registrar asistencia manual
+        fetch(`/asistencia/manual?id=${decodedText}`)
+            .then(r => r.ok ? alert("Asistencia registrada para " + decodedText) : alert("Error al registrar"))
+            .catch(err => alert("Error de red"));
+    }
+
+    const qrScanner = new Html5Qrcode("qr-reader");
+    qrScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScanSuccess);
+</script>

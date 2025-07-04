@@ -28,6 +28,10 @@ namespace AccionSocial.web.Controllers
         {
             return View();
         }
+        public IActionResult QRAsistencia()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
