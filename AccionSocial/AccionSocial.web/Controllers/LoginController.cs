@@ -68,6 +68,7 @@ namespace AccionSocial.web.Controllers
 
                 // Store token in both storage mechanisms
                 await _tokenStorage.SetTokenAsync(response.Token);
+                await _tokenStorage.SetRefreshTokenAsync(response.RefreshToken);
 
                 // Create authentication cookie
                 var claims = new List<Claim>
