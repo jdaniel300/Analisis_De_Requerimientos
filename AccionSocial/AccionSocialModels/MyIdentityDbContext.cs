@@ -70,6 +70,7 @@ namespace AccionSocialModels
                 // Índice opcional para el nombre del taller
                 b.HasIndex(t => t.Nombre).IsUnique();
 
+
             });
             modelBuilder.Entity<Participantes>(b =>
             {

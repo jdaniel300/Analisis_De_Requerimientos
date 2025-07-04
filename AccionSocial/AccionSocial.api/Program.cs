@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -1329,64 +1331,97 @@ void ConfigureModificacionEndpoints(RouteGroupBuilder group)
 //TALLERES
 void ConfigureTalleresEndpoints(RouteGroupBuilder group)
 {
-    group.MapPost("/crear", async (
-     CrearTallerDTO tallerdto,
-     MyIdentityDbContext context,
-     ILogger<Program> logger) =>
+
+    // Endpoint para obtener lista de talleres
+    group.MapGet("/talleres/Listar", async (MyIdentityDbContext dbContext) =>
     {
         try
         {
-            // Crear el taller
-            var taller = new Taller
-            {
-                Nombre = tallerdto.Nombre,
-                Descripcion = tallerdto.Descripcion,
-                Objetivos = tallerdto.Objetivos,
-                Estado = true, 
-                FechaActualizacion = DateTime.UtcNow,
-                FechaCreacion = DateTime.UtcNow
-            };
-
-            context.Talleres.Add(taller);
-            await context.SaveChangesAsync();
-
-            logger.LogInformation("Taller creado con éxito: {Nombre} (ID: {Id})", taller.Nombre, taller.Id);
-
-            return Results.Ok(new
-            {
-                success = true,
-                message = $"Taller '{taller.Nombre}' registrado exitosamente",
-                data = new
+            var talleres = await dbContext.Talleres
+                .Select(t => new ListaTalleresDTO
                 {
-                    Taller = new
-                    {
-                        Id = taller.Id,
-                        Nombre = taller.Nombre,
-                        Descripcion = taller.Descripcion,
-                        Objetivos = taller.Objetivos,
-                        Estado = taller.Estado,
-                        FechaCreacion = taller.FechaCreacion,
-                        FechaActualizacion = taller.FechaActualizacion
-                    }
-                }
-            });
+                    Id = t.Id,
+                    Nombre = t.Nombre,
+                    Descripcion = t.Descripcion,
+                    Objetivos = t.Objetivos,
+                    Estado = t.Estado,
+                    FechaCreacion = t.FechaCreacion,
+                    FechaActualizacion = t.FechaActualizacion
+                })
+                .ToListAsync();
+
+            return Results.Ok(talleres);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error al crear el taller");
-            return Results.Json(new
-            {
-                success = false,
-                message = "Error interno del servidor",
-                error = ex.Message
-            }, statusCode: 500);
+            return Results.Problem($"Error al obtener los talleres: {ex.Message}");
         }
     })
- .WithName("CrearTaller")
- .WithOpenApi()
- .Produces(StatusCodes.Status200OK)
- .Produces(StatusCodes.Status400BadRequest)
- .Produces(StatusCodes.Status500InternalServerError);
+    .WithName("GetTalleres")
+    .Produces<List<ListaTalleresDTO>>(StatusCodes.Status200OK)
+    .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+    {
+        group.MapPost("/crear", async (
+         CrearTallerDTO tallerdto,
+         MyIdentityDbContext context,
+         ILogger<Program> logger) =>
+        {
+            try
+            {
+                // Crear el taller
+                var taller = new Taller
+                {
+                    Nombre = tallerdto.Nombre,
+                    Descripcion = tallerdto.Descripcion,
+                    Objetivos = tallerdto.Objetivos,
+                    Estado = true,
+                    FechaActualizacion = DateTime.UtcNow,
+                    FechaCreacion = DateTime.UtcNow
+                };
+
+                context.Talleres.Add(taller);
+                await context.SaveChangesAsync();
+
+                logger.LogInformation("Taller creado con éxito: {Nombre} (ID: {Id})", taller.Nombre, taller.Id);
+
+                return Results.Ok(new
+                {
+                    success = true,
+                    message = $"Taller '{taller.Nombre}' registrado exitosamente",
+                    data = new
+                    {
+                        Taller = new
+                        {
+                            Id = taller.Id,
+                            Nombre = taller.Nombre,
+                            Descripcion = taller.Descripcion,
+                            Objetivos = taller.Objetivos,
+                            Estado = taller.Estado,
+                            FechaCreacion = taller.FechaCreacion,
+                            FechaActualizacion = taller.FechaActualizacion
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error al crear el taller");
+                return Results.Json(new
+                {
+                    success = false,
+                    message = "Error interno del servidor",
+                    error = ex.Message
+                }, statusCode: 500);
+            }
+        })
+     .WithName("CrearTaller")
+     .WithOpenApi()
+     .Produces(StatusCodes.Status200OK)
+     .Produces(StatusCodes.Status400BadRequest)
+     .Produces(StatusCodes.Status500InternalServerError);
+    }
+    
 }
 
 //app.UseSwagger();
