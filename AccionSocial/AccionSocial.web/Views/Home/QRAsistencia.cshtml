@@ -13,9 +13,14 @@
             <div class="card-body">
                 <p>Escanea este QR para registrar asistencia automática a la sesión.</p>
                 @{
-                    var idTaller = 123; // Cambia por datos reales dinámicos
-                    var participanteEjemplo = "456"; // También dinámico
-                    var urlAsistencia = Url.Action("RegistrarAsistencia", "Home", new { idParticipante = participanteEjemplo, idTaller = idTaller }, protocol: Request.Scheme);
+                    var idTaller = 123; // Reemplazar con valor real dinámico
+                    var participanteEjemplo = "456"; // Simulación de participante
+                    var urlAsistencia = Url.Action("RegistrarAsistencia", "Home", new
+                    {
+                        idParticipante = participanteEjemplo,
+                        idTaller = idTaller
+                    }, protocol: Context.Request.Scheme);
+
                     var qrUrl = $"https://api.qrserver.com/v1/create-qr-code/?data={Uri.EscapeDataString(urlAsistencia)}&size=200x200";
                 }
                 <img src="@qrUrl" alt="QR Taller" />
@@ -28,8 +33,13 @@
             <div class="card-header"><strong>Carnet QR para participante</strong></div>
             <div class="card-body">
                 @{
-                    var participanteId = "456"; // Cambiar dinámico
-                    var urlCarnet = Url.Action("RegistrarAsistencia", "Home", new { idParticipante = participanteId, idTaller = idTaller }, protocol: Request.Scheme);
+                    var participanteId = "456";
+                    var urlCarnet = Url.Action("RegistrarAsistencia", "Home", new
+                    {
+                        idParticipante = participanteId,
+                        idTaller = idTaller
+                    }, protocol: Context.Request.Scheme);
+
                     var qrCarnetUrl = $"https://api.qrserver.com/v1/create-qr-code/?data={Uri.EscapeDataString(urlCarnet)}&size=150x150";
                 }
                 <img src="@qrCarnetUrl" alt="QR Carnet" />
@@ -55,17 +65,16 @@
     function onScanSuccess(decodedText) {
         document.getElementById('qr-result').innerText = "Escaneado: " + decodedText;
 
-        // Aquí asumimos decodedText es la URL completa para registrar asistencia
+        // Enviar al backend
         fetch(decodedText)
             .then(response => {
                 if (response.ok) {
-                    alert("Asistencia registrada correctamente.");
-                    // Opcional: redirigir o actualizar UI
+                    alert("✅ Asistencia registrada correctamente.");
                 } else {
-                    alert("Error al registrar asistencia.");
+                    alert("❌ Error al registrar asistencia.");
                 }
             })
-            .catch(() => alert("Error de red."));
+            .catch(() => alert("⚠️ Error de red."));
     }
 
     const qrScanner = new Html5Qrcode("qr-reader");
