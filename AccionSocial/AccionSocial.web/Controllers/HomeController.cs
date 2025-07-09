@@ -28,6 +28,27 @@ namespace AccionSocial.web.Controllers
         {
             return View();
         }
+        public IActionResult FiltrarAsistencia()
+        {
+            return View();
+        }
+        public IActionResult QRAsistencia()
+        {
+            return View();
+        }
+        [HttpGet]
+    public IActionResult RegistrarAsistencia(string idParticipante, int idTaller)
+    {
+        // Aquí haces la lógica para registrar en base de datos:
+        // Ejemplo:
+        // _dbContext.Asistencias.Add(new Asistencia { ParticipanteId = idParticipante, TallerId = idTaller, Fecha = DateTime.Now });
+        // _dbContext.SaveChanges();
+
+        // Retornar una vista muy simple con el pop-up o mensaje
+        ViewData["IdParticipante"] = idParticipante;
+        ViewData["IdTaller"] = idTaller;
+        return View();
+    }
         public IActionResult Privacy()
         {
             return View();

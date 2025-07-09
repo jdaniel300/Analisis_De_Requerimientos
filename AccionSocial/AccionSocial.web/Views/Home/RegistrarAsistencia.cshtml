@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = "Asistencia Registrada";
+    Layout = "_LayoutPlantilla";
+}
+
+<div class="container mt-5 text-center">
+    <h2>✅ Asistencia registrada con éxito</h2>
+    <p>Participante: <strong>@ViewData["IdParticipante"]</strong></p>
+    <p>Taller: <strong>@ViewData["IdTaller"]</strong></p>
+</div>
+
+<script>
+    alert("Asistencia registrada correctamente. ¡Gracias!");
+</script>

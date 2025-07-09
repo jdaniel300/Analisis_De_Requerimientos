@@ -1,0 +1,194 @@
+@{
+    ViewData["Title"] = "Filtrar Asistencia";
+    Layout = "_LayoutPlantilla";
+}
+
+<div class="container mt-4">
+    <div class="page-inner">
+        <h3 class="fw-bold mb-4">Filtrar Asistencia</h3>
+
+        <!-- Filtros -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Taller</label>
+                        <select class="form-select" id="filtroTaller">
+                            <option selected value="">Todos</option>
+                            <option value="Costura">Costura</option>
+                            <option value="Microfinanzas">Microfinanzas</option>
+                            <option value="Ejercicio">Ejercicio</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Fecha</label>
+                        <input type="date" class="form-control" id="filtroFecha" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Participante</label>
+                        <input type="text" class="form-control" id="filtroParticipante" placeholder="Nombre o ID" />
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-primary" onclick="filtrarTabla()">🔍 Buscar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="card mb-5">
+            <div class="card-header">
+                <h4 class="card-title">Resultados de Asistencia</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="tablaAsistencia">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Participante</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Taller</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Juan Pérez</td>
+                                <td>2025-07-02</td>
+                                <td>10:00 AM</td>
+                                <td>Costura</td>
+                                <td><span class="badge bg-success">Presente</span></td>
+                            </tr>
+                            <tr>
+                                <td>Laura Gómez</td>
+                                <td>2025-07-02</td>
+                                <td>10:00 AM</td>
+                                <td>Costura</td>
+                                <td><span class="badge bg-danger">Ausente</span></td>
+                            </tr>
+                            <tr>
+                                <td>Pedro Sánchez</td>
+                                <td>2025-07-03</td>
+                                <td>02:00 PM</td>
+                                <td>Microfinanzas</td>
+                                <td><span class="badge bg-success">Presente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial por participante -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Historial de Asistencia por Participante</h4>
+            </div>
+            <div class="card-body">
+                <form class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Participante</label>
+                        <input type="text" class="form-control" id="histParticipante" placeholder="Nombre o ID" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Taller</label>
+                        <select class="form-select" id="histTaller">
+                            <option value="">Todos</option>
+                            <option value="Costura">Costura</option>
+                            <option value="Microfinanzas">Microfinanzas</option>
+                            <option value="Ejercicio">Ejercicio</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Rango de Fecha (inicio)</label>
+                        <input type="date" class="form-control" id="histFechaInicio" />
+                        <label class="form-label fw-bold mt-2">Rango de Fecha (fin)</label>
+                        <input type="date" class="form-control" id="histFechaFin" />
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-info" onclick="filtrarHistorial()">📖 Ver Historial</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="tablaHistorial">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Taller</th>
+                                <th>Participante</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-07-02</td>
+                                <td>Costura</td>
+                                <td>Juan Pérez</td>
+                                <td><span class="badge bg-success">Presente</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-07-03</td>
+                                <td>Costura</td>
+                                <td>Juan Pérez</td>
+                                <td><span class="badge bg-danger">Ausente</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-07-05</td>
+                                <td>Costura</td>
+                                <td>Juan Pérez</td>
+                                <td><span class="badge bg-success">Presente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filtrarTabla() {
+        const taller = document.getElementById("filtroTaller").value.toLowerCase();
+        const fecha = document.getElementById("filtroFecha").value;
+        const participante = document.getElementById("filtroParticipante").value.toLowerCase();
+
+        const filas = document.querySelectorAll("#tablaAsistencia tbody tr");
+
+        filas.forEach(fila => {
+            const columnas = fila.querySelectorAll("td");
+            const nombre = columnas[0].textContent.toLowerCase();
+            const fechaFila = columnas[1].textContent;
+            const tallerFila = columnas[3].textContent.toLowerCase();
+
+            const coincideTaller = !taller || tallerFila.includes(taller);
+            const coincideFecha = !fecha || fechaFila === fecha;
+            const coincideParticipante = !participante || nombre.includes(participante);
+
+            fila.style.display = (coincideTaller && coincideFecha && coincideParticipante) ? "" : "none";
+        });
+    }
+
+    function filtrarHistorial() {
+        const participante = document.getElementById("histParticipante").value.toLowerCase();
+        const taller = document.getElementById("histTaller").value.toLowerCase();
+        const fechaInicio = document.getElementById("histFechaInicio").value;
+        const fechaFin = document.getElementById("histFechaFin").value;
+
+        const filas = document.querySelectorAll("#tablaHistorial tbody tr");
+
+        filas.forEach(fila => {
+            const columnas = fila.querySelectorAll("td");
+            const fecha = columnas[0].textContent;
+            const tallerFila = columnas[1].textContent.toLowerCase();
+            const nombre = columnas[2].textContent.toLowerCase();
+
+            const coincideParticipante = !participante || nombre.includes(participante);
+            const coincideTaller = !taller || tallerFila.includes(taller);
+            const dentroDeRango = (!fechaInicio || fecha >= fechaInicio) && (!fechaFin || fecha <= fechaFin);
+
+            fila.style.display = (coincideParticipante && coincideTaller && dentroDeRango) ? "" : "none";
+        });
+    }
+</script>
