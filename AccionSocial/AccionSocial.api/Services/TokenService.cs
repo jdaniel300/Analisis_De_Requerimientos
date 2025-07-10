@@ -124,9 +124,10 @@ namespace AccionSocial.api.Services.Token
         {
             try
             {
-                if (string.IsNullOrEmpty(token) || !ValidateToken(token))
+                if (string.IsNullOrEmpty(token))
                     return false;
 
+                // No validar el token antes de invalidarlo
                 var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
                 var cacheKey = $"invalid_token_{token}";
 

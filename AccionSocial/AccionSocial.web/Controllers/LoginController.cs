@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Concurrent;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
@@ -36,17 +37,31 @@ namespace AccionSocial.web.Controllers
             return View("_Login");
         }
 
-        private static readonly ConcurrentDictionary<string, DateTime> FailedAttempts = new();
+        private static readonly ConcurrentDictionary<string, (int Attempts,        DateTime LastAttempt)> FailedAttempts = new();
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDTO model, string returnUrl = null)
         {
-
-            if (FailedAttempts.TryGetValue(model.UsernameOrEmail, out var lastAttempt) &&
-               (DateTime.UtcNow - lastAttempt).TotalMinutes < 5)
+            // Verificación de intentos fallidos
+            if (FailedAttempts.TryGetValue(model.UsernameOrEmail, out var attemptInfo))
             {
-                ModelState.AddModelError(string.Empty, "Demasiados intentos fallidos. Espere 5 minutos.");
-                return View("_Login", model);
+                if (attemptInfo.Attempts >= 3)
+                {
+                    var delaySeconds = Math.Min(30, attemptInfo.Attempts * 2);
+                    await Task.Delay(TimeSpan.FromSeconds(delaySeconds));
+
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new
+                        {
+                            message = $"Demasiados intentos. Espere {delaySeconds} segundos.",
+                            shouldRefresh = true
+                        }, HttpStatusCode.TooManyRequests);
+                    }
+
+                    ModelState.AddModelError(string.Empty, $"Demasiados intentos. Espere {delaySeconds} segundos.");
+                    return View("_Login", model);
+                }
             }
 
             try
@@ -54,6 +69,7 @@ namespace AccionSocial.web.Controllers
                 await _tokenStorage.ClearTokenAsync();
                 var response = await _authService.AuthenticateAsync(model);
                 FailedAttempts.TryRemove(model.UsernameOrEmail, out _);
+
                 if (response == null || string.IsNullOrEmpty(response.Token))
                 {
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -66,11 +82,11 @@ namespace AccionSocial.web.Controllers
                     return View("_Login", model);
                 }
 
-                // Store token in both storage mechanisms
+                // Almacenar tokens
                 await _tokenStorage.SetTokenAsync(response.Token);
                 await _tokenStorage.SetRefreshTokenAsync(response.RefreshToken);
 
-                // Create authentication cookie
+                // Crear identidad
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, response.User.userName),
@@ -92,11 +108,6 @@ namespace AccionSocial.web.Controllers
                     AllowRefresh = true
                 };
 
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Ok(new { redirectUrl = returnUrl ?? "/" });
-                }
-
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(new ClaimsIdentity(
@@ -104,31 +115,67 @@ namespace AccionSocial.web.Controllers
                         CookieAuthenticationDefaults.AuthenticationScheme)),
                     authProperties);
 
-
+                // Manejo de redirección
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new
+                    {
+                        redirectUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : "/Home"
+                    });
+                }
 
                 return RedirectToLocal(returnUrl);
             }
             catch (AuthException ex) when (ex.ErrorType == AuthErrorType.InvalidCredentials)
             {
-                // Registrar intento fallido
-                FailedAttempts.AddOrUpdate(model.UsernameOrEmail,
-                    DateTime.UtcNow,
-                    (_, _) => DateTime.UtcNow);
+                var attemptsInfo = FailedAttempts.AddOrUpdate(model.UsernameOrEmail,
+                    (1, DateTime.UtcNow),
+                    (key, oldValue) => (oldValue.Attempts + 1, DateTime.UtcNow));
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new
+                    {
+                        message = ex.Message,
+                        shouldRefresh = attemptsInfo.Attempts >= 3,
+                        remainingAttempts = 5 - attemptsInfo.Attempts
+                    }, HttpStatusCode.Unauthorized);
+                }
 
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return View("_Login", model);
             }
             catch (AuthException ex) when (ex.ErrorType == AuthErrorType.AccountLocked)
             {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { message = ex.Message }, HttpStatusCode.Forbidden);
+                }
+
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return View("_Login", model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error durante el login");
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { message = "Error interno del servidor" }, HttpStatusCode.InternalServerError);
+                }
+
                 ModelState.AddModelError(string.Empty, "Error interno del servidor");
                 return View("_Login", model);
             }
+        }
+
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -140,14 +187,7 @@ namespace AccionSocial.web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        private IActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            return RedirectToAction("Index", "Home");
-        }
+        
 
         [HttpGet]
         public IActionResult Register()

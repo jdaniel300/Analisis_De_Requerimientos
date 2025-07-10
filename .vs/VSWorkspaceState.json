@@ -3,12 +3,13 @@
     "",
     "\\AccionSocial",
     "\\AccionSocial\\AccionSocial.api",
+    "\\AccionSocial\\AccionSocial.api\\Services",
     "\\AccionSocial\\AccionSocial.web",
     "\\AccionSocial\\AccionSocial.web\\Views",
     "\\AccionSocial\\AccionSocial.web\\Views\\Admin",
     "\\AccionSocial\\AccionSocial.web\\Views\\Home",
     "\\AccionSocial\\AccionSocial.web\\Views\\Shared"
   ],
-  "SelectedNode": "\\AccionSocial\\AccionSocial.web\\Views\\Shared\\_Registro.cshtml",
+  "SelectedNode": "\\AccionSocial\\AccionSocial.api\\Services\\TokenService.cs",
   "PreviewInSolutionExplorer": false
 }

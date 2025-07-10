@@ -84,6 +84,7 @@ namespace AccionSocial.web.Controllers
 
                 // Configurar parámetros de ordenamiento para la vista
                 ViewData["CurrentSort"] = sortOrder;
+                ViewData["FullNameSortParam"] = sortOrder == "fullname_asc" ? "fullname_desc" : "fullname_asc";
                 ViewData["NameSortParam"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
                 ViewData["EmailSortParam"] = sortOrder == "email_asc" ? "email_desc" : "email_asc";
                 ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";

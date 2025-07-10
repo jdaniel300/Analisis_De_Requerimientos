@@ -25,8 +25,6 @@ static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(1));
 }
 
-
-
 static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
 {
     return Policy<HttpResponseMessage>
@@ -34,6 +32,7 @@ static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
         .OrResult(r => (int)r.StatusCode >= 500)
         .CircuitBreakerAsync(3, TimeSpan.FromSeconds(10));
 }
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<CookiePolicyOptions>(options =>
@@ -86,6 +85,17 @@ builder.Services.AddHttpClient("AccionSocialApi", client =>
 .AddHttpMessageHandler<AuthTokenHandler>()
 .AddPolicyHandler(GetRetryPolicy())        
 .AddPolicyHandler(GetCircuitBreakerPolicy());
+
+builder.Services.AddHttpClient("AuthApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
+    // Configuración específica...
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    AllowAutoRedirect = false,
+    UseCookies = false
+})
+.AddHttpMessageHandler<AuthTokenHandler>();
 
 builder.Services.AddHttpClient<ITokenRefreshService, TokenRefreshService>(client =>
 {

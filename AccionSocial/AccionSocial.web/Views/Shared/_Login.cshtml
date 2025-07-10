@@ -30,6 +30,11 @@
     }
 </style>
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card">
@@ -76,19 +81,16 @@
 
 @section Scripts {
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const form = e.target;
             const button = form.querySelector('button[type="submit"]');
             const errorElement = document.getElementById('loginError');
-            const username = document.getElementById('username').value;
 
-            // Reset error and UI state
+            // Reset UI state
             errorElement.style.display = 'none';
             errorElement.textContent = '';
             const originalButtonText = button.innerHTML;
-
-            // Update UI for loading state
             button.disabled = true;
             button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Verificando...';
 
@@ -97,71 +99,36 @@
                     method: 'POST',
                     body: new FormData(form),
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
                         'RequestVerificationToken': form.querySelector('input[name="__RequestVerificationToken"]').value,
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 });
 
-                if (!response.ok) {
-                    let errorMessage = 'Error en la autenticación';
-                    let disableFormDuration = 0;
+                const data = await response.json();
 
-                    // Handle different error statuses
-                    if (response.status === 429) {
-                        errorMessage = 'Demasiados intentos. Por favor espere 5 minutos.';
-                        disableFormDuration = 300000; // 5 minutes
-                    } else if (response.status === 401) {
-                        // Get remaining attempts from response headers if available
-                        const remainingAttempts = response.headers.get('X-Remaining-Attempts');
-                        if (remainingAttempts && remainingAttempts > 0) {
-                            errorMessage = `Credenciales inválidas. Le quedan ${remainingAttempts} intentos.`;
-                        } else {
-                            errorMessage = 'Credenciales inválidas';
-                        }
-                    } else if (response.status >= 500) {
-                        errorMessage = 'Error del servidor. Por favor intente más tarde.';
-                    }
-
-                    // Try to get error details from response
-                    try {
-                        const errorData = await response.json();
-                        if (errorData.message) {
-                            errorMessage = errorData.message;
-                        }
-                        if (errorData.remainingAttempts) {
-                            errorMessage += ` (Intentos restantes: ${errorData.remainingAttempts})`;
-                        }
-                    } catch (e) {
-                        console.log('Could not parse error response');
-                    }
-
-                    if (disableFormDuration > 0) {
-                        disableForm(form, disableFormDuration);
-                    }
-
-                    throw new Error(errorMessage);
-                }
-
-                const result = await response.json();
-
-                // Handle successful login
-                if (result.redirectUrl) {
-                    window.location.href = result.redirectUrl || '/';
+                if (response.ok) {
+                    // Successful login - redirect
+                    window.location.href = data.redirectUrl;
                 } else {
-                    window.location.reload();
+                    // Show error message
+                    errorElement.textContent = data.message;
+                    errorElement.style.display = 'block';
+
+                    // Refresh page if needed
+                    if (data.shouldRefresh) {
+                        setTimeout(() => window.location.reload(), 2000);
+                    }
+
+                    // Disable form if too many attempts
+                    if (response.status === 429) {
+                        disableForm(form, 300000); // 5 minutes
+                    }
                 }
-
             } catch (error) {
-                // Show error to user
-                errorElement.textContent = error.message;
-                errorElement.style.display = 'block';
-
-                // Log error for debugging
                 console.error('Login error:', error);
-
+                errorElement.textContent = 'Error de conexión. Por favor intente nuevamente.';
+                errorElement.style.display = 'block';
             } finally {
-                // Restore button state
                 button.disabled = false;
                 button.innerHTML = originalButtonText;
             }
@@ -169,11 +136,10 @@
 
         function disableForm(form, duration) {
             const elements = form.querySelectorAll('input, button');
-            elements.forEach(el => el.disabled = true);
-
-            // Show countdown to user
             const errorElement = document.getElementById('loginError');
             const endTime = Date.now() + duration;
+
+            elements.forEach(el => el.disabled = true);
 
             const countdownInterval = setInterval(() => {
                 const remaining = Math.ceil((endTime - Date.now()) / 1000);
@@ -184,54 +150,9 @@
                 } else {
                     const minutes = Math.floor(remaining / 60);
                     const seconds = remaining % 60;
-                    errorElement.textContent = `Demasiados intentos. Espere ${minutes}:${seconds.toString().padStart(2, '0')} minutos.`;
+                    errorElement.textContent = `Demasiados intentos. Espere ${minutes}:${seconds.toString().padStart(2, '0')}.`;
                 }
             }, 1000);
         }
-
-        // Client-side attempt tracking (complementary to server-side)
-        (function() {
-            const loginAttempts = {};
-            const MAX_ATTEMPTS = 5;
-            const BLOCK_TIME = 5 * 60 * 1000; // 5 minutes
-
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                const username = document.getElementById('username').value;
-                const now = Date.now();
-
-                // Clear expired blocks
-                for (const key in loginAttempts) {
-                    if (loginAttempts[key].expiry < now) {
-                        delete loginAttempts[key];
-                    }
-                }
-
-                // Check if user is blocked
-                if (loginAttempts[username] && loginAttempts[username].expiry > now) {
-                    e.preventDefault();
-                    const errorElement = document.getElementById('loginError');
-                    const remaining = Math.ceil((loginAttempts[username].expiry - now)/60000);
-                    errorElement.textContent = `Demasiados intentos. Espere ${remaining} minutos.`;
-                    errorElement.style.display = 'block';
-                    return;
-                }
-            });
-
-            // Track failed attempts (called from the main login function)
-            window.trackFailedAttempt = function(username) {
-                const now = Date.now();
-
-                if (!loginAttempts[username]) {
-                    loginAttempts[username] = { count: 1, expiry: 0 };
-                } else {
-                    loginAttempts[username].count++;
-                }
-
-                // Block if too many attempts
-                if (loginAttempts[username].count >= MAX_ATTEMPTS) {
-                    loginAttempts[username].expiry = now + BLOCK_TIME;
-                }
-            };
-        })();
     </script>
 }

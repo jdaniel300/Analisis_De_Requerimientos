@@ -13,7 +13,7 @@
 <div class="container m-5">
     <div class="col-md-12">
         <div class="card">
-                    <div class="card-header">
+            <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Administración de Usuarios</h4>
                             <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
@@ -22,7 +22,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body">
+            <div class="card-body">
                         <!-- Filtros y búsqueda -->
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -35,18 +35,18 @@
                             </div>
                         </div>
 
-                        <div class="table-responsive">
+                        <div class="container">
                             <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
+                                        
                                         <th>
                                             <a asp-action="AdministracionUsuarios" 
-                                               asp-route-sortOrder="@ViewData["NameSortParam"]"
+                                               asp-route-sortOrder="@ViewData["FullNameSortParam"]"
                                                asp-route-currentFilter="@ViewData["CurrentFilter"]">
-                                                Usuario
+                                                Nombre 
                                             </a>
                                         </th>
-                                        <th>Nombre Completo</th>
                                         <th>
                                             <a asp-action="AdministracionUsuarios" 
                                                asp-route-sortOrder="@ViewData["EmailSortParam"]"
@@ -55,13 +55,6 @@
                                             </a>
                                         </th>
                                         <th>Roles</th>
-                                        <th>
-                                            <a asp-action="AdministracionUsuarios" 
-                                               asp-route-sortOrder="@ViewData["DateSortParam"]"
-                                               asp-route-currentFilter="@ViewData["CurrentFilter"]">
-                                                Fecha Creación
-                                            </a>
-                                        </th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -72,11 +65,9 @@
                                         foreach (var usuario in Model.Usuarios.Datos)
                                         {
                                             <tr>
-                                                <td>@usuario.UserName</td>
                                                 <td>@usuario.NombreCompleto</td>
                                                 <td>@usuario.Email</td>
                                                 <td>@string.Join(", ", usuario.Roles ?? new List<string>())</td>
-                                                <td>@usuario.FechaCreacion.ToString("dd/MM/yyyy")</td>
                                                 <td>
                                                     <span class="badge @(usuario.Estado ? "badge-success" : "badge-danger")">
                                                         @(usuario.Estado ? "Activo" : "Inactivo")
@@ -161,7 +152,7 @@
                             }
                         </div>
                     </div>
-                </div>
+        </div>
     </div>
 </div>
 

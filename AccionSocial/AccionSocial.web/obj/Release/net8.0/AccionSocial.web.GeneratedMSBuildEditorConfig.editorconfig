@@ -17,73 +17,93 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = AccionSocial.web
 build_property.RootNamespace = AccionSocial.web
-build_property.ProjectDir = D:\Repositorios\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web\
+build_property.ProjectDir = D:\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\Repositorios\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web
+build_property.MSBuildProjectDirectory = D:\Analisis_De_Requerimientos\AccionSocial\AccionSocial.web
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Admin/AdministracionUsuarios.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Admin/AdministracionUsuarios.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5pc3RyYWNpb25Vc3Vhcmlvcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Home/Index.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Home/FiltrarAsistencia.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxGaWx0cmFyQXNpc3RlbmNpYS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Home/Privacy.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/Error.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Home/QRAsistencia.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxRUkFzaXN0ZW5jaWEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Home/RegistrarAsistencia.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxSZWdpc3RyYXJBc2lzdGVuY2lhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Home/RegistrarTaller.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxSZWdpc3RyYXJUYWxsZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Home/Reportes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxSZXBvcnRlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Encabezado.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Encabezado.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9FbmNhYmV6YWRvLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Login.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_PiePag.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_PiePag.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9QaWVQYWcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Registro.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Registro.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9SZWdpc3Ryby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_SideBar.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_SideBar.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TaWRlQmFyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Talleres/AdministracionTalleres.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Talleres/AdministracionTalleres.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFsbGVyZXNcQWRtaW5pc3RyYWNpb25UYWxsZXJlcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/_ViewImports.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/_ViewStart.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Layout.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-w1fge707rs
 
-[D:/Repositorios/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_LayoutPlantilla.cshtml]
+[D:/Analisis_De_Requerimientos/AccionSocial/AccionSocial.web/Views/Shared/_LayoutPlantilla.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRQbGFudGlsbGEuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-omo5byo809

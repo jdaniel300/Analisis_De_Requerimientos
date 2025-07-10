@@ -1,9 +1,9 @@
-
 using AccionSocial.api.Services.Token;
 using AccionSocialModels;
 using AccionSocialModels.DTO;
 using AccionSocialModels.Relaciones;
 using AccionSocialModels.Response;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
@@ -122,6 +122,7 @@ builder.Services.AddAuthentication(options =>
     };
 })
 .AddCookie();
+
 builder.Services.AddAuthorization(options =>
 {
     // Define la política "Admin" que requiere el rol "Admin"
@@ -217,6 +218,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = false;
 });
 
+
+
 /* ==================== CONSTRUCCIÓN DE LA APLICACIÓN ==================== */
 var app = builder.Build();
 
@@ -265,10 +268,13 @@ await InitializeDatabase(app);
 /* ==================== ENDPOINTS ==================== */
 var authGroup = app.MapGroup("/api/auth").WithTags("Autenticacion");
 ConfigureAuthEndpoints(authGroup);
+
 var consGroup = app.MapGroup("/api/consultas").WithTags("Consultas");
 ConfigureConsultaEndpoints(consGroup);
+
 var modGroup = app.MapGroup("/api/mod").WithTags("Modificaciones");
 ConfigureModificacionEndpoints(modGroup);
+
 var tallerGroup = app.MapGroup("/api/taller").WithTags("Talleres");
 ConfigureTalleresEndpoints(tallerGroup);
 
@@ -367,34 +373,47 @@ async Task InitializeRolesAndAdminUser(IServiceProvider services, ILogger<Progra
         }
     }
 
-    // Crear usuario admin
-    var adminUser = await userManager.FindByNameAsync("admin") ?? new Usuario
-    {
-        UserName = "admin",
-        NormalizedUserName = "ADMIN",
-        Email = "admin@accionsocial.com",
-        NormalizedEmail = "ADMIN@ACCIONSOCIAL.COM",
-        EmailConfirmed = true,
-        Nombre = "Admin",
-        Apellidos = "Sistema",
-        PhoneNumber = "1234-5678",
-        FechaCreacion = DateTime.Now,
-        Estado = true,
-        FechaCaducidadContrasena = DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
-        SecurityStamp = Guid.NewGuid().ToString()
-    };
+    // Buscar usuario admin
+    var adminUser = await userManager.FindByNameAsync("admin");
 
-    if (adminUser.Id == null)
+    // Si no existe, crearlo
+    if (adminUser == null)
     {
+        adminUser = new Usuario
+        {
+            UserName = "admin",
+            NormalizedUserName = "ADMIN",
+            Email = "admin@accionsocial.com",
+            NormalizedEmail = "ADMIN@ACCIONSOCIAL.COM",
+            EmailConfirmed = true,
+            Nombre = "Admin",
+            Apellidos = "Sistema",
+            PhoneNumber = "1234-5678",
+            FechaCreacion = DateTime.Now,
+            Estado = true,
+            FechaCaducidadContrasena = DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
+            SecurityStamp = Guid.NewGuid().ToString()
+        };
+
         var createResult = await userManager.CreateAsync(adminUser, "AdminAccion123!");
+
         if (!createResult.Succeeded)
         {
             logger.LogError("Failed to create admin user: {Errors}",
                 string.Join(", ", createResult.Errors.Select(e => e.Description)));
             return;
         }
+
+        // Volver a cargar el usuario para asegurar que tiene ID permanente
+        adminUser = await userManager.FindByNameAsync("admin");
+        if (adminUser == null)
+        {
+            logger.LogError("Admin user was created but cannot be found");
+            return;
+        }
     }
 
+    // Asignar rol solo si no lo tiene
     if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
     {
         var addRoleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -403,6 +422,10 @@ async Task InitializeRolesAndAdminUser(IServiceProvider services, ILogger<Progra
             logger.LogError("Failed to add Admin role: {Errors}",
                 string.Join(", ", addRoleResult.Errors.Select(e => e.Description)));
         }
+        else
+        {
+            logger.LogInformation("Admin role assigned successfully");
+        }
     }
 }
 
@@ -410,7 +433,7 @@ async Task InitializeRolesAndAdminUser(IServiceProvider services, ILogger<Progra
 //AHUTENTICACION
 void ConfigureAuthEndpoints(RouteGroupBuilder group)
 {
-    // Login
+    // Login - PROBADO
     group.MapPost("/login", async (
     [FromBody] LoginDTO request,
     [FromServices] UserManager<Usuario> userManager,
@@ -490,9 +513,6 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
                      {"retryAfter", remainingLockoutTime.Value.TotalSeconds}
                     });
             }
-
-            
-
             // 3. Generar tokens - Con validación adicional
             var roles = await userManager.GetRolesAsync(user);
             if (roles == null || !roles.Any())
@@ -535,7 +555,9 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
                 ExpiresIn = DateTime.UtcNow.AddMinutes(jwtSettings.Value.TokenExpireMinutes)
             };
 
-            logger.LogInformation("Login exitoso para usuario {UserId}", user.Id);
+            logger.LogInformation("Login exitoso para usuario");
+
+            await signInManager.SignInAsync(user, request.RememberMe);
             return Results.Ok(response);
         }
         catch (Exception ex)
@@ -547,15 +569,9 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
                 statusCode: StatusCodes.Status500InternalServerError);
         }
     })
-.WithName("Login")
-.WithOpenApi()
-.Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-.Produces<ProblemDetails>(StatusCodes.Status401Unauthorized)
-.Produces<ProblemDetails>(StatusCodes.Status403Forbidden)
-.Produces<ProblemDetails>(StatusCodes.Status429TooManyRequests)
-.Produces<ProblemDetails>(StatusCodes.Status500InternalServerError)
-.Produces(StatusCodes.Status200OK); ;
-
+      .WithName("Login")
+      .WithOpenApi();
+    //Refresh Token
     group.MapPost("/refresh-token", async (
     [FromBody] RefreshTokenRequest request,
     [FromServices] ITokenService tokenService,
@@ -621,9 +637,10 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
             logger.LogError(ex, "Error inesperado en el endpoint de refresh-token");
             return Results.Problem("Error interno del servidor");
         }
-    }).WithName("RefreshToken").WithOpenApi();
-
-    // Logout
+    })
+      .WithName("RefreshToken")
+      .WithOpenApi();
+    // Logout - PROBADO
     group.MapPost("/logout", async (
     [FromServices] ITokenService tokenService,
     [FromServices] UserManager<Usuario> userManager,
@@ -632,12 +649,22 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
     {
         try
         {
-            var token = httpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            // Obtener el token del header Authorization
+            var authHeader = httpContext.Request.Headers["Authorization"].ToString();
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                return Results.Unauthorized();
+            }
+            var token = authHeader["Bearer ".Length..].Trim();
 
-            // Invalidar el token
-            await tokenService.InvalidateTokenAsync(token);
+            // 1. Invalidar el token JWT (sin validarlo primero)
+            var invalidationResult = await tokenService.InvalidateTokenAsync(token);
+            if (!invalidationResult)
+            {
+                logger.LogWarning("No se pudo invalidar el token");
+            }
 
-            // Opcional: limpiar refresh token del usuario
+            // 2. Limpiar el refresh token del usuario
             var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!string.IsNullOrEmpty(userId))
             {
@@ -645,43 +672,100 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
                 if (user != null)
                 {
                     user.RefreshToken = null;
+                    user.RefreshTokenExpiry = null;
                     await userManager.UpdateAsync(user);
                 }
             }
 
-            logger.LogInformation("Token invalidado en el servidor");
+            // 3. Cerrar sesión de Identity
+            await httpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+
+            logger.LogInformation("Logout exitoso para usuario {UserId}", userId);
             return Results.Ok(new { message = "Sesión cerrada correctamente" });
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error durante el logout");
-            return Results.Problem("Ocurrió un error al cerrar la sesión");
+            return Results.Problem(
+                title: "Error interno",
+                detail: "Ocurrió un error al cerrar la sesión",
+                statusCode: StatusCodes.Status500InternalServerError);
         }
-    }).WithName("Logout").WithOpenApi();
-
-    group.MapGet("/usuarioActual", async (
-    ClaimsPrincipal userClaim,
-    [FromServices] UserManager<Usuario> userManager) =>
-    {
-        var user = await userManager.GetUserAsync(userClaim);
-        if (user == null)
-        {
-            return Results.Unauthorized();
-        }
-
-        var roles = await userManager.GetRolesAsync(user);
-
-        return Results.Ok(new
-        {
-            Id = user.Id,
-            Username = user.UserName,
-            Email = user.Email,
-            NombreCompleto = $"{user.Nombre} {user.Apellidos}",
-            Roles = roles
-        });
-    }).WithName("UsuarioActual")
+    })
+      .WithName("Logout")
       .WithOpenApi();
 
+    //Actrualizar usuario - PROBADO
+    group.MapPut("/actualizarUsuario/{id}", async (
+    [FromRoute] int id,
+    [FromBody] UsuarioUpdateDto updateDto,
+    [FromServices] UserManager<Usuario> userManager,
+    [FromServices] SignInManager<Usuario> signInManager,
+    ClaimsPrincipal userClaim) =>
+    {
+        // Obtener usuario actual (el que hace la solicitud)
+        var currentUser = await userManager.GetUserAsync(userClaim);
+        if (currentUser == null) return Results.Unauthorized();
+
+        // Obtener usuario a modificar
+        var userToUpdate = await userManager.FindByIdAsync(id.ToString());
+        if (userToUpdate == null) return Results.NotFound();
+
+        // Verificar permisos
+        var isAdmin = await userManager.IsInRoleAsync(currentUser, "Admin");
+
+        // Si no es admin y está intentando modificar otro usuario, denegar
+        if (currentUser.Id != id && !isAdmin)
+            return Results.Forbid();
+
+        // Actualizar campos básicos (todos los usuarios pueden modificar estos campos de sí mismos)
+        userToUpdate.UserName = updateDto.UserName ?? userToUpdate.UserName;
+        userToUpdate.Email = updateDto.Email ?? userToUpdate.Email;
+        userToUpdate.Nombre = updateDto.Nombre ?? userToUpdate.Nombre;
+        userToUpdate.Apellidos = updateDto.Apellidos ?? userToUpdate.Apellidos;
+        userToUpdate.PhoneNumber = updateDto.Telefono ?? userToUpdate.PhoneNumber;
+
+        // Solo admin puede modificar estado y roles
+        if (isAdmin)
+        {
+            if (updateDto.Estado.HasValue)
+                userToUpdate.Estado = updateDto.Estado.Value;
+
+            if (updateDto.Roles != null)
+            {
+                var currentRoles = await userManager.GetRolesAsync(userToUpdate);
+                await userManager.RemoveFromRolesAsync(userToUpdate, currentRoles);
+                await userManager.AddToRolesAsync(userToUpdate, updateDto.Roles);
+            }
+        }
+        // Manejo de cambio de contraseña
+        if (!string.IsNullOrEmpty(updateDto.CurrentPassword) && !string.IsNullOrEmpty(updateDto.NewPassword))
+        {
+            // Solo el propio usuario puede cambiar su contraseña (el admin no puede cambiarla directamente)
+            if (currentUser.Id != id)
+                return Results.Forbid();
+
+            // Verificar la contraseña actual
+            var passwordCheck = await signInManager.CheckPasswordSignInAsync(userToUpdate, updateDto.CurrentPassword, false);
+            if (!passwordCheck.Succeeded)
+                return Results.BadRequest("La contraseña actual es incorrecta");
+
+            // Cambiar la contraseña
+            var token = await userManager.GeneratePasswordResetTokenAsync(userToUpdate);
+            var resultPassword = await userManager.ResetPasswordAsync(userToUpdate, token, updateDto.NewPassword);
+            if (!resultPassword.Succeeded)
+                return Results.BadRequest(resultPassword.Errors);
+        }
+
+        var result = await userManager.UpdateAsync(userToUpdate);
+        if (!result.Succeeded)
+            return Results.BadRequest(result.Errors);
+
+        return Results.Ok();
+    })
+      .WithName("ActualizarUsuario")
+      .WithOpenApi();
+    //Elimiar por id - PROBADO
     group.MapDelete("/eliminar/{id}", async (
         [FromRoute] string id,
         [FromServices] UserManager<Usuario> userManager,
@@ -724,9 +808,9 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
 
         return Results.NoContent();
     }).RequireAuthorization(policy => policy.RequireRole("Admin"))
-      .WithName("eliminarUsuarioPorIdAdmin")
+      .WithName("EliminarUsuarioPorIdAdmin")
       .WithOpenApi();
-
+    //Eliminar - PROBADO
     group.MapDelete("/usuarioActual", async (
     ClaimsPrincipal userClaim,
     [FromServices] UserManager<Usuario> userManager,
@@ -751,9 +835,9 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
         await signInManager.SignOutAsync();
 
         return Results.NoContent();
-    });
+    }).WithName("ElimarUsuarioActual").WithOpenApi();
 
-    //REGISTRO POR LOGIN
+    //REGISTRO POR LOGIN - PROBADO
     group.MapPost("/register", async (
         RegistroDTO registerUserDto,
         UserManager<Usuario> userManager,
@@ -816,13 +900,9 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
             logger.LogError("Error al registrar usuario: {Errors}", string.Join(", ", errors));
             return Results.BadRequest(new { Errors = errors });
         }
-    })
-    .WithName("RegisterUser")
-    .WithOpenApi()
-    .Produces(StatusCodes.Status200OK)
-    .Produces(StatusCodes.Status400BadRequest);
+    }).WithName("RegisterUser").WithOpenApi();
 
-    // REGISTRO POR ADMINISTRADOR
+    // REGISTRO POR ADMINISTRADOR - PROBADO
     group.MapPost("/admin/register", async (
         RegistroDTO registerUserDto,
         UserManager<Usuario> userManager,
@@ -941,13 +1021,8 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
             logger.LogError("Error al registrar usuario: {Errors}", string.Join(", ", errors));
             return Results.BadRequest(new { Errors = errors });
         }
-    })
-    .WithName("RegisterUserByAdmin")
-    .WithOpenApi()
-    .Produces(StatusCodes.Status200OK)
-    .Produces(StatusCodes.Status400BadRequest)
-    .Produces(StatusCodes.Status401Unauthorized);
-
+    }).WithName("RegisterUserByAdmin").WithOpenApi();
+    //Obtener usuario por id admin - PROBADO
     group.MapGet("/admin/usuarios/{id}", async (
     [FromRoute] string id,
     [FromServices] UserManager<Usuario> userManager,
@@ -988,16 +1063,14 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
             UserName = user.UserName,
             NombreCompleto = $"{user.Nombre} {user.Apellidos}"
         });
-    })
-    .WithName("UsuarioPorId")
-    .WithOpenApi();
+    }).WithName("UsuarioPorId").WithOpenApi();
     // [Resto de endpoints de autenticación...]
     // (Mantener la misma estructura para los demás endpoints)
 }
 //CONSILTAS
 void ConfigureConsultaEndpoints(RouteGroupBuilder group)
 {
-    // Endpoints de consulta
+    // Endpoints de consulta - PROBADO
     group.MapGet("/roles/{id:int}", async (
         [FromRoute] int id,
         [FromServices] RoleManager<Rol> roleManager) =>
@@ -1006,7 +1079,7 @@ void ConfigureConsultaEndpoints(RouteGroupBuilder group)
         return rol == null ? Results.NotFound() : Results.Ok(rol);
     }).WithName("ObtenerRolPorId").WithOpenApi();
 
-    // Obtener lista de todos los roles
+    // Obtener lista de todos los roles - PROBADO
     group.MapGet("/roles/", async (
         [FromServices] RoleManager<Rol> roleManager) =>
     {
@@ -1019,14 +1092,7 @@ void ConfigureConsultaEndpoints(RouteGroupBuilder group)
             r.NormalizedName
             // Agrega más propiedades si es necesario
         }));
-    })
-    .WithName("Roles")
-    .WithOpenApi(operation => new(operation)
-    {
-        Summary = "Obtiene todos los roles disponibles",
-        Description = "Retorna una lista completa de todos los roles registrados en el sistema."
-    })
-    .Produces(StatusCodes.Status200OK, typeof(IEnumerable<Rol>), "application/json");
+    }).WithName("Roles").WithOpenApi();
 
     group.MapGet("/admin/usuarios",
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")] async (
@@ -1061,6 +1127,8 @@ void ConfigureConsultaEndpoints(RouteGroupBuilder group)
             {
                 "name_asc" => query.OrderBy(u => u.UserName),
                 "name_desc" => query.OrderByDescending(u => u.UserName),
+                "fullname_asc" => query.OrderBy(u => u.Nombre + " " + u.Apellidos),
+                "fullname_desc" => query.OrderByDescending(u => u.Nombre + " " + u.Apellidos),
                 "email_asc" => query.OrderBy(u => u.Email),
                 "email_desc" => query.OrderByDescending(u => u.Email),
                 "date_asc" => query.OrderBy(u => u.FechaCreacion),
@@ -1124,114 +1192,12 @@ void ConfigureConsultaEndpoints(RouteGroupBuilder group)
             logger.LogError(ex, "Error al obtener lista de usuarios");
             return Results.Problem("Error interno al obtener usuarios");
         }
-    });
+    }).WithName("ListaUsuarios").WithOpenApi();
 
 }
 //MODIFICACIONES
 void ConfigureModificacionEndpoints(RouteGroupBuilder group)
 {
-
-    group.MapPut("/admin/usuarios/{id}", async (
-    [FromRoute] string id,
-    [FromBody] ActualizarRolEstadoDTO actualizarDto,
-    [FromServices] UserManager<Usuario> userManager,
-    [FromServices] RoleManager<Rol> roleManager,
-    [FromServices] IHttpContextAccessor httpContextAccessor,
-    [FromServices] ILogger<Program> logger) =>
-    {
-        // 1. VERIFICAR PERMISOS
-        var usuarioActual = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
-        if (usuarioActual == null || !(await userManager.IsInRoleAsync(usuarioActual, "Admin")))
-        {
-            return Results.Unauthorized();
-        }
-
-        // 2. BUSCAR USUARIO
-        var usuario = await userManager.FindByIdAsync(id);
-        if (usuario == null)
-        {
-            return Results.NotFound("Usuario no encontrado");
-        }
-
-        // 3. VALIDAR AUTO-MODIFICACIÓN
-        if (usuarioActual.Id == usuario.Id)
-        {
-            return Results.BadRequest("No puedes modificarte a ti mismo");
-        }
-
-        try
-        {
-            bool cambiosRealizados = false;
-            var cambios = new List<string>();
-
-            // 4. ACTUALIZAR ROL (si se especificó)
-            if (!string.IsNullOrEmpty(actualizarDto.NuevoRol))
-            {
-                if (!await roleManager.RoleExistsAsync(actualizarDto.NuevoRol))
-                {
-                    return Results.BadRequest($"El rol {actualizarDto.NuevoRol} no existe");
-                }
-
-                var rolesActuales = await userManager.GetRolesAsync(usuario);
-                await userManager.RemoveFromRolesAsync(usuario, rolesActuales);
-                await userManager.AddToRoleAsync(usuario, actualizarDto.NuevoRol);
-
-                cambios.Add($"Rol actualizado a {actualizarDto.NuevoRol}");
-                cambiosRealizados = true;
-            }
-
-            // 5. ACTUALIZAR ESTADO (si se especificó) - ahora como booleano simple
-            if (actualizarDto.Activo.HasValue)
-            {
-                // Asumiendo que tu entidad Usuario tiene una propiedad booleana Activo
-                usuario.Estado = actualizarDto.Activo.Value;
-                cambios.Add($"Estado actualizado a {(usuario.Estado ? "Activo" : "Inactivo")}");
-                cambiosRealizados = true;
-            }
-
-            // 6. GUARDAR CAMBIOS
-            if (cambiosRealizados)
-            {
-                var resultado = await userManager.UpdateAsync(usuario);
-                if (!resultado.Succeeded)
-                {
-                    logger.LogError("Error al actualizar usuario: {Errors}", string.Join(", ", resultado.Errors));
-                    return Results.Problem("Error al guardar los cambios");
-                }
-
-                logger.LogInformation("Admin {Admin} modificó usuario {UserId}: {Cambios}",
-                    usuarioActual.UserName, id, string.Join(", ", cambios));
-
-                return Results.Ok(new
-                {
-                    Success = true,
-                    Message = "Cambios aplicados correctamente",
-                    Cambios = cambios,
-                    UsuarioId = id
-                });
-            }
-
-            return Results.BadRequest("No se especificaron cambios válidos");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error al actualizar usuario {UserId}", id);
-            return Results.Problem("Error interno al procesar la solicitud");
-        }
-    })
-        .WithName("ActualizarUsuario")
-        .WithOpenApi(operation => new(operation)
-        {
-            Summary = "Actualiza rol y/o estado de un usuario",
-            Description = "Requiere rol de Administrador. Permite actualizar rol, estado (como booleano) o ambos."
-        })
-        .Produces<ApiResponse>(StatusCodes.Status200OK)
-        .Produces(StatusCodes.Status400BadRequest)
-        .Produces(StatusCodes.Status401Unauthorized)
-        .Produces(StatusCodes.Status404NotFound)
-        .Produces(StatusCodes.Status500InternalServerError);
-
-
     group.MapPut("/usr/", async (
         [FromBody] ActualizarUsuarioDTO updateDto,
         ClaimsPrincipal userClaim,
@@ -1331,39 +1297,9 @@ void ConfigureModificacionEndpoints(RouteGroupBuilder group)
 //TALLERES
 void ConfigureTalleresEndpoints(RouteGroupBuilder group)
 {
-
-    // Endpoint para obtener lista de talleres
-    group.MapGet("/talleres/Listar", async (MyIdentityDbContext dbContext) =>
-    {
-        try
-        {
-            var talleres = await dbContext.Talleres
-                .Select(t => new ListaTalleresDTO
-                {
-                    Id = t.Id,
-                    Nombre = t.Nombre,
-                    Descripcion = t.Descripcion,
-                    Objetivos = t.Objetivos,
-                    Estado = t.Estado,
-                    FechaCreacion = t.FechaCreacion,
-                    FechaActualizacion = t.FechaActualizacion
-                })
-                .ToListAsync();
-
-            return Results.Ok(talleres);
-        }
-        catch (Exception ex)
-        {
-            return Results.Problem($"Error al obtener los talleres: {ex.Message}");
-        }
-    })
-    .WithName("GetTalleres")
-    .Produces<List<ListaTalleresDTO>>(StatusCodes.Status200OK)
-    .ProducesProblem(StatusCodes.Status500InternalServerError);
-
-    {
-        group.MapPost("/crear", async (
-         CrearTallerDTO tallerdto,
+    //PROBADO
+    group.MapPost("/crear", async (
+         TallerDTO tallerdto,
          MyIdentityDbContext context,
          ILogger<Program> logger) =>
         {
@@ -1416,12 +1352,220 @@ void ConfigureTalleresEndpoints(RouteGroupBuilder group)
             }
         })
      .WithName("CrearTaller")
-     .WithOpenApi()
-     .Produces(StatusCodes.Status200OK)
-     .Produces(StatusCodes.Status400BadRequest)
-     .Produces(StatusCodes.Status500InternalServerError);
-    }
-    
+     .WithOpenApi();
+    //PROBADO
+    group.MapGet("/listar", async (MyIdentityDbContext dbContext) =>
+    {
+        try
+        {
+            var talleres = await dbContext.Talleres
+                .Select(t => new ListaTalleresDTO
+                {
+                    Id = t.Id,
+                    Nombre = t.Nombre,
+                    Descripcion = t.Descripcion,
+                    Objetivos = t.Objetivos,
+                    Estado = t.Estado,
+                    FechaCreacion = t.FechaCreacion,
+                    FechaActualizacion = t.FechaActualizacion
+                })
+                .ToListAsync();
+
+            return Results.Ok(talleres);
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem($"Error al obtener los talleres: {ex.Message}");
+        }
+    })
+    .WithName("ListarTalleres")
+    .WithOpenApi();
+    //PROBADO
+    group.MapPut("/editar/{id}", async (
+        int id,
+        TallerDTO tallerdto,
+        MyIdentityDbContext context,
+        ILogger<Program> logger) =>
+    {
+        try
+        {
+            // Buscar el taller existente
+            var tallerExistente = await context.Talleres.FindAsync(id);
+
+            if (tallerExistente == null)
+            {
+                logger.LogWarning("No se encontró el taller con ID: {Id}", id);
+                return Results.NotFound(new
+                {
+                    success = false,
+                    message = $"No se encontró el taller con ID {id}"
+                });
+            }
+
+            // Actualizar los campos del taller
+            if (tallerdto.Nombre != null)
+            {
+                tallerExistente.Nombre = tallerdto.Nombre;
+            }
+
+            if (tallerdto.Descripcion != null)
+            {
+                tallerExistente.Descripcion = tallerdto.Descripcion;
+            }
+
+            if (tallerdto.Objetivos != null)
+            {
+                tallerExistente.Objetivos = tallerdto.Objetivos;
+            }
+
+            tallerExistente.FechaActualizacion = DateTime.UtcNow;
+
+            await context.SaveChangesAsync();
+
+            logger.LogInformation("Taller actualizado con éxito: {Nombre} (ID: {Id})",
+                tallerExistente.Nombre, tallerExistente.Id);
+
+            return Results.Ok(new
+            {
+                success = true,
+                message = $"Taller '{tallerExistente.Nombre}' actualizado exitosamente",
+                data = new
+                {
+                    Taller = new
+                    {
+                        Id = tallerExistente.Id,
+                        Nombre = tallerExistente.Nombre,
+                        Descripcion = tallerExistente.Descripcion,
+                        Objetivos = tallerExistente.Objetivos,
+                        Estado = tallerExistente.Estado,
+                        FechaCreacion = tallerExistente.FechaCreacion,
+                        FechaActualizacion = tallerExistente.FechaActualizacion
+                    }
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al actualizar el taller con ID: {Id}", id);
+            return Results.Json(new
+            {
+                success = false,
+                message = "Error interno del servidor al actualizar el taller",
+                error = ex.Message
+            }, statusCode: 500);
+        }
+    })
+    .WithName("EditarTaller")
+    .WithOpenApi();
+    //PROBADO
+    group.MapDelete("/desabilitar/{id}", async (
+        int id,
+        MyIdentityDbContext context,
+        ILogger<Program> logger) =>
+    {
+        try
+        {
+            // Buscar el taller existente
+            var tallerExistente = await context.Talleres.FindAsync(id);
+
+            if (tallerExistente == null)
+            {
+                logger.LogWarning("No se encontró el taller con ID: {Id}", id);
+                return Results.NotFound(new
+                {
+                    success = false,
+                    message = $"No se encontró el taller con ID {id}"
+                });
+            }
+
+            // Realizar borrado lógico (cambiar estado a false)
+            tallerExistente.Estado = false;
+            tallerExistente.FechaActualizacion = DateTime.UtcNow;
+
+            await context.SaveChangesAsync();
+
+            logger.LogInformation("Taller desactivado con éxito: {Nombre} (ID: {Id})",
+                tallerExistente.Nombre, tallerExistente.Id);
+
+            return Results.Ok(new
+            {
+                success = true,
+                message = $"Taller '{tallerExistente.Nombre}' desactivado exitosamente",
+                data = new
+                {
+                    Id = tallerExistente.Id,
+                    Nombre = tallerExistente.Nombre,
+                    Estado = tallerExistente.Estado
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al desactivar el taller con ID: {Id}", id);
+            return Results.Json(new
+            {
+                success = false,
+                message = "Error interno del servidor al desactivar el taller",
+                error = ex.Message
+            }, statusCode: 500);
+        }
+    })
+    .WithName("DesabilitarTaller")
+    .WithOpenApi();
+    //PROBADO
+    group.MapDelete("/eliminar-fisico/{id}", async (
+        int id,
+        MyIdentityDbContext context,
+        ILogger<Program> logger) =>
+    {
+        try
+        {
+            // Buscar el taller existente
+            var tallerExistente = await context.Talleres.FindAsync(id);
+
+            if (tallerExistente == null)
+            {
+                logger.LogWarning("No se encontró el taller con ID: {Id}", id);
+                return Results.NotFound(new
+                {
+                    success = false,
+                    message = $"No se encontró el taller con ID {id}"
+                });
+            }
+
+            // Eliminación física
+            context.Talleres.Remove(tallerExistente);
+            await context.SaveChangesAsync();
+
+            logger.LogInformation("Taller eliminado permanentemente: {Nombre} (ID: {Id})",
+                tallerExistente.Nombre, id);
+
+            return Results.Ok(new
+            {
+                success = true,
+                message = $"Taller '{tallerExistente.Nombre}' eliminado permanentemente",
+                data = new
+                {
+                    Id = id,
+                    Nombre = tallerExistente.Nombre
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al eliminar el taller con ID: {Id}", id);
+            return Results.Json(new
+            {
+                success = false,
+                message = "Error interno del servidor al eliminar el taller",
+                error = ex.Message
+            }, statusCode: 500);
+        }
+    })
+    .WithName("EliminarTallerFisico")
+    .WithOpenApi();
+
+
 }
 
 //app.UseSwagger();
