@@ -8,7 +8,7 @@ namespace AccionSocial.web.Services.Auth
     {
         Task<LoginResponse> AuthenticateAsync(LoginDTO loginDto);
         Task LogoutAsync();
-        Task<LoginResponse> GetCurrentUserAsync();
+        
         Task<RegisterResponse> RegisterAsync(RegistroDTO registerDto);
         Task<ResultadoDTO> RegisterByAdminAsync(RegistroDTO registerDto);
 

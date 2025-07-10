@@ -39,17 +39,22 @@ namespace AccionSocialModels.Migrations
                     b.Property<DateTime>("FechaInscripcion")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("IdTaller")
+                    b.Property<int>("IdSesion")
                         .HasColumnType("int");
 
                     b.Property<int>("IdUsuario")
                         .HasColumnType("int");
 
+                    b.Property<int?>("SesionId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdTaller");
+                    b.HasIndex("IdSesion");
 
-                    b.HasIndex("IdUsuario", "IdTaller")
+                    b.HasIndex("SesionId");
+
+                    b.HasIndex("IdUsuario", "IdSesion")
                         .IsUnique();
 
                     b.ToTable("Participantes", (string)null);
@@ -115,6 +120,40 @@ namespace AccionSocialModels.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
+                });
+
+            modelBuilder.Entity("AccionSocialModels.Sesion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Estado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateOnly>("Fecha")
+                        .HasColumnType("date");
+
+                    b.Property<TimeSpan>("HoraFin")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("HoraInicio")
+                        .HasColumnType("time");
+
+                    b.Property<int>("IdTaller")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Fecha");
+
+                    b.HasIndex("IdTaller");
+
+                    b.ToTable("Sesiones", (string)null);
                 });
 
             modelBuilder.Entity("AccionSocialModels.Taller", b =>
@@ -370,9 +409,9 @@ namespace AccionSocialModels.Migrations
 
             modelBuilder.Entity("AccionSocialModels.Participantes", b =>
                 {
-                    b.HasOne("AccionSocialModels.Taller", "Taller")
+                    b.HasOne("AccionSocialModels.Sesion", "Sesion")
                         .WithMany()
-                        .HasForeignKey("IdTaller")
+                        .HasForeignKey("IdSesion")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -382,7 +421,11 @@ namespace AccionSocialModels.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Taller");
+                    b.HasOne("AccionSocialModels.Sesion", null)
+                        .WithMany("Participantes")
+                        .HasForeignKey("SesionId");
+
+                    b.Navigation("Sesion");
 
                     b.Navigation("Usuario");
                 });
@@ -404,6 +447,17 @@ namespace AccionSocialModels.Migrations
                     b.Navigation("taller");
 
                     b.Navigation("usuario");
+                });
+
+            modelBuilder.Entity("AccionSocialModels.Sesion", b =>
+                {
+                    b.HasOne("AccionSocialModels.Taller", "Taller")
+                        .WithMany("Sesiones")
+                        .HasForeignKey("IdTaller")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Taller");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -455,6 +509,16 @@ namespace AccionSocialModels.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AccionSocialModels.Sesion", b =>
+                {
+                    b.Navigation("Participantes");
+                });
+
+            modelBuilder.Entity("AccionSocialModels.Taller", b =>
+                {
+                    b.Navigation("Sesiones");
                 });
 #pragma warning restore 612, 618
         }

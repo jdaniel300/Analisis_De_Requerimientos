@@ -119,6 +119,8 @@ public class AuthService : IAuthService
         }
     }
 
+
+    //revisar
     public async Task<bool> IsAuthenticatedAsync()
     {
         var token = await _tokenService.GetTokenAsync();
@@ -139,38 +141,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<LoginResponse> GetCurrentUserAsync()
-    {
-        var token = await _tokenService.GetTokenAsync();
-        if (string.IsNullOrEmpty(token))
-            throw new UnauthorizedAccessException("No hay token de autenticación");
-
-        try
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/current-user");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _httpClient.SendAsync(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                await _tokenService.RemoveTokenAsync();
-                throw new UnauthorizedAccessException("Sesión expirada");
-            }
-
-            response.EnsureSuccessStatusCode();
-
-            var user = await response.Content.ReadFromJsonAsync<LoginResponse>()
-                ?? throw new Exception("Respuesta del servidor inválida");
-
-            return user;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al obtener usuario actual");
-            throw new Exception("Error al comunicarse con el servicio de autenticación", ex);
-        }
-    }
+    
 
     public async Task<RegisterResponse> RegisterAsync(RegistroDTO registerDto)
     {
@@ -365,6 +336,7 @@ public class AuthService : IAuthService
             };
         }
     }
+
 }
 
 

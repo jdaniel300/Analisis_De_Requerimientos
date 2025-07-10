@@ -14,6 +14,8 @@ namespace AccionSocialModels
        public DbSet<Taller> Talleres { get; set; }
         public DbSet<EncargadoTaller> EncargadoTaller { get; set; }
         public DbSet<Participantes> Participantes { get; set; }
+
+        public DbSet<Sesion> Sesion { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -72,6 +74,31 @@ namespace AccionSocialModels
 
 
             });
+
+            modelBuilder.Entity<Sesion>(b =>
+            {
+                b.ToTable("Sesiones");
+
+                // Clave primaria
+                b.HasKey(s => s.Id);
+                b.Property(s => s.Id).ValueGeneratedOnAdd().IsRequired();
+
+                // Propiedades específicas de sesión
+                b.Property(s => s.Fecha).IsRequired();
+                b.Property(s => s.HoraInicio).IsRequired();
+                b.Property(s => s.HoraFin).IsRequired();
+                b.Property(s => s.Estado).HasDefaultValue(true);
+
+                // Relación con Taller
+                b.HasOne(s => s.Taller)
+                    .WithMany(t => t.Sesiones)
+                    .HasForeignKey(s => s.IdTaller)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Índice para búsquedas por fecha
+                b.HasIndex(s => s.Fecha);
+            });
+
             modelBuilder.Entity<Participantes>(b =>
             {
                 b.ToTable("Participantes");
@@ -82,7 +109,7 @@ namespace AccionSocialModels
 
                 // Configuración de propiedades
                 b.Property(p => p.IdUsuario).IsRequired();
-                b.Property(p => p.IdTaller).IsRequired();
+                b.Property(p => p.IdSesion).IsRequired();
 
                 b.Property(p => p.FechaInscripcion)
                     .IsRequired()
@@ -99,13 +126,13 @@ namespace AccionSocialModels
                     .HasForeignKey(p => p.IdUsuario)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                b.HasOne(p => p.Taller)
+                b.HasOne(p => p.Sesion)
                     .WithMany()
-                    .HasForeignKey(p => p.IdTaller)
+                    .HasForeignKey(p => p.IdSesion)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 // Índice único opcional
-                b.HasIndex(p => new { p.IdUsuario, p.IdTaller })
+                b.HasIndex(p => new { p.IdUsuario, p.IdSesion })
                     .IsUnique();
             });
 
@@ -148,6 +175,8 @@ namespace AccionSocialModels
                     .IsUnique()
                     .HasDatabaseName("IX_Unique_Encargado_Taller");
             });
+
+            
 
         }
     }

@@ -15,5 +15,7 @@ namespace AccionSocialModels
         public bool Estado { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaActualizacion { get; set; }
+
+        public ICollection<Sesion> Sesiones { get; set; }
     }
 }

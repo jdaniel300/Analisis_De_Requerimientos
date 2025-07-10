@@ -1,6 +1,8 @@
 using AccionSocial.web.Services.Admin;
 using AccionSocial.web.Services.Auth;
 using AccionSocial.web.Services.Token;
+using AccionSocial.web.Services.Usr;
+using AccionSocial.web.Services.Usuario;
 using Jose;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -62,7 +64,13 @@ builder.Services.AddScoped<IAdministradorService, AdministradorService>();
 builder.Services.AddScoped<ITokenRefreshService, TokenRefreshService>();
 builder.Services.AddScoped<ITokenStorageService, BrowserTokenStorage>();
 builder.Services.AddTransient<AuthTokenHandler>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
+builder.Services.AddHttpClient<IUsuarioService, UsuarioService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]
+        ?? throw new InvalidOperationException("Missing ApiSettings:BaseUrl"));
+});
 
 builder.Services.AddHttpClient("AccionSocialApi", client =>
 {

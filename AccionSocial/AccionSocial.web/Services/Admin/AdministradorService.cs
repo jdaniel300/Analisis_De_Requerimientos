@@ -198,6 +198,8 @@ namespace AccionSocial.web.Services.Admin
                 throw; // Puedes manejar esto de otra forma si lo prefieres
             }
         }
+
+        
     }
 
 }

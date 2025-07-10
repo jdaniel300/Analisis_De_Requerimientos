@@ -10,6 +10,6 @@
     "\\AccionSocial\\AccionSocial.web\\Views\\Home",
     "\\AccionSocial\\AccionSocial.web\\Views\\Shared"
   ],
-  "SelectedNode": "\\AccionSocial\\AccionSocial.api\\Services\\TokenService.cs",
+  "SelectedNode": "\\AccionSocial\\AccionSocial.web\\Views\\Shared\\_Login.cshtml",
   "PreviewInSolutionExplorer": false
 }

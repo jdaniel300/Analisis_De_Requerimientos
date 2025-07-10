@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace AccionSocialModels.Response
 {
-    public class CurrentUserResponse
-    {
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string NombreCompleto { get; set; }
-        public IEnumerable<string> Roles { get; set; }
-    }
+    public record CurrentUserResponse(
+        int UserId,
+        string UserName,
+        string Email,
+        string NombreCompleto,
+        List<string> Roles,
+        DateTime FechaCreacion,
+        DateTime? UltimoAcceso,
+        bool Estado);
 }

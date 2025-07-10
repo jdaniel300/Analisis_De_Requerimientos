@@ -269,6 +269,9 @@ await InitializeDatabase(app);
 var authGroup = app.MapGroup("/api/auth").WithTags("Autenticacion");
 ConfigureAuthEndpoints(authGroup);
 
+var usrGroup = app.MapGroup("/api/usr").WithTags("Usuario");
+ConfigureUsrEndpoints(usrGroup);
+
 var consGroup = app.MapGroup("/api/consultas").WithTags("Consultas");
 ConfigureConsultaEndpoints(consGroup);
 
@@ -695,148 +698,6 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
       .WithName("Logout")
       .WithOpenApi();
 
-    //Actrualizar usuario - PROBADO
-    group.MapPut("/actualizarUsuario/{id}", async (
-    [FromRoute] int id,
-    [FromBody] UsuarioUpdateDto updateDto,
-    [FromServices] UserManager<Usuario> userManager,
-    [FromServices] SignInManager<Usuario> signInManager,
-    ClaimsPrincipal userClaim) =>
-    {
-        // Obtener usuario actual (el que hace la solicitud)
-        var currentUser = await userManager.GetUserAsync(userClaim);
-        if (currentUser == null) return Results.Unauthorized();
-
-        // Obtener usuario a modificar
-        var userToUpdate = await userManager.FindByIdAsync(id.ToString());
-        if (userToUpdate == null) return Results.NotFound();
-
-        // Verificar permisos
-        var isAdmin = await userManager.IsInRoleAsync(currentUser, "Admin");
-
-        // Si no es admin y está intentando modificar otro usuario, denegar
-        if (currentUser.Id != id && !isAdmin)
-            return Results.Forbid();
-
-        // Actualizar campos básicos (todos los usuarios pueden modificar estos campos de sí mismos)
-        userToUpdate.UserName = updateDto.UserName ?? userToUpdate.UserName;
-        userToUpdate.Email = updateDto.Email ?? userToUpdate.Email;
-        userToUpdate.Nombre = updateDto.Nombre ?? userToUpdate.Nombre;
-        userToUpdate.Apellidos = updateDto.Apellidos ?? userToUpdate.Apellidos;
-        userToUpdate.PhoneNumber = updateDto.Telefono ?? userToUpdate.PhoneNumber;
-
-        // Solo admin puede modificar estado y roles
-        if (isAdmin)
-        {
-            if (updateDto.Estado.HasValue)
-                userToUpdate.Estado = updateDto.Estado.Value;
-
-            if (updateDto.Roles != null)
-            {
-                var currentRoles = await userManager.GetRolesAsync(userToUpdate);
-                await userManager.RemoveFromRolesAsync(userToUpdate, currentRoles);
-                await userManager.AddToRolesAsync(userToUpdate, updateDto.Roles);
-            }
-        }
-        // Manejo de cambio de contraseña
-        if (!string.IsNullOrEmpty(updateDto.CurrentPassword) && !string.IsNullOrEmpty(updateDto.NewPassword))
-        {
-            // Solo el propio usuario puede cambiar su contraseña (el admin no puede cambiarla directamente)
-            if (currentUser.Id != id)
-                return Results.Forbid();
-
-            // Verificar la contraseña actual
-            var passwordCheck = await signInManager.CheckPasswordSignInAsync(userToUpdate, updateDto.CurrentPassword, false);
-            if (!passwordCheck.Succeeded)
-                return Results.BadRequest("La contraseña actual es incorrecta");
-
-            // Cambiar la contraseña
-            var token = await userManager.GeneratePasswordResetTokenAsync(userToUpdate);
-            var resultPassword = await userManager.ResetPasswordAsync(userToUpdate, token, updateDto.NewPassword);
-            if (!resultPassword.Succeeded)
-                return Results.BadRequest(resultPassword.Errors);
-        }
-
-        var result = await userManager.UpdateAsync(userToUpdate);
-        if (!result.Succeeded)
-            return Results.BadRequest(result.Errors);
-
-        return Results.Ok();
-    })
-      .WithName("ActualizarUsuario")
-      .WithOpenApi();
-    //Elimiar por id - PROBADO
-    group.MapDelete("/eliminar/{id}", async (
-        [FromRoute] string id,
-        [FromServices] UserManager<Usuario> userManager,
-        [FromServices] SignInManager<Usuario> signInManager,
-        ClaimsPrincipal userClaim) =>
-    {
-        // Verificar si el usuario actual es admin
-        var currentUser = await userManager.GetUserAsync(userClaim);
-        var isAdmin = await userManager.IsInRoleAsync(currentUser, "Admin");
-
-        if (!isAdmin)
-        {
-            return Results.Forbid();
-        }
-
-        // No permitir auto-eliminación
-        if (currentUser.Id.ToString() == id)
-        {
-            return Results.BadRequest("No puedes eliminarte a ti mismo.");
-        }
-
-        var userToDelete = await userManager.FindByIdAsync(id);
-        if (userToDelete == null)
-        {
-            return Results.NotFound();
-        }
-
-        var result = await userManager.DeleteAsync(userToDelete);
-
-        if (!result.Succeeded)
-        {
-            return Results.Problem(
-                detail: string.Join(", ", result.Errors.Select(e => e.Description)),
-                statusCode: StatusCodes.Status400BadRequest);
-        }
-        if (currentUser.Id.ToString() == id)
-        {
-            await signInManager.SignOutAsync();
-        }
-
-        return Results.NoContent();
-    }).RequireAuthorization(policy => policy.RequireRole("Admin"))
-      .WithName("EliminarUsuarioPorIdAdmin")
-      .WithOpenApi();
-    //Eliminar - PROBADO
-    group.MapDelete("/usuarioActual", async (
-    ClaimsPrincipal userClaim,
-    [FromServices] UserManager<Usuario> userManager,
-    [FromServices] SignInManager<Usuario> signInManager) =>
-    {
-        var currentUser = await userManager.GetUserAsync(userClaim);
-        if (currentUser == null)
-        {
-            return Results.Unauthorized();
-        }
-
-        var result = await userManager.DeleteAsync(currentUser);
-
-        if (!result.Succeeded)
-        {
-            return Results.Problem(
-                detail: string.Join(", ", result.Errors.Select(e => e.Description)),
-                statusCode: StatusCodes.Status400BadRequest);
-        }
-
-        // Cerrar sesión después de eliminar la cuenta
-        await signInManager.SignOutAsync();
-
-        return Results.NoContent();
-    }).WithName("ElimarUsuarioActual").WithOpenApi();
-
     //REGISTRO POR LOGIN - PROBADO
     group.MapPost("/register", async (
         RegistroDTO registerUserDto,
@@ -1064,10 +925,221 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
             NombreCompleto = $"{user.Nombre} {user.Apellidos}"
         });
     }).WithName("UsuarioPorId").WithOpenApi();
-    // [Resto de endpoints de autenticación...]
-    // (Mantener la misma estructura para los demás endpoints)
+
+    
 }
-//CONSILTAS
+
+void ConfigureUsrEndpoints(RouteGroupBuilder group)
+{
+    //PROBADO
+    group.MapGet("/usuarioActual", async (
+    HttpContext httpContext,
+    [FromServices] UserManager<Usuario> userManager,
+    [FromServices] ITokenService tokenService,
+    [FromServices] ILogger<Program> logger) =>
+    {
+        try
+        {
+            // Obtener el claim del usuario desde el token JWT
+            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null)
+            {
+                logger.LogWarning("Intento de acceder a current-user sin autenticación");
+                return Results.Unauthorized();
+            }
+
+            var userId = userIdClaim.Value;
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null || !user.Estado)
+            {
+                logger.LogWarning("Usuario no encontrado o inactivo: {UserId}", userId);
+                return Results.NotFound("Usuario no encontrado o inactivo");
+            }
+
+            // Obtener roles del usuario
+            var roles = await userManager.GetRolesAsync(user);
+            if (roles == null || !roles.Any())
+            {
+                logger.LogWarning("Usuario {UserId} no tiene roles asignados", user.Id);
+                roles = new List<string> { "Usuario" }; // Rol por defecto
+            }
+
+            // Preparar respuesta
+            var response = new
+            {
+                User = new
+                {
+                    userId = user.Id,
+                    userName = user.UserName,
+                    email = user.Email,
+                    nombreCompleto = $"{user.Nombre} {user.Apellidos}".Trim(),
+                    roles = roles.ToList()
+                }
+            };
+
+            logger.LogInformation("Información de usuario obtenida para {UserId}", user.Id);
+            return Results.Ok(response);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error inesperado al obtener información del usuario actual");
+            return Results.Problem(
+                title: "Error interno",
+                detail: "Ocurrió un error inesperado",
+                statusCode: StatusCodes.Status500InternalServerError);
+        }
+    })
+      .WithName("UsuarioActual")
+      .WithOpenApi()
+      .RequireAuthorization();
+
+    //Eliminar - PROBADO
+    group.MapDelete("/usuarioActual", async (
+    ClaimsPrincipal userClaim,
+    [FromServices] UserManager<Usuario> userManager,
+    [FromServices] SignInManager<Usuario> signInManager) =>
+    {
+        var currentUser = await userManager.GetUserAsync(userClaim);
+        if (currentUser == null)
+        {
+            return Results.Unauthorized();
+        }
+
+        var result = await userManager.DeleteAsync(currentUser);
+
+        if (!result.Succeeded)
+        {
+            return Results.Problem(
+                detail: string.Join(", ", result.Errors.Select(e => e.Description)),
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        // Cerrar sesión después de eliminar la cuenta
+        await signInManager.SignOutAsync();
+
+        return Results.NoContent();
+    }).WithName("ElimarUsuarioActual").WithOpenApi();
+
+    //Elimiar por id - PROBADO
+    group.MapDelete("/eliminar/{id}", async (
+        [FromRoute] string id,
+        [FromServices] UserManager<Usuario> userManager,
+        [FromServices] SignInManager<Usuario> signInManager,
+        ClaimsPrincipal userClaim) =>
+    {
+        // Verificar si el usuario actual es admin
+        var currentUser = await userManager.GetUserAsync(userClaim);
+        var isAdmin = await userManager.IsInRoleAsync(currentUser, "Admin");
+
+        if (!isAdmin)
+        {
+            return Results.Forbid();
+        }
+
+        // No permitir auto-eliminación
+        if (currentUser.Id.ToString() == id)
+        {
+            return Results.BadRequest("No puedes eliminarte a ti mismo.");
+        }
+
+        var userToDelete = await userManager.FindByIdAsync(id);
+        if (userToDelete == null)
+        {
+            return Results.NotFound();
+        }
+
+        var result = await userManager.DeleteAsync(userToDelete);
+
+        if (!result.Succeeded)
+        {
+            return Results.Problem(
+                detail: string.Join(", ", result.Errors.Select(e => e.Description)),
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+        if (currentUser.Id.ToString() == id)
+        {
+            await signInManager.SignOutAsync();
+        }
+
+        return Results.NoContent();
+    }).RequireAuthorization(policy => policy.RequireRole("Admin"))
+      .WithName("EliminarUsuarioPorIdAdmin")
+      .WithOpenApi();
+
+    //Actrualizar usuario - PROBADO
+    group.MapPut("/actualizarUsuario/{id}", async (
+    [FromRoute] int id,
+    [FromBody] UsuarioUpdateDto updateDto,
+    [FromServices] UserManager<Usuario> userManager,
+    [FromServices] SignInManager<Usuario> signInManager,
+    ClaimsPrincipal userClaim) =>
+    {
+        // Obtener usuario actual (el que hace la solicitud)
+        var currentUser = await userManager.GetUserAsync(userClaim);
+        if (currentUser == null) return Results.Unauthorized();
+
+        // Obtener usuario a modificar
+        var userToUpdate = await userManager.FindByIdAsync(id.ToString());
+        if (userToUpdate == null) return Results.NotFound();
+
+        // Verificar permisos
+        var isAdmin = await userManager.IsInRoleAsync(currentUser, "Admin");
+
+        // Si no es admin y está intentando modificar otro usuario, denegar
+        if (currentUser.Id != id && !isAdmin)
+            return Results.Forbid();
+
+        // Actualizar campos básicos (todos los usuarios pueden modificar estos campos de sí mismos)
+        userToUpdate.UserName = updateDto.UserName ?? userToUpdate.UserName;
+        userToUpdate.Email = updateDto.Email ?? userToUpdate.Email;
+        userToUpdate.Nombre = updateDto.Nombre ?? userToUpdate.Nombre;
+        userToUpdate.Apellidos = updateDto.Apellidos ?? userToUpdate.Apellidos;
+        userToUpdate.PhoneNumber = updateDto.Telefono ?? userToUpdate.PhoneNumber;
+
+        // Solo admin puede modificar estado y roles
+        if (isAdmin)
+        {
+            if (updateDto.Estado.HasValue)
+                userToUpdate.Estado = updateDto.Estado.Value;
+
+            if (updateDto.Roles != null)
+            {
+                var currentRoles = await userManager.GetRolesAsync(userToUpdate);
+                await userManager.RemoveFromRolesAsync(userToUpdate, currentRoles);
+                await userManager.AddToRolesAsync(userToUpdate, updateDto.Roles);
+            }
+        }
+        // Manejo de cambio de contraseña
+        if (!string.IsNullOrEmpty(updateDto.CurrentPassword) && !string.IsNullOrEmpty(updateDto.NewPassword))
+        {
+            // Solo el propio usuario puede cambiar su contraseña (el admin no puede cambiarla directamente)
+            if (currentUser.Id != id)
+                return Results.Forbid();
+
+            // Verificar la contraseña actual
+            var passwordCheck = await signInManager.CheckPasswordSignInAsync(userToUpdate, updateDto.CurrentPassword, false);
+            if (!passwordCheck.Succeeded)
+                return Results.BadRequest("La contraseña actual es incorrecta");
+
+            // Cambiar la contraseña
+            var token = await userManager.GeneratePasswordResetTokenAsync(userToUpdate);
+            var resultPassword = await userManager.ResetPasswordAsync(userToUpdate, token, updateDto.NewPassword);
+            if (!resultPassword.Succeeded)
+                return Results.BadRequest(resultPassword.Errors);
+        }
+
+        var result = await userManager.UpdateAsync(userToUpdate);
+        if (!result.Succeeded)
+            return Results.BadRequest(result.Errors);
+
+        return Results.Ok();
+    })
+      .WithName("ActualizarUsuario")
+      .WithOpenApi();
+}
+//CONSULTAS
 void ConfigureConsultaEndpoints(RouteGroupBuilder group)
 {
     // Endpoints de consulta - PROBADO
@@ -1198,100 +1270,7 @@ void ConfigureConsultaEndpoints(RouteGroupBuilder group)
 //MODIFICACIONES
 void ConfigureModificacionEndpoints(RouteGroupBuilder group)
 {
-    group.MapPut("/usr/", async (
-        [FromBody] ActualizarUsuarioDTO updateDto,
-        ClaimsPrincipal userClaim,
-        [FromServices] UserManager<Usuario> userManager,
-        [FromServices] ILogger<Program> logger) =>
-    {
-        var user = await userManager.GetUserAsync(userClaim);
-        if (user == null)
-        {
-            return Results.Unauthorized();
-        }
-
-        try
-        {
-            // Actualizar datos básicos
-            if (!string.IsNullOrEmpty(updateDto.Nombre))
-            {
-                user.Nombre = updateDto.Nombre;
-            }
-
-            if (!string.IsNullOrEmpty(updateDto.Apellidos))
-            {
-                user.Apellidos = updateDto.Apellidos;
-            }
-
-            if (!string.IsNullOrEmpty(updateDto.PhoneNumber))
-            {
-                user.PhoneNumber = updateDto.PhoneNumber;
-            }
-
-            // Actualizar contraseña si se proporciona
-            if (!string.IsNullOrEmpty(updateDto.CurrentPassword) &&
-                !string.IsNullOrEmpty(updateDto.NewPassword))
-            {
-                var changePasswordResult = await userManager.ChangePasswordAsync(
-                    user,
-                    updateDto.CurrentPassword,
-                    updateDto.NewPassword);
-
-                if (!changePasswordResult.Succeeded)
-                {
-                    logger.LogWarning("Error al cambiar contraseña para usuario {UserId}: {Errors}",
-                        user.Id, string.Join(", ", changePasswordResult.Errors.Select(e => e.Description)));
-
-                    return Results.BadRequest(new
-                    {
-                        Errors = changePasswordResult.Errors.Select(e => e.Description)
-                    });
-                }
-
-                logger.LogInformation("Usuario {UserId} cambió su contraseña", user.Id);
-            }
-
-            // Guardar cambios en el usuario
-            var updateResult = await userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-            {
-                logger.LogWarning("Error al actualizar usuario {UserId}: {Errors}",
-                    user.Id, string.Join(", ", updateResult.Errors.Select(e => e.Description)));
-
-                return Results.BadRequest(new
-                {
-                    Errors = updateResult.Errors.Select(e => e.Description)
-                });
-            }
-
-            logger.LogInformation("Usuario {UserId} actualizó su perfil", user.Id);
-
-            // Obtener datos actualizados
-            var roles = await userManager.GetRolesAsync(user);
-
-            return Results.Ok(new
-            {
-                Message = "Perfil actualizado correctamente",
-                Username = user.UserName,
-                Email = user.Email,
-                NombreCompleto = $"{user.Nombre} {user.Apellidos}",
-                PhoneNumber = user.PhoneNumber,
-                Roles = roles
-            });
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error al actualizar usuario {UserId}", user.Id);
-            return Results.Problem("Error interno al actualizar el perfil");
-        }
-    })
-    .RequireAuthorization()
-    .WithName("ActualizarUsuarioActual")
-    .WithOpenApi()
-    .Produces(StatusCodes.Status200OK)
-    .Produces(StatusCodes.Status400BadRequest)
-    .Produces(StatusCodes.Status401Unauthorized)
-    .Produces(StatusCodes.Status500InternalServerError);
+    
 }
 
 //TALLERES

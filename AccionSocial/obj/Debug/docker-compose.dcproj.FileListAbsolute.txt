@@ -158,6 +158,7 @@ D:\Repositorios\Analisis_De_Requerimientos\AccionSocial\bin\Debug\AccionSocialMo
 D:\Repositorios\Analisis_De_Requerimientos\AccionSocial\obj\Debug\docker-compose.dcproj.AssemblyReference.cache
 D:\Repositorios\Analisis_De_Requerimientos\AccionSocial\obj\Debug\docker-compose.dcproj.CoreCompileInputs.cache
 D:\Repositorios\Analisis_De_Requerimientos\AccionSocial\obj\Debug\docker-c.35A3FFBA.Up2Date
+D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.AspNetCore.OpenApi.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\AccionSocial.api.deps.json
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\AccionSocial.api.runtimeconfig.json
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\BlazorDebugProxy\BrowserDebugHost.dll
@@ -197,7 +198,6 @@ D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.Extensions.Primit
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.EntityFrameworkCore.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.IdentityModel.Tokens.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\System.IdentityModel.Tokens.Jwt.dll
-D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.AspNetCore.OpenApi.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.Extensions.Identity.Stores.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.EntityFrameworkCore.Relational.dll
 D:\Analisis_De_Requerimientos\AccionSocial\bin\Debug\Microsoft.Extensions.Caching.Memory.dll
