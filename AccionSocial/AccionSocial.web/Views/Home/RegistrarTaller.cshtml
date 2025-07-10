@@ -3,14 +3,40 @@
     Layout = "_LayoutPlantilla";
 }
 
+<style>
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+</style>
+
 <div class="container mt-4">
     <div class="page-inner">
         <div class="row">
             <div class="col-md-12 d-flex justify-content-between align-items-center mb-4">
                 <h3 class="fw-bold">Registrar Taller</h3>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdveYeJYieakBF_F7wtHnPjBiG0dl0OPWlqE4eWzIsIuOjAlw/viewform" target="_blank" class="btn btn-outline-primary">
-                    Llenar encuesta de talleres anteriores
-                </a>
+                <div>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdveYeJYieakBF_F7wtHnPjBiG0dl0OPWlqE4eWzIsIuOjAlw/viewform" target="_blank" class="btn btn-outline-primary me-2">
+                        Llenar encuesta de talleres anteriores
+                    </a>
+                    <button class="btn btn-outline-primary" onclick="mostrarPopup()">Mostrar AA</button>
+                </div>
             </div>
         </div>
 
@@ -76,6 +102,13 @@
     </div>
 </div>
 
+<div id="popup" class="popup-overlay">
+    <div class="popup-content">
+        <h4>Registro por QR</h4>
+        <button class="btn btn-sm btn-outline-secondary mt-3" onclick="cerrarPopup()">Cerrar</button>
+    </div>
+</div>
+
 <script>
     function filtrarPorDia(dia) {
         const cards = document.querySelectorAll('.taller-card');
@@ -103,5 +136,13 @@
     function desmatricular() {
         document.getElementById('alerta-matricula').style.display = 'none';
         document.getElementById('alerta-desmatricula').style.display = 'block';
+    }
+
+    function mostrarPopup() {
+        document.getElementById('popup').style.display = 'flex';
+    }
+
+    function cerrarPopup() {
+        document.getElementById('popup').style.display = 'none';
     }
 </script>
