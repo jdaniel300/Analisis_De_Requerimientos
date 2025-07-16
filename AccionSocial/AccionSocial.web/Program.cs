@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Polly;
 using Polly.Extensions.Http;
@@ -56,6 +57,7 @@ builder.Services.AddMemoryCache();
 // Configuración de Kestrel
 builder.WebHost.ConfigureKestrel(serverOptions => {
     serverOptions.ListenAnyIP(8080);
+
 });
 
 
@@ -70,6 +72,7 @@ builder.Services.AddHttpClient<IUsuarioService, UsuarioService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]
         ?? throw new InvalidOperationException("Missing ApiSettings:BaseUrl"));
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 });
 
 builder.Services.AddHttpClient("AccionSocialApi", client =>
@@ -244,7 +247,17 @@ app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath), 
+    RequestPath = "/uploads"
+});
 
 app.Use(async (context, next) =>
 {

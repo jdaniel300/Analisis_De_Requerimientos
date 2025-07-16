@@ -4,6 +4,8 @@ using AccionSocialModels.DTO;
 using AccionSocialModels.Response;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 
 namespace AccionSocial.web.Services.Usr
@@ -13,15 +15,18 @@ namespace AccionSocial.web.Services.Usr
         private readonly HttpClient _httpClient;
         private readonly ILogger<UsuarioService> _logger;
         private readonly ITokenStorageService _tokenService;
+        private readonly IWebHostEnvironment _env;
 
         public UsuarioService(
             HttpClient httpClient,
             ILogger<UsuarioService> logger,
-            ITokenStorageService tokenService)
+            ITokenStorageService tokenService,
+            IWebHostEnvironment env)
         {
             _httpClient = httpClient;
             _logger = logger;
             _tokenService = tokenService;
+            _env = env;
         }
 
         public async Task<CurrentUserResponse?> GetCurrentUserAsync()
@@ -29,6 +34,7 @@ namespace AccionSocial.web.Services.Usr
             var token = await _tokenService.GetTokenAsync();
             if (string.IsNullOrEmpty(token))
             {
+                _logger.LogWarning("Intento de obtener usuario actual sin token");
                 throw new UnauthorizedAccessException("No hay token de autenticación disponible");
             }
 
@@ -39,20 +45,27 @@ namespace AccionSocial.web.Services.Usr
 
                 var response = await _httpClient.SendAsync(request);
 
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                switch (response.StatusCode)
                 {
-                    await _tokenService.RemoveTokenAsync();
-                    throw new UnauthorizedAccessException("Sesión expirada o token inválido");
+                    case HttpStatusCode.Unauthorized:
+                        await _tokenService.RemoveTokenAsync();
+                        throw new UnauthorizedAccessException("Sesión expirada o token inválido");
+
+                    case HttpStatusCode.NotFound:
+                        throw new KeyNotFoundException("Usuario no encontrado");
+
+                    case HttpStatusCode.Forbidden:
+                        throw new UnauthorizedAccessException("No tiene permisos para esta acción");
                 }
 
                 response.EnsureSuccessStatusCode();
 
                 return await response.Content.ReadFromJsonAsync<CurrentUserResponse>();
             }
-            catch (HttpRequestException httpEx)
+            catch (HttpRequestException ex)
             {
-                _logger.LogError(httpEx, "Error HTTP al obtener usuario actual");
-                throw new Exception("Error al comunicarse con el servicio de usuarios", httpEx);
+                _logger.LogError(ex, "Error HTTP al obtener usuario actual");
+                throw new ApplicationException("Error al comunicarse con el servidor", ex);
             }
             catch (Exception ex)
             {
@@ -61,47 +74,114 @@ namespace AccionSocial.web.Services.Usr
             }
         }
 
-        public async Task<bool> DeleteCurrentUserAsync()
+        public async Task<Stream> ObtenerImagenPerfil()
         {
+            try
+            {
+                var token = await _tokenService.GetTokenAsync();
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await _httpClient.GetAsync("api/usr/obtenerImagenPerfil");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStreamAsync();
+                }
+
+                // Si hay error, devolver imagen por defecto
+                _logger.LogWarning("No se pudo obtener la imagen de perfil, usando imagen por defecto. Status: {StatusCode}", response.StatusCode);
+                return GetDefaultImageStream();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener imagen de perfil");
+                return GetDefaultImageStream();
+            }
+        }
+
+        private Stream GetDefaultImageStream()
+        {
+            var defaultImagePath = Path.Combine(_env.WebRootPath, "img", "default-avatar.jpg");
+            return new FileStream(defaultImagePath, FileMode.Open, FileAccess.Read);
+        }
+
+        public async Task<string> SubirImagenPerfil(MultipartFormDataContent fileContent)
+        {
+            try
+            {
+                var token = await _tokenService.GetTokenAsync();
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await _httpClient.PostAsync("api/usr/subirImagenPerfil", fileContent);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("Error al subir imagen: {StatusCode} - {Error}", response.StatusCode, errorContent);
+                    throw new HttpRequestException($"Error al subir imagen: {errorContent}");
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<ImageUploadResponse>();
+                return result?.ImagePath;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al subir imagen de perfil");
+                throw;
+            }
+        }
+
+        public async Task<DeleteUserResult> DeleteCurrentUserAsync(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return DeleteUserResult.Failure("La contraseña es requerida");
+            }
+
             var token = await _tokenService.GetTokenAsync();
             if (string.IsNullOrEmpty(token))
             {
-                throw new UnauthorizedAccessException("No hay token de autenticación disponible");
+                return DeleteUserResult.Unauthorized("No hay token de autenticación disponible");
             }
 
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Delete, "/api/usr/usuarioActual");
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var deleteRequest = new { Password = password };
+                var jsonContent = JsonSerializer.Serialize(deleteRequest);
+                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                var request = new HttpRequestMessage(HttpMethod.Delete, "/api/usr/usuarioActual")
+                {
+                    Content = content,
+                    Headers = { Authorization = new AuthenticationHeaderValue("Bearer", token) }
+                };
 
                 var response = await _httpClient.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    await _tokenService.RemoveTokenAsync();
+                    return DeleteUserResult.Success();
+                }
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await _tokenService.RemoveTokenAsync();
-                    throw new UnauthorizedAccessException("Sesión expirada o token inválido");
+                    return DeleteUserResult.Unauthorized("Sesión expirada o token inválido");
                 }
 
-                if (response.StatusCode == HttpStatusCode.NoContent)
-                {
-                    // Eliminar token local después de eliminar la cuenta
-                    await _tokenService.RemoveTokenAsync();
-                    return true;
-                }
-
-                // Si llegamos aquí, hubo un error
                 var errorContent = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Error al eliminar usuario: {errorContent}");
+                return DeleteUserResult.Failure(errorContent);
             }
             catch (HttpRequestException httpEx)
             {
                 _logger.LogError(httpEx, "Error HTTP al eliminar usuario actual");
-                throw new Exception("Error al comunicarse con el servicio de usuarios", httpEx);
+                return DeleteUserResult.Failure("Error al comunicarse con el servicio de usuarios");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error inesperado al eliminar usuario actual");
-                throw;
+                return DeleteUserResult.Failure("Error inesperado al eliminar el usuario");
             }
         }
 
@@ -212,6 +292,6 @@ namespace AccionSocial.web.Services.Usr
             }
         }
 
-
+       
     }
 }

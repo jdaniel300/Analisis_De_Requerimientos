@@ -2,12 +2,12 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 
-# Create wwwroot user/group and install tools
+# Crear usuario, directorios y permisos
 RUN groupadd -r wwwroot && \
     useradd -r -g wwwroot wwwroot && \
-    mkdir -p /app/keys && \
-    chown -R wwwroot:wwwroot /app/keys && \
-    chmod -R 700 /app/keys && \
+    mkdir -p /app/wwwroot/uploads && \
+    chown -R wwwroot:wwwroot /app && \
+    chmod -R 755 /app/wwwroot && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
       iputils-ping \
@@ -37,4 +37,7 @@ RUN dotnet publish "AccionSocial.web.csproj" -c Release -o /app/publish /p:UseAp
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Asegurar permisos nuevamente (por si COPY los modificó)
+RUN chown -R wwwroot:wwwroot /app && \
+    chmod -R 755 /app/wwwroot
 ENTRYPOINT ["dotnet", "AccionSocial.web.dll"]

@@ -1,63 +1,63 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using AccionSocialModels.Response
+@model CurrentUserResponse?
 @{
     ViewData["Title"] = "Perfil";
     Layout = "_LayoutPlantilla";
+
 }
 
 
-<div class="col-md-4">
-    <div class="card card-profile">
-        <div class="card-header" style="background-image: url('assets/img/blogpost.jpg')">
-            <div class="profile-picture">
-                <div class="avatar avatar-xl">
-                    <img src="assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
-                </div>
+<div class="modal fade" id="perfilModal" tabindex="-1" role="dialog" aria-labelledby="perfilModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="perfilModalLabel">Mi Perfil</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
-        <div class="card-body">
-            <div class="user-profile text-center">
-                <div class="name">Hizrian, 19</div>
-                <div class="job">Frontend Developer</div>
-                <div class="desc">A man who hates loneliness</div>
-                <div class="social-media">
-                    <a class="btn btn-info btn-twitter btn-sm btn-link" href="#">
-                        <span class="btn-label just-icon">
-                            <i class="icon-social-twitter"></i>
-                        </span>
-                    </a>
-                    <a class="btn btn-primary btn-sm btn-link" rel="publisher" href="#">
-                        <span class="btn-label just-icon">
-                            <i class="icon-social-facebook"></i>
-                        </span>
-                    </a>
-                    <a class="btn btn-danger btn-sm btn-link" rel="publisher" href="#">
-                        <span class="btn-label just-icon">
-                            <i class="icon-social-instagram"></i>
-                        </span>
-                    </a>
-                </div>
-                <div class="view-profile">
-                    <a href="#" class="btn btn-secondary w-100">View Full Profile</a>
-                </div>
+            <div class="modal-body">
+                @if (Model == null)
+                {
+                    <div class="alert alert-warning">No se pudo cargar la información del perfil</div>
+                }
+                else
+                {
+                    <div class="card card-profile">
+                        <div class="card-header bg-primary">
+                            <div class="profile-picture">
+                                <div class="avatar avatar-xl">
+                                    <img src="~/assets/img/default-profile.png" alt="Foto de perfil" class="avatar-img rounded-circle">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="user-profile text-center">
+                                <div class="name">@Model.NombreCompleto</div>
+                                <div class="job">@string.Join(", ", Model.Roles)</div>
+                                <div class="desc">
+                                    <i class="icon-envelope"></i> <span>@Model.Email</span>
+                                </div>
+                                <div class="desc">
+                                    <i class="icon-user"></i> <span>@Model.UserName</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row user-stats text-center">
+                                <div class="col">
+                                    <div class="title">ID de Usuario</div>
+                                    <div class="number small">@Model.UserId</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
-        </div>
-        <div class="card-footer">
-            <div class="row user-stats text-center">
-                <div class="col">
-                    <div class="number">125</div>
-                    <div class="title">Post</div>
-                </div>
-                <div class="col">
-                    <div class="number">25K</div>
-                    <div class="title">Followers</div>
-                </div>
-                <div class="col">
-                    <div class="number">134</div>
-                    <div class="title">Following</div>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
+

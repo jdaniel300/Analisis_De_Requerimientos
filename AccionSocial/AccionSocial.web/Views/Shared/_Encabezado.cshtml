@@ -1,5 +1,8 @@
-﻿@using Microsoft.AspNetCore.Authentication
+﻿@using AccionSocialModels.Response
+@using Microsoft.AspNetCore.Authentication
+@using AccionSocialModels
 @using System.Security.Claims
+@model AccionSocialModels.Response.CurrentUserResponse
 @{
     var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
     var fullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value;
@@ -8,7 +11,7 @@
     <div class="main-header-logo">
         <!-- Logo Header -->
         <div class="logo-header" data-background-color="dark">
-            
+
             <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">
                     <i class="gg-menu-right"></i>
@@ -50,7 +53,7 @@
                         </form>
                     </ul>
                 </li>
-                
+
                 <li class="nav-item topbar-icon dropdown hidden-caret">
                     <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-bell"></i>
@@ -105,11 +108,11 @@
                 <li class="nav-item topbar-user dropdown hidden-caret">
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                         <div class="avatar-sm">
-                            <img src="~/Plantilla/img/profile.jpg" alt="..." class="avatar-img rounded-circle" />
+                            <img src="/api/usr/obtenerImagenPerfil" alt="Imagen de perfil" class="avatar-img rounded-circle" />
                         </div>
                         <span class="profile-username">
                             <span class="op-7">Hola,</span>
-                            <span class="fw-bold">Usuario</span>
+                            <span class="fw-bold">@fullName</span>
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -117,12 +120,15 @@
                         <li>
                             <div class="user-box">
                                 <div class="avatar-lg">
-                                    <img src="~/Plantilla/img/profile.jpg" alt="image profile" class="avatar-img rounded" />
+                                    <img src="/api/usr/obtenerImagenPerfil" alt="image profile" class="avatar-img rounded" />
                                 </div>
                                 <div class="u-text">
                                     <h4>@fullName</h4>
                                     <p class="text-muted">@userEmail</p>
-                                    <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">Ver perfil</a>
+
+                                    <button type="button" class="btn btn-xs btn-secondary btn-sm" onclick="loadProfileModal()">
+                                        <i class="fas fa-user me-1"></i> Ver mi perfil
+                                    </button>
                                 </div>
                             </div>
                         </li>
@@ -149,3 +155,450 @@
     </nav>
 <!-- End Navbar -->
 </div>
+
+
+<!-- Modal del Perfil -->
+<div class="modal fade" id="perfilModal" tabindex="-1" aria-labelledby="perfilModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="perfilModalLabel">Mi Perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="perfilModalBody">
+                <!-- Contenido dinámico se cargará aquí -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="saveProfileBtn" style="display:none;">Guardar cambios</button>
+                <button type="button" class="btn btn-outline-primary" id="editProfileBtn">Editar perfil</button>
+                <button type="button" class="btn btn-danger ms-auto" id="deleteAccountBtn">
+                    <i class="fas fa-trash-alt me-1"></i> Eliminar cuenta
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación de Cuenta -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar tu cuenta permanentemente? Esta acción no se puede deshacer.</p>
+                <div class="form-group mb-3">
+                    <label for="confirmPassword">Ingresa tu contraseña para confirmar:</label>
+                    <input type="password" class="form-control" id="confirmPassword" required>
+                </div>
+                <div class="alert alert-danger" id="deleteError" style="display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Eliminar cuenta</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+        let currentUserData = null;
+    let isEditMode = false;
+
+    function loadProfileModal() {
+        const modal = new bootstrap.Modal(document.getElementById('perfilModal'));
+        const modalBody = document.getElementById('perfilModalBody');
+
+        // Mostrar spinner de carga
+        modalBody.innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p>Cargando perfil...</p>
+            </div>`;
+
+        document.getElementById('editProfileBtn').style.display = 'inline-block';
+        document.getElementById('saveProfileBtn').style.display = 'none';
+        isEditMode = false;
+
+        modal.show();
+
+        fetch('@Url.Action("GetUserProfile", "UsrActual")')
+        .then(async response => {
+            if (!response.ok) {
+                let errorMessage = response.statusText;
+                try {
+                    const errorResponse = await response.text();
+                    if (errorResponse) {
+                        errorMessage = errorResponse;
+                    }
+                } catch (e) {
+                    console.error('Error al leer respuesta de error:', e);
+                }
+                throw new Error(errorMessage);
+            }
+
+            // Verificar que la respuesta tenga contenido
+            const responseText = await response.text();
+            if (!responseText) {
+                throw new Error('La respuesta del servidor está vacía');
+            }
+
+            return JSON.parse(responseText);
+        }).then(user => {
+            currentUserData = user;
+            renderProfileView(user, false);
+            modal.show();
+        }).catch(error => {
+                console.error('Error loading profile:', error);
+                modalBody.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error al cargar el perfil: ${error.message || 'Error desconocido'}
+                    </div>
+                    <div class="text-center mt-2">
+                        <button class="btn btn-primary" onclick="loadProfileModal()">
+                            <i class="fas fa-sync-alt me-1"></i> Reintentar
+                        </button>
+                    </div>`;
+            });
+    }
+
+    function renderProfileView(user, editMode) {
+        const modalBody = document.getElementById('perfilModalBody');
+        const lastAccess = user.ultimoAcceso ?
+            new Date(user.ultimoAcceso).toLocaleString() :
+            'Nunca';
+
+        if (!editMode) {
+            // Vista de solo lectura
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="/api/files/download/${user.imagenPerfil || 'default-avatar.jpg'}" alt="Imagen de perfil"
+                             class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                    </div>
+                    <div class="col-md-8">
+                        <h4>${user.nombreCompleto}</h4>
+                        <hr>
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Nombre de usuario</strong></label>
+                            <p>${user.userName}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Correo electrónico</strong></label>
+                            <p>${user.email}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Roles</strong></label>
+                            <p>
+                                ${user.roles.map(role => `<span class="badge bg-primary me-1">${role}</span>`).join('')}
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Último acceso</strong></label>
+                            <p>${lastAccess}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Estado</strong></label>
+                            <p>
+                                <span class="badge ${user.estado ? 'bg-success' : 'bg-secondary'}">
+                                    ${user.estado ? 'Activo' : 'Inactivo'}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>`;
+        } else {
+            // Vista de edición
+            const nombreParts = user.nombreCompleto?.split(' ') || ['', ''];
+            const nombre = nombreParts[0];
+            const apellidos = nombreParts.slice(1).join(' ');
+
+            modalBody.innerHTML = `
+                <form id="profileForm">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img src="/api/files/download/${user.imagenPerfil || 'default-avatar.jpg'}" alt="Imagen de perfil"
+                                 class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                            <div class="mt-2">
+                                <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('profileImageInput').click()">Cambiar foto</button>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Nombre</strong></label>
+                                <input type="text" class="form-control" name="Nombre" value="${nombre}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Apellidos</strong></label>
+                                <input type="text" class="form-control" name="Apellidos" value="${apellidos}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Nombre de usuario</strong></label>
+                                <input type="text" class="form-control" name="UserName" value="${user.userName}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Correo electrónico</strong></label>
+                                <input type="email" class="form-control" name="Email" value="${user.email}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Teléfono</strong></label>
+                                <input type="tel" class="form-control" name="Telefono" value="${user.telefono || ''}">
+                            </div>
+                            <hr>
+                            <h5>Cambiar contraseña</h5>
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña actual</label>
+                                <input type="password" class="form-control" name="CurrentPassword">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nueva contraseña</label>
+                                <input type="password" class="form-control" name="NewPassword">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Confirmar nueva contraseña</label>
+                                <input type="password" class="form-control" name="ConfirmNewPassword">
+                            </div>
+                        </div>
+                    </div>
+                </form>`;
+
+            // Manejar cambio de imagen de perfil
+            document.getElementById('profileImageInput').addEventListener('change', async function(e) {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+
+                    // Validaciones
+                    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    if (!validTypes.includes(file.type)) {
+                        showAlert('danger', 'Solo se permiten imágenes JPEG, PNG o GIF');
+                        return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                        showAlert('danger', 'La imagen no debe superar los 5MB');
+                        return;
+                    }
+
+                    // Mostrar preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.querySelectorAll('#perfilModal img, .avatar-preview').forEach(img => {
+                            img.src = e.target.result;
+                        });
+                    };
+                    reader.readAsDataURL(file);
+
+                    // Enviar al servidor
+                    try {
+                        const formData = new FormData();
+                        formData.append('file', file);
+
+                        const response = await fetch('/api/files/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            let errorMessage = 'Error al subir la imagen';
+                            try {
+                                // Intentar obtener el mensaje de error del cuerpo
+                                const errorResponse = await response.text();
+                                if (errorResponse) {
+                                    errorMessage = errorResponse;
+                                }
+                            } catch (e) {
+                                console.error('Error al leer respuesta de error:', e);
+                            }
+                            throw new Error(errorMessage);
+                        }
+
+                        const responseText = await response.text();
+                        if (!responseText) {
+                            throw new Error('La respuesta del servidor está vacía');
+                        }
+
+                        const result = JSON.parse(responseText);
+                        showAlert('success', 'Imagen de perfil actualizada correctamente');
+
+                        // Actualizar la imagen de perfil en el objeto de usuario
+                        currentUserData.imagenPerfil = result.path.split('/').pop();
+
+                        // Actualizar todas las imágenes de perfil con cache busting
+                        document.querySelectorAll('.avatar-img, #perfilModal img').forEach(img => {
+                            img.src = `${result.path}?t=${new Date().getTime()}`;
+                        });
+                    } catch (error) {
+                        console.error('Error al subir imagen:', error);
+                        showAlert('danger', error.message);
+                    }
+                }
+            });
+        }
+    }
+
+    // Manejar clic en botón Editar
+    document.getElementById('editProfileBtn').addEventListener('click', function() {
+        isEditMode = true;
+        renderProfileView(currentUserData, true);
+        document.getElementById('editProfileBtn').style.display = 'none';
+        document.getElementById('saveProfileBtn').style.display = 'inline-block';
+    });
+
+    // Manejar clic en botón Guardar
+    document.getElementById('saveProfileBtn').addEventListener('click', async function() {
+        const saveBtn = this;
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+
+        try {
+            const formData = new FormData(document.getElementById('profileForm'));
+            const updateDto = {
+                Nombre: formData.get('Nombre'),
+                Apellidos: formData.get('Apellidos'),
+                UserName: formData.get('UserName'),
+                Email: formData.get('Email'),
+                Telefono: formData.get('Telefono'),
+                CurrentPassword: formData.get('CurrentPassword'),
+                NewPassword: formData.get('NewPassword'),
+                ImagenPerfil: currentUserData.imagenPerfil // Añadir la imagen de perfil actualizada
+            };
+
+            // Validar contraseñas si se están cambiando
+            if (updateDto.NewPassword) {
+                const confirmPassword = formData.get('ConfirmNewPassword');
+                if (updateDto.NewPassword !== confirmPassword) {
+                    throw new Error('Las contraseñas nuevas no coinciden');
+                }
+                if (!updateDto.CurrentPassword) {
+                    throw new Error('Debes ingresar tu contraseña actual para cambiarla');
+                }
+            }
+
+            const response = await fetch('@Url.Action("ActualizarPerfil", "UsrActual")', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateDto)
+            });
+
+             if (!response.ok) {
+                let errorMessage = 'Error al actualizar el perfil';
+                try {
+                    const errorResponse = await response.text();
+                    if (errorResponse) {
+                        errorMessage = errorResponse;
+                    }
+                } catch (e) {
+                    console.error('Error al leer respuesta de error:', e);
+                }
+                throw new Error(errorMessage);
+            }
+
+            const responseText = await response.text();
+            if (!responseText) {
+                throw new Error('La respuesta del servidor está vacía');
+            }
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Mostrar mensaje de éxito y recargar datos
+                showAlert('success', 'Perfil actualizado correctamente');
+                loadProfileModal();
+            } else {
+                throw new Error(result.message || 'Error al actualizar el perfil');
+            }
+        } catch (error) {
+            showAlert('danger', error.message);
+            console.error('Error updating profile:', error);
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = 'Guardar cambios';
+        }
+    });
+
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        const modalBody = document.getElementById('perfilModalBody');
+        modalBody.prepend(alertDiv);
+
+        // Auto cerrar después de 5 segundos
+        setTimeout(() => {
+            const bsAlert = new bootstrap.Alert(alertDiv);
+            bsAlert.close();
+        }, 5000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manejador para abrir el modal
+        document.getElementById('deleteAccountBtn')?.addEventListener('click', function() {
+            const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('deleteError').style.display = 'none';
+            confirmModal.show();
+        });
+
+        // Manejador para la confirmación de eliminación
+        document.getElementById('confirmDeleteBtn')?.addEventListener('click', async function() {
+            const password = document.getElementById('confirmPassword').value.trim();
+            const errorElement = document.getElementById('deleteError');
+            const confirmBtn = this;
+
+            if (!password) {
+                errorElement.textContent = 'Debes ingresar tu contraseña para confirmar';
+                errorElement.style.display = 'block';
+                return;
+            }
+
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Eliminando...';
+
+            try {
+                const response = await fetch('@Url.Action("DeleteCurrentUser", "UsrActual")', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ Password: password })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+
+                    // Cerrar todos los modales
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        const bsModal = bootstrap.Modal.getInstance(modal);
+                        if (bsModal) bsModal.hide();
+                    });
+
+                    // Redirigir exactamente a /Login/login
+                    window.location.href = result.redirectUrl || '/Login/login?accountDeleted=true';
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Error al procesar la solicitud');
+                }
+            } catch (error) {
+                errorElement.textContent = error.message;
+                errorElement.style.display = 'block';
+                console.error('Error:', error);
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = 'Eliminar cuenta';
+            }
+        });
+    });
+</script>

@@ -2,6 +2,9 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 
+ENV TZ=America/Costa_Rica
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # First update and install packages
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -32,8 +35,14 @@ RUN dotnet build "AccionSocial.api.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "AccionSocial.api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+
 # Etapa final
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Crear directorios y establecer permisos sin usuario específico
+RUN mkdir -p /app/uploads /app/wwwroot && \
+    chmod -R 775 /app/uploads /app/wwwroot
+
 ENTRYPOINT ["dotnet", "AccionSocial.api.dll"]

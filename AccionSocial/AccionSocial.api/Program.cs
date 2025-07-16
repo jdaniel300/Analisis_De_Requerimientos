@@ -11,10 +11,12 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -25,7 +27,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 /* ==================== CONFIGURACIÓN BÁSICA ==================== */
-
 
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
@@ -261,6 +262,24 @@ app.UseCors("AllowWebApp");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Configuración para servir archivos estáticos
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot")),
+    RequestPath = ""
+});
+
+
+// Configuración para servir archivos estáticos
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "uploads")),
+    RequestPath = "/uploads",
+    ContentTypeProvider = new FileExtensionContentTypeProvider()
+});
+
 /* ==================== INICIALIZACIÓN DE LA BASE DE DATOS ==================== */
 await InitializeDatabase(app);
 
@@ -274,6 +293,9 @@ ConfigureUsrEndpoints(usrGroup);
 
 var consGroup = app.MapGroup("/api/consultas").WithTags("Consultas");
 ConfigureConsultaEndpoints(consGroup);
+
+var filesGroup = app.MapGroup("/api/files").WithTags("Archivos");
+ConfigureFileEndpoints(filesGroup);
 
 var modGroup = app.MapGroup("/api/mod").WithTags("Modificaciones");
 ConfigureModificacionEndpoints(modGroup);
@@ -432,7 +454,76 @@ async Task InitializeRolesAndAdminUser(IServiceProvider services, ILogger<Progra
     }
 }
 
+void ConfigureFileEndpoints(RouteGroupBuilder group) {
+    
 
+    // Endpoint para subir archivos
+    group.MapPost("/upload", async (HttpContext httpContext, IWebHostEnvironment env) =>
+    {
+        try
+        {
+            var formFile = httpContext.Request.Form.Files.FirstOrDefault();
+            if (formFile == null || formFile.Length == 0)
+                return Results.BadRequest("No se proporcionó archivo");
+
+            // Validaciones
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".pdf", ".docx" };
+            var fileExtension = Path.GetExtension(formFile.FileName).ToLower();
+            if (!allowedExtensions.Contains(fileExtension))
+                return Results.BadRequest("Tipo de archivo no permitido");
+
+            if (formFile.Length > 10 * 1024 * 1024) // 10MB
+                return Results.BadRequest("El archivo no debe superar los 10MB");
+
+            // Crear directorio si no existe
+            var uploadsPath = Path.Combine(env.ContentRootPath, "uploads");
+            if (!Directory.Exists(uploadsPath))
+                Directory.CreateDirectory(uploadsPath);
+
+            // Nombre único para el archivo
+            var fileName = $"{Guid.NewGuid()}{fileExtension}";
+            var filePath = Path.Combine(uploadsPath, fileName);
+
+            // Guardar archivo
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await formFile.CopyToAsync(stream);
+            }
+
+            // Retornar URL relativa
+            var fileUrl = $"/uploads/{fileName}";
+            return Results.Ok(new { path = fileUrl, fileName = formFile.FileName });
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem($"Error al subir archivo: {ex.Message}");
+        }
+    }).RequireAuthorization(); // Opcional: proteger el endpoint
+
+    // Endpoint para descargar/ver archivos
+    group.MapGet("/download/{fileName}", (string fileName, IWebHostEnvironment env) =>
+    {
+        try
+        {
+            var filePath = Path.Combine(env.ContentRootPath, "uploads", fileName);
+
+            if (!System.IO.File.Exists(filePath))
+                return Results.NotFound();
+
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(fileName, out var contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            return Results.File(filePath, contentType, fileDownloadName: fileName);
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem($"Error al obtener archivo: {ex.Message}");
+        }
+    });
+}
 //AHUTENTICACION
 void ConfigureAuthEndpoints(RouteGroupBuilder group)
 {
@@ -530,6 +621,7 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
             // 4. Actualizar usuario - Con transacción
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpireDays);
+            user.UltimoAcceso = DateTime.Now;
 
             var updateResult = await userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
@@ -926,15 +1018,15 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
         });
     }).WithName("UsuarioPorId").WithOpenApi();
 }
-
+//USUARIO
 void ConfigureUsrEndpoints(RouteGroupBuilder group)
 {
     //PROBADO
     group.MapGet("/usuarioActual", async (
-    HttpContext httpContext,
-    [FromServices] UserManager<Usuario> userManager,
-    [FromServices] ITokenService tokenService,
-    [FromServices] ILogger<Program> logger) =>
+        HttpContext httpContext,
+        [FromServices] UserManager<Usuario> userManager,
+        [FromServices] ITokenService tokenService,
+        [FromServices] ILogger<Program> logger) =>
     {
         try
         {
@@ -969,6 +1061,7 @@ void ConfigureUsrEndpoints(RouteGroupBuilder group)
                 UserId: user.Id,
                 UserName: user.UserName,
                 Email: user.Email,
+                Telefono: user.PhoneNumber,
                 NombreCompleto: $"{user.Nombre} {user.Apellidos}".Trim(),
                 Roles: roles.ToList(),
                 FechaCreacion: user.FechaCreacion,
@@ -993,32 +1086,156 @@ void ConfigureUsrEndpoints(RouteGroupBuilder group)
       .WithOpenApi()
       .RequireAuthorization();
 
+    group.MapPost("/subirImagenPerfil", async (
+    HttpContext httpContext,
+    [FromServices] UserManager<Usuario> userManager,
+    [FromServices] IWebHostEnvironment env,
+    [FromServices] ILogger<Program> logger) =>
+    {
+        try
+        {
+            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Results.Unauthorized();
+
+            var formFile = httpContext.Request.Form.Files.FirstOrDefault();
+            if (formFile == null || formFile.Length == 0)
+                return Results.BadRequest("No se proporcionó archivo");
+
+            // Validar tipo de archivo
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".pdf" };
+            var fileExtension = Path.GetExtension(formFile.FileName).ToLower();
+            if (!allowedExtensions.Contains(fileExtension))
+                return Results.BadRequest("Solo se permiten imágenes JPG, PNG, GIF o PDF");
+
+            // Validar tamaño (max 10MB)
+            if (formFile.Length > 10 * 1024 * 1024)
+                return Results.BadRequest("El archivo no debe superar los 10MB");
+
+            // Crear directorio si no existe
+            var uploadsPath = Path.Combine(env.ContentRootPath, "uploads", "profile-images");
+            if (!Directory.Exists(uploadsPath))
+                Directory.CreateDirectory(uploadsPath);
+
+            // Nombre único para el archivo
+            var fileName = $"{userIdClaim.Value}{fileExtension}";
+            var filePath = Path.Combine(uploadsPath, fileName);
+
+            // Guardar archivo
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await formFile.CopyToAsync(stream);
+            }
+
+            // Retornar URL relativa
+            var imageUrl = $"/uploads/profile-images/{fileName}";
+            return Results.Ok(new { imagePath = imageUrl });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al subir imagen de perfil");
+            return Results.Problem("Error interno al procesar la imagen");
+        }
+    }).RequireAuthorization();
+
+    group.MapGet("/obtenerImagenPerfil", async (
+        HttpContext httpContext,
+        [FromServices] UserManager<Usuario> userManager,
+        [FromServices] IWebHostEnvironment env,
+        [FromServices] ILogger<Program> logger) =>
+    {
+        try
+        {
+            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Results.Unauthorized();
+
+            var uploadsPath = Path.Combine(env.ContentRootPath, "uploads", "profile-images");
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+
+            // Buscar cualquier imagen con el ID de usuario como nombre
+            foreach (var ext in allowedExtensions)
+            {
+                var filePath = Path.Combine(uploadsPath, $"{userIdClaim.Value}{ext}");
+                if (System.IO.File.Exists(filePath))
+                {
+                    return Results.File(filePath, $"image/{ext.TrimStart('.')}");
+                }
+            }
+
+            // Si no encuentra, retornar imagen por defecto
+            var defaultImagePath = Path.Combine(env.WebRootPath, "img", "default-avatar.jpg");
+            return Results.File(defaultImagePath, "image/jpeg");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al obtener imagen de perfil");
+            var defaultImagePath = Path.Combine(env.WebRootPath, "img", "default-avatar.jpg");
+            return Results.File(defaultImagePath, "image/jpeg");
+        }
+    }).RequireAuthorization();
+
     //Eliminar - PROBADO
     group.MapDelete("/usuarioActual", async (
-    ClaimsPrincipal userClaim,
+    HttpContext httpContext,
+    [FromBody] DeleteUserRequest request,
     [FromServices] UserManager<Usuario> userManager,
-    [FromServices] SignInManager<Usuario> signInManager) =>
+    [FromServices] SignInManager<Usuario> signInManager,
+    [FromServices] ILogger<Program> logger) =>
     {
-        var currentUser = await userManager.GetUserAsync(userClaim);
-        if (currentUser == null)
+        try
         {
-            return Results.Unauthorized();
+            // Obtener el usuario actual
+            var currentUser = await userManager.GetUserAsync(httpContext.User);
+            if (currentUser == null)
+            {
+                logger.LogWarning("Intento de eliminar cuenta sin autenticación");
+                return Results.Unauthorized();
+            }
+
+            
+            if (string.IsNullOrWhiteSpace(request.Password))
+            {
+                logger.LogWarning("Intento de eliminar cuenta sin proporcionar contraseña para el usuario {UserId}", currentUser.Id);
+                return Results.BadRequest("Se requiere la contraseña para eliminar la cuenta");
+            }
+
+            // Verificar la contraseña
+            var isPasswordValid = await userManager.CheckPasswordAsync(currentUser, request.Password);
+            if (!isPasswordValid)
+            {
+                logger.LogWarning("Contraseña incorrecta al intentar eliminar la cuenta para el usuario {UserId}", currentUser.Id);
+                return Results.BadRequest("Contraseña incorrecta");
+            }
+
+            // Eliminar el usuario
+            var result = await userManager.DeleteAsync(currentUser);
+
+            if (!result.Succeeded)
+            {
+                logger.LogError("Error al eliminar la cuenta del usuario {UserId}: {Errors}",
+                    currentUser.Id, string.Join(", ", result.Errors.Select(e => e.Description)));
+                return Results.Problem(
+                    detail: string.Join(", ", result.Errors.Select(e => e.Description)),
+                    statusCode: StatusCodes.Status400BadRequest);
+            }
+
+            // Cerrar sesión después de eliminar la cuenta
+            await signInManager.SignOutAsync();
+
+            logger.LogInformation("Cuenta eliminada exitosamente para el usuario {UserId}", currentUser.Id);
+            return Results.NoContent();
         }
-
-        var result = await userManager.DeleteAsync(currentUser);
-
-        if (!result.Succeeded)
+        catch (Exception ex)
         {
+            logger.LogError(ex, "Error inesperado al intentar eliminar la cuenta del usuario");
             return Results.Problem(
-                detail: string.Join(", ", result.Errors.Select(e => e.Description)),
-                statusCode: StatusCodes.Status400BadRequest);
+                title: "Error interno",
+                detail: "Ocurrió un error inesperado al intentar eliminar la cuenta",
+                statusCode: StatusCodes.Status500InternalServerError);
         }
-
-        // Cerrar sesión después de eliminar la cuenta
-        await signInManager.SignOutAsync();
-
-        return Results.NoContent();
-    }).WithName("ElimarUsuarioActual").WithOpenApi();
+    })
+    .WithName("EliminarUsuarioActual")
+    .WithOpenApi()
+    .RequireAuthorization();
 
     //Elimiar por id - PROBADO
     group.MapDelete("/eliminar/{id}", async (
@@ -1136,6 +1353,9 @@ void ConfigureUsrEndpoints(RouteGroupBuilder group)
     })
       .WithName("ActualizarUsuario")
       .WithOpenApi();
+
+    
+   
 }
 //CONSULTAS
 void ConfigureConsultaEndpoints(RouteGroupBuilder group)
