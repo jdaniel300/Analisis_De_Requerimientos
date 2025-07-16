@@ -925,8 +925,6 @@ void ConfigureAuthEndpoints(RouteGroupBuilder group)
             NombreCompleto = $"{user.Nombre} {user.Apellidos}"
         });
     }).WithName("UsuarioPorId").WithOpenApi();
-
-    
 }
 
 void ConfigureUsrEndpoints(RouteGroupBuilder group)
@@ -967,17 +965,17 @@ void ConfigureUsrEndpoints(RouteGroupBuilder group)
             }
 
             // Preparar respuesta
-            var response = new
-            {
-                User = new
-                {
-                    userId = user.Id,
-                    userName = user.UserName,
-                    email = user.Email,
-                    nombreCompleto = $"{user.Nombre} {user.Apellidos}".Trim(),
-                    roles = roles.ToList()
-                }
-            };
+            var response = new CurrentUserResponse(
+                UserId: user.Id,
+                UserName: user.UserName,
+                Email: user.Email,
+                NombreCompleto: $"{user.Nombre} {user.Apellidos}".Trim(),
+                Roles: roles.ToList(),
+                FechaCreacion: user.FechaCreacion,
+                UltimoAcceso: user.UltimoAcceso,
+                Estado: user.Estado
+            );
+
 
             logger.LogInformation("Información de usuario obtenida para {UserId}", user.Id);
             return Results.Ok(response);

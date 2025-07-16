@@ -175,9 +175,6 @@ namespace AccionSocialModels
                     .IsUnique()
                     .HasDatabaseName("IX_Unique_Encargado_Taller");
             });
-
-            
-
         }
     }
 }
