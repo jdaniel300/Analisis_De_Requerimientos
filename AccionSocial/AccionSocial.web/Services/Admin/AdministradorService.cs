@@ -199,7 +199,49 @@ namespace AccionSocial.web.Services.Admin
             }
         }
 
-        
+        public async Task<UsuarioDetalleDTO?> ObtenerUsuarioDetalleAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"/api/usuarios/{id}");
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadFromJsonAsync<UsuarioDetalleDTO>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener usuario con ID: {Id}", id);
+                return null;
+            }
+        }
+
+        public async Task<bool> ActualizarUsuarioAsync(int id, ActualizarUsuarioRequest request)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"/api/usuarios/{id}", request);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al actualizar usuario con ID: {Id}", id);
+                return false;
+            }
+        }
+
+        public async Task<bool> EliminarUsuarioAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"/api/usr/eliminar/{id}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al eliminar usuario con ID: {Id}", id);
+                return false;
+            }
+        }
     }
 
 }

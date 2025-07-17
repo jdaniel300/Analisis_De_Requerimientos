@@ -39,6 +39,8 @@
     <link rel="stylesheet" href="~/Plantilla/css/plugins.min.css" />
     <link rel="stylesheet" href="~/Plantilla/css/kaiadmin.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+
 </head>
 <body>
     <div class="wrapper">
@@ -52,6 +54,7 @@
             @if (User.Identity.IsAuthenticated)
             {
                 @Html.Partial("_Encabezado")
+
             }
 
             <!-- Contenido Principal -->
@@ -89,6 +92,7 @@
     <script src="~/Plantilla/js/core/popper.min.js"></script>
     <script src="~/Plantilla/js/core/bootstrap.min.js"></script>
 
+
     <!-- jQuery Scrollbar -->
     <script src="~/Plantilla/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
 
@@ -116,6 +120,7 @@
 
     <!-- Kaiadmin JS -->
     <script src="~/Plantilla/js/kaiadmin.min.js"></script>
+    
 
     <!-- Configuracion por inactividad -->
     <script>

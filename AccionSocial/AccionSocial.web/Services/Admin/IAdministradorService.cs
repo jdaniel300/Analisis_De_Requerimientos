@@ -14,6 +14,10 @@ namespace AccionSocial.web.Services.Admin
         string filtro = "",
         string sortOrder = "");
         Task<ResultadoDTO> RegistrarUsuarioAsync(RegistroDTO registerDto);
-        
+
+        Task<UsuarioDetalleDTO?> ObtenerUsuarioDetalleAsync(int id);
+        Task<bool> ActualizarUsuarioAsync(int id, ActualizarUsuarioRequest request);
+        Task<bool> EliminarUsuarioAsync(int id);
     }
 }
+

@@ -324,25 +324,28 @@
                     },
                     success: function(response) {
                         console.log("Respuesta exitosa del servidor:", response);
-                        
+
                         if (response && response.success) {
                             toastr.success(response.message || 'Usuario registrado correctamente');
-                            
-                            // Configurar el evento de cierre ANTES de cerrar el modal
-                            modal.one('hidden.bs.modal', function() {
+
+                            // Cerrar el modal inmediatamente
+                            modal.modal('hide');
+
+                            // Configurar el evento de cierre después de cerrar el modal
+                            modal.on('hidden.bs.modal', function() {
                                 // Recargar la página después de cerrar el modal
                                 setTimeout(function() {
                                     location.reload();
                                 }, 500);
+
+                                // Eliminar el evento para que no se acumule en futuras aperturas
+                                modal.off('hidden.bs.modal');
                             });
-                            
-                            // Cerrar el modal
-                            modal.modal('hide');
                         } else {
                             // Manejar respuesta con error pero código 200
                             var errorMsg = response?.message || 'Error al registrar usuario';
                             toastr.error(errorMsg);
-                            
+
                             if (response?.errors) {
                                 showErrors(response.errors.General || response.errors);
                             }
@@ -381,6 +384,10 @@
                 $('#registerUserForm')[0].reset();
                 $('.text-danger').text('');
                 $('#generalErrorsContainer').addClass('d-none').empty();
+
+                // Restablecer el botón de submit
+                var submitBtn = $('#registerUserForm').find('button[type="submit"]');
+                submitBtn.prop('disabled', false).text('Registrar');
             });
 
             // Manejo de botones de cierre del modal

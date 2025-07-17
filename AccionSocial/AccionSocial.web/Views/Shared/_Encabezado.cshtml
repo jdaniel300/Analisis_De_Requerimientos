@@ -2,10 +2,10 @@
 @using Microsoft.AspNetCore.Authentication
 @using AccionSocialModels
 @using System.Security.Claims
-@model AccionSocialModels.Response.CurrentUserResponse
+
 @{
     var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-    var fullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value;
+    var userFullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value;
 }
 <div class="main-header">
     <div class="main-header-logo">
@@ -105,25 +105,63 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item topbar-user dropdown hidden-caret">
+
+                <li class="nav-item topbar-user dropdown">
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
-                        <div class="avatar-sm">
-                            <img src="/api/usr/obtenerImagenPerfil" alt="Imagen de perfil" class="avatar-img rounded-circle" />
+                        <div class="avatar-sm m-1">
+                            <span class="avatar-title rounded-circle border border-white bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    var initials = "NN";
+                                    if (!string.IsNullOrEmpty(userFullName))
+                                    {
+                                        var nameParts = userFullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                        initials = nameParts.Length > 0 ? nameParts[0][0].ToString().ToUpper() : "";
+                                        initials += nameParts.Length > 1 ? nameParts[1][0].ToString().ToUpper() : "";
+                                        if (initials.Length == 1) initials += initials;
+                                    }
+                                    @initials
+                                }
+                                else
+                                {
+                                    @:GU
+                                }
+                            </span>
                         </div>
-                        <span class="profile-username">
+                        <span class="profile-username d-none d-md-inline">
                             <span class="op-7">Hola,</span>
-                            <span class="fw-bold">@fullName</span>
+                            <span class="fw-bold">@userFullName</span>
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
                         <div class="dropdown-user-scroll scrollbar-outer">
                         <li>
                             <div class="user-box">
-                                <div class="avatar-lg">
-                                    <img src="/api/usr/obtenerImagenPerfil" alt="image profile" class="avatar-img rounded" />
+                                <div class="avatar-container me-3">
+                                    <div class="avatar-sm" style="width: 40px; height: 40px;">
+                                        <span class="avatar-title rounded-circle border border-white d-flex align-items-center justify-content-center"
+                                              style="background-color: #6c757d; color: white; font-weight: bold;">
+                                            @if (User.Identity.IsAuthenticated)
+                                            {
+                                                var initials = "NN";
+                                                if (!string.IsNullOrEmpty(userFullName))
+                                                {
+                                                    var nameParts = userFullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                                    initials = nameParts.Length > 0 ? nameParts[0][0].ToString().ToUpper() : "";
+                                                    initials += nameParts.Length > 1 ? nameParts[1][0].ToString().ToUpper() : "";
+                                                    if (initials.Length == 1) initials += initials;
+                                                }
+                                                @initials
+                                            }
+                                            else
+                                            {
+                                                @:GU
+                                            }
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="u-text">
-                                    <h4>@fullName</h4>
+                                    <h4>@userFullName</h4>
                                     <p class="text-muted">@userEmail</p>
 
                                     <button type="button" class="btn btn-xs btn-secondary btn-sm" onclick="loadProfileModal()">
@@ -134,11 +172,11 @@
                         </li>
                         <li>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Mi perfil</a>
+
                             <a class="dropdown-item" href="#">Mis talleres</a>
                             <a class="dropdown-item" href="#">Mis solicitudes</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Configuracion de cuenta</a>
+
+
                             <div class="dropdown-divider"></div>
                             <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post">
                                 @Html.AntiForgeryToken()
@@ -205,7 +243,7 @@
 </div>
 
 <script>
-        let currentUserData = null;
+    let currentUserData = null;
     let isEditMode = false;
 
     function loadProfileModal() {
@@ -278,10 +316,7 @@
             // Vista de solo lectura
             modalBody.innerHTML = `
                 <div class="row">
-                    <div class="col-md-4 text-center">
-                        <img src="/api/files/download/${user.imagenPerfil || 'default-avatar.jpg'}" alt="Imagen de perfil"
-                             class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
-                    </div>
+
                     <div class="col-md-8">
                         <h4>${user.nombreCompleto}</h4>
                         <hr>
@@ -322,14 +357,7 @@
             modalBody.innerHTML = `
                 <form id="profileForm">
                     <div class="row">
-                        <div class="col-md-4 text-center">
-                            <img src="/api/files/download/${user.imagenPerfil || 'default-avatar.jpg'}" alt="Imagen de perfil"
-                                 class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
-                            <div class="mt-2">
-                                <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('profileImageInput').click()">Cambiar foto</button>
-                            </div>
-                        </div>
+
                         <div class="col-md-8">
                             <div class="mb-3">
                                 <label class="form-label"><strong>Nombre</strong></label>
@@ -370,76 +398,7 @@
                 </form>`;
 
             // Manejar cambio de imagen de perfil
-            document.getElementById('profileImageInput').addEventListener('change', async function(e) {
-                if (this.files && this.files[0]) {
-                    const file = this.files[0];
 
-                    // Validaciones
-                    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-                    if (!validTypes.includes(file.type)) {
-                        showAlert('danger', 'Solo se permiten imágenes JPEG, PNG o GIF');
-                        return;
-                    }
-
-                    if (file.size > 5 * 1024 * 1024) {
-                        showAlert('danger', 'La imagen no debe superar los 5MB');
-                        return;
-                    }
-
-                    // Mostrar preview
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.querySelectorAll('#perfilModal img, .avatar-preview').forEach(img => {
-                            img.src = e.target.result;
-                        });
-                    };
-                    reader.readAsDataURL(file);
-
-                    // Enviar al servidor
-                    try {
-                        const formData = new FormData();
-                        formData.append('file', file);
-
-                        const response = await fetch('/api/files/upload', {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                        if (!response.ok) {
-                            let errorMessage = 'Error al subir la imagen';
-                            try {
-                                // Intentar obtener el mensaje de error del cuerpo
-                                const errorResponse = await response.text();
-                                if (errorResponse) {
-                                    errorMessage = errorResponse;
-                                }
-                            } catch (e) {
-                                console.error('Error al leer respuesta de error:', e);
-                            }
-                            throw new Error(errorMessage);
-                        }
-
-                        const responseText = await response.text();
-                        if (!responseText) {
-                            throw new Error('La respuesta del servidor está vacía');
-                        }
-
-                        const result = JSON.parse(responseText);
-                        showAlert('success', 'Imagen de perfil actualizada correctamente');
-
-                        // Actualizar la imagen de perfil en el objeto de usuario
-                        currentUserData.imagenPerfil = result.path.split('/').pop();
-
-                        // Actualizar todas las imágenes de perfil con cache busting
-                        document.querySelectorAll('.avatar-img, #perfilModal img').forEach(img => {
-                            img.src = `${result.path}?t=${new Date().getTime()}`;
-                        });
-                    } catch (error) {
-                        console.error('Error al subir imagen:', error);
-                        showAlert('danger', error.message);
-                    }
-                }
-            });
         }
     }
 

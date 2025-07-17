@@ -36,7 +36,12 @@ namespace AccionSocial.web.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 _logger.LogWarning(ex, "Autenticación fallida al obtener perfil");
-                return Unauthorized(new { message = "Sesión expirada" });
+                return Unauthorized(new { message = "Sesión expirada", requiresLogin = true });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Usuario no encontrado");
+                return NotFound(new { message = "Usuario no encontrado" });
             }
             catch (Exception ex)
             {
