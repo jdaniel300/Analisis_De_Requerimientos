@@ -1086,93 +1086,6 @@ void ConfigureUsrEndpoints(RouteGroupBuilder group)
       .WithOpenApi()
       .RequireAuthorization();
 
-    group.MapPost("/subirImagenPerfil", async (
-    HttpContext httpContext,
-    [FromServices] UserManager<Usuario> userManager,
-    [FromServices] IWebHostEnvironment env,
-    [FromServices] ILogger<Program> logger) =>
-    {
-        try
-        {
-            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null) return Results.Unauthorized();
-
-            var formFile = httpContext.Request.Form.Files.FirstOrDefault();
-            if (formFile == null || formFile.Length == 0)
-                return Results.BadRequest("No se proporcionó archivo");
-
-            // Validar tipo de archivo
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".pdf" };
-            var fileExtension = Path.GetExtension(formFile.FileName).ToLower();
-            if (!allowedExtensions.Contains(fileExtension))
-                return Results.BadRequest("Solo se permiten imágenes JPG, PNG, GIF o PDF");
-
-            // Validar tamaño (max 10MB)
-            if (formFile.Length > 10 * 1024 * 1024)
-                return Results.BadRequest("El archivo no debe superar los 10MB");
-
-            // Crear directorio si no existe
-            var uploadsPath = Path.Combine(env.ContentRootPath, "uploads", "profile-images");
-            if (!Directory.Exists(uploadsPath))
-                Directory.CreateDirectory(uploadsPath);
-
-            // Nombre único para el archivo
-            var fileName = $"{userIdClaim.Value}{fileExtension}";
-            var filePath = Path.Combine(uploadsPath, fileName);
-
-            // Guardar archivo
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await formFile.CopyToAsync(stream);
-            }
-
-            // Retornar URL relativa
-            var imageUrl = $"/uploads/profile-images/{fileName}";
-            return Results.Ok(new { imagePath = imageUrl });
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error al subir imagen de perfil");
-            return Results.Problem("Error interno al procesar la imagen");
-        }
-    }).RequireAuthorization();
-
-    group.MapGet("/obtenerImagenPerfil", async (
-        HttpContext httpContext,
-        [FromServices] UserManager<Usuario> userManager,
-        [FromServices] IWebHostEnvironment env,
-        [FromServices] ILogger<Program> logger) =>
-    {
-        try
-        {
-            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null) return Results.Unauthorized();
-
-            var uploadsPath = Path.Combine(env.ContentRootPath, "uploads", "profile-images");
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-
-            // Buscar cualquier imagen con el ID de usuario como nombre
-            foreach (var ext in allowedExtensions)
-            {
-                var filePath = Path.Combine(uploadsPath, $"{userIdClaim.Value}{ext}");
-                if (System.IO.File.Exists(filePath))
-                {
-                    return Results.File(filePath, $"image/{ext.TrimStart('.')}");
-                }
-            }
-
-            // Si no encuentra, retornar imagen por defecto
-            var defaultImagePath = Path.Combine(env.WebRootPath, "img", "default-avatar.jpg");
-            return Results.File(defaultImagePath, "image/jpeg");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error al obtener imagen de perfil");
-            var defaultImagePath = Path.Combine(env.WebRootPath, "img", "default-avatar.jpg");
-            return Results.File(defaultImagePath, "image/jpeg");
-        }
-    }).RequireAuthorization();
-
     //Eliminar - PROBADO
     group.MapDelete("/usuarioActual", async (
     HttpContext httpContext,
@@ -1238,50 +1151,7 @@ void ConfigureUsrEndpoints(RouteGroupBuilder group)
     .RequireAuthorization();
 
     //Elimiar por id - PROBADO
-    group.MapDelete("/eliminar/{id}", async (
-        [FromRoute] string id,
-        [FromServices] UserManager<Usuario> userManager,
-        [FromServices] SignInManager<Usuario> signInManager,
-        ClaimsPrincipal userClaim) =>
-    {
-        // Verificar si el usuario actual es admin
-        var currentUser = await userManager.GetUserAsync(userClaim);
-        var isAdmin = await userManager.IsInRoleAsync(currentUser, "Admin");
-
-        if (!isAdmin)
-        {
-            return Results.Forbid();
-        }
-
-        // No permitir auto-eliminación
-        if (currentUser.Id.ToString() == id)
-        {
-            return Results.BadRequest("No puedes eliminarte a ti mismo.");
-        }
-
-        var userToDelete = await userManager.FindByIdAsync(id);
-        if (userToDelete == null)
-        {
-            return Results.NotFound();
-        }
-
-        var result = await userManager.DeleteAsync(userToDelete);
-
-        if (!result.Succeeded)
-        {
-            return Results.Problem(
-                detail: string.Join(", ", result.Errors.Select(e => e.Description)),
-                statusCode: StatusCodes.Status400BadRequest);
-        }
-        if (currentUser.Id.ToString() == id)
-        {
-            await signInManager.SignOutAsync();
-        }
-
-        return Results.NoContent();
-    }).RequireAuthorization(policy => policy.RequireRole("Admin"))
-      .WithName("EliminarUsuarioPorIdAdmin")
-      .WithOpenApi();
+    
 
     //Actrualizar usuario - PROBADO
     group.MapPut("/actualizarUsuario/{id}", async (
@@ -1354,8 +1224,53 @@ void ConfigureUsrEndpoints(RouteGroupBuilder group)
       .WithName("ActualizarUsuario")
       .WithOpenApi();
 
-    
-   
+    // Eliminar usuario por ID - PROBADO
+    group.MapDelete("/eliminar/{id}", async (
+        [FromRoute] int id,
+        [FromServices] UserManager<Usuario> userManager,
+        [FromServices] SignInManager<Usuario> signInManager,
+        ClaimsPrincipal userClaim) =>
+        {
+            // Verificar si el usuario actual es admin
+            var currentUser = await userManager.GetUserAsync(userClaim);
+            var isAdmin = await userManager.IsInRoleAsync(currentUser, "Admin");
+
+            if (!isAdmin)
+            {
+                return Results.Forbid();
+            }
+
+            // No permitir auto-eliminación
+            if (currentUser.Id == id)
+            {
+                return Results.BadRequest("No puedes eliminarte a ti mismo.");
+            }
+
+            var userToDelete = await userManager.FindByIdAsync(id.ToString());
+            if (userToDelete == null)
+            {
+                return Results.NotFound();
+            }
+
+            var result = await userManager.DeleteAsync(userToDelete);
+
+            if (!result.Succeeded)
+            {
+                return Results.Problem(
+                    detail: string.Join(", ", result.Errors.Select(e => e.Description)),
+                    statusCode: StatusCodes.Status400BadRequest);
+            }
+            if (currentUser.Id == id)
+            {
+                await signInManager.SignOutAsync();
+            }
+
+            return Results.NoContent();
+        }).RequireAuthorization(policy => policy.RequireRole("Admin"))
+          .WithName("EliminarUsuarioPorIdAdmin")
+          .WithOpenApi();
+
+
 }
 //CONSULTAS
 void ConfigureConsultaEndpoints(RouteGroupBuilder group)
@@ -1393,7 +1308,7 @@ void ConfigureConsultaEndpoints(RouteGroupBuilder group)
         [FromQuery] string filtro = "",
         [FromQuery] string sortOrder = "") =>
     {
-       
+
         // Validación de parámetros
         if (pagina < 1) pagina = 1;
         if (tamanoPagina < 1 || tamanoPagina > 100) tamanoPagina = 10;
@@ -1484,6 +1399,80 @@ void ConfigureConsultaEndpoints(RouteGroupBuilder group)
         }
     }).WithName("ListaUsuarios").WithOpenApi();
 
+    group.MapGet("/admin/usuarios/{id}",
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")] async (
+            [FromRoute] int id,
+            [FromServices] UserManager<Usuario> userManager,
+            [FromServices] ILogger<Program> logger) =>
+        {
+            try
+            {
+                // Buscar usuario por ID
+                var usuario = await userManager.Users
+                    .Where(u => u.Id == id)
+                    .Select(u => new
+                    {
+                        u.Id,
+                        u.UserName,
+                        u.Email,
+                        u.Nombre,
+                        u.Apellidos,
+                        u.PhoneNumber,
+                        u.FechaCreacion,
+                        u.Estado,
+                        u.UltimoAcceso,
+                        u.FechaCaducidadContrasena,
+                        u.EmailConfirmed,
+                        u.PhoneNumberConfirmed,
+                        u.TwoFactorEnabled,
+                        u.LockoutEnd,
+                        u.LockoutEnabled,
+                        u.AccessFailedCount
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (usuario == null)
+                {
+                    return Results.NotFound("Usuario no encontrado");
+                }
+
+                // Obtener roles del usuario
+                var userEntity = await userManager.FindByIdAsync(id.ToString());
+                var roles = await userManager.GetRolesAsync(userEntity);
+
+                // Construir objeto de respuesta
+                var response = new
+                {
+                    usuario.Id,
+                    usuario.UserName,
+                    usuario.Email,
+                    usuario.Nombre,
+                    usuario.Apellidos,
+                    usuario.PhoneNumber,
+                    usuario.FechaCreacion,
+                    usuario.UltimoAcceso,
+                    usuario.FechaCaducidadContrasena,
+                    Estado = usuario.Estado ? "Activo" : "Inactivo",
+                    Rol = roles.FirstOrDefault() ?? "Participante",
+                    usuario.EmailConfirmed,
+                    usuario.PhoneNumberConfirmed,
+                    usuario.TwoFactorEnabled,
+                    Bloqueado = usuario.LockoutEnd.HasValue && usuario.LockoutEnd > DateTimeOffset.Now,
+                    usuario.LockoutEnabled,
+                    usuario.AccessFailedCount
+                };
+
+                return Results.Ok(response);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Error al obtener detalles del usuario {id}");
+                return Results.Problem("Error interno al obtener detalles del usuario");
+            }
+        }).WithName("ObtenerUsuario").WithOpenApi();
+
+
+    
 }
 //MODIFICACIONES
 void ConfigureModificacionEndpoints(RouteGroupBuilder group)

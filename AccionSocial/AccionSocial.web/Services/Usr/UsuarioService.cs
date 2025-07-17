@@ -16,17 +16,20 @@ namespace AccionSocial.web.Services.Usr
         private readonly ILogger<UsuarioService> _logger;
         private readonly ITokenStorageService _tokenService;
         private readonly IWebHostEnvironment _env;
+        private readonly ITokenRefreshService _tokenRefreshService;
 
         public UsuarioService(
             HttpClient httpClient,
             ILogger<UsuarioService> logger,
             ITokenStorageService tokenService,
-            IWebHostEnvironment env)
+            IWebHostEnvironment env,
+            ITokenRefreshService tokenRefreshService)
         {
             _httpClient = httpClient;
             _logger = logger;
             _tokenService = tokenService;
             _env = env;
+            _tokenRefreshService = tokenRefreshService;
         }
 
         public async Task<CurrentUserResponse?> GetCurrentUserAsync()
@@ -48,8 +51,19 @@ namespace AccionSocial.web.Services.Usr
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.Unauthorized:
-                        await _tokenService.RemoveTokenAsync();
-                        throw new UnauthorizedAccessException("Sesión expirada o token inválido");
+                        // Intento refrescar el token
+                        var newToken = await _tokenRefreshService.RefreshTokenAsync();
+                        if (newToken == null)
+                        {
+                            await _tokenService.RemoveTokenAsync();
+                            throw new UnauthorizedAccessException("Sesión expirada o token inválido");
+                        }
+
+                        // Reintentar la petición con el nuevo token
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newToken);
+                        response = await _httpClient.SendAsync(request);
+                        response.EnsureSuccessStatusCode();
+                        break;
 
                     case HttpStatusCode.NotFound:
                         throw new KeyNotFoundException("Usuario no encontrado");
@@ -57,6 +71,7 @@ namespace AccionSocial.web.Services.Usr
                     case HttpStatusCode.Forbidden:
                         throw new UnauthorizedAccessException("No tiene permisos para esta acción");
                 }
+
 
                 response.EnsureSuccessStatusCode();
 
